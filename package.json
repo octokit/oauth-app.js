@@ -19,8 +19,8 @@
   "author": "Gregor Martynus (https://twitter.com/gr2m)",
   "license": "MIT",
   "dependencies": {
-    "@octokit/oauth-login-url": "^2.1.2",
-    "@octokit/request": "^5.3.1"
+    "@octokit/core": "^2.4.1",
+    "@octokit/oauth-login-url": "^2.1.2"
   },
   "devDependencies": {
     "@pika/pack": "^0.5.0",
