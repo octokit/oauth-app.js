@@ -18,15 +18,19 @@
   ],
   "author": "Gregor Martynus (https://twitter.com/gr2m)",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "@octokit/oauth-login-url": "^2.1.2",
+    "@octokit/request": "^5.3.1"
+  },
   "devDependencies": {
-    "@octokit/request": "^5.3.1",
     "@pika/pack": "^0.5.0",
     "@pika/plugin-build-node": "^0.9.2",
     "@pika/plugin-ts-standard-pkg": "^0.9.2",
     "@types/jest": "^25.1.2",
     "@types/node": "^13.7.1",
+    "@types/node-fetch": "^2.5.4",
     "jest": "^25.1.0",
+    "node-fetch": "^2.6.0",
     "prettier": "^1.19.1",
     "semantic-release": "^17.0.3",
     "semantic-release-plugin-update-version-in-files": "^1.0.0",
