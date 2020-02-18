@@ -21,7 +21,8 @@
   "dependencies": {
     "@octokit/auth-oauth-app": "^2.3.2",
     "@octokit/core": "^2.4.1",
-    "@octokit/oauth-login-url": "^2.1.2"
+    "@octokit/oauth-login-url": "^2.1.2",
+    "universal-user-agent": "^4.0.0"
   },
   "devDependencies": {
     "@pika/pack": "^0.5.0",
