@@ -19,6 +19,7 @@
   "author": "Gregor Martynus (https://twitter.com/gr2m)",
   "license": "MIT",
   "dependencies": {
+    "@octokit/auth-oauth-app": "^2.3.2",
     "@octokit/core": "^2.4.1",
     "@octokit/oauth-login-url": "^2.1.2"
   },
