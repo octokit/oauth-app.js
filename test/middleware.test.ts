@@ -217,4 +217,50 @@ describe("app.middleware", () => {
       scopes: []
     });
   });
+
+  it("GET /api/github/oauth/token", async () => {
+    const mock = fetchMock.sandbox().postOnce(
+      "https://api.github.com/applications/0123/token",
+      { id: 1 },
+      {
+        headers: {
+          authorization:
+            "basic " + Buffer.from("0123:0123secret").toString("base64")
+        },
+        body: {
+          access_token: "token123"
+        }
+      }
+    );
+
+    const Mocktokit = OAuthAppOctokit.defaults({
+      request: {
+        fetch: mock
+      }
+    });
+
+    const app = new OAuthApp({
+      clientId: "0123",
+      clientSecret: "0123secret",
+      Octokit: Mocktokit
+    });
+
+    const server = createServer(app.middleware).listen();
+    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/token`,
+      {
+        headers: {
+          authorization: "token token123"
+        }
+      }
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(200);
+    expect(await response.json()).toStrictEqual({ id: 1 });
+  });
 });
