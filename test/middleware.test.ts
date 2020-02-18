@@ -132,7 +132,7 @@ describe("app.middleware", () => {
     });
 
     const onTokenCallback = jest.fn();
-    app.onToken(onTokenCallback);
+    app.on("token.created", onTokenCallback);
 
     const server = createServer(app.middleware).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
@@ -189,7 +189,7 @@ describe("app.middleware", () => {
     });
 
     const onTokenCallback = jest.fn();
-    app.onToken(onTokenCallback);
+    app.on("token.created", onTokenCallback);
 
     const server = createServer(app.middleware).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
@@ -262,5 +262,73 @@ describe("app.middleware", () => {
 
     expect(response.status).toEqual(200);
     expect(await response.json()).toStrictEqual({ id: 1 });
+  });
+
+  it("PATCH /api/github/oauth/token", async () => {
+    const mock = fetchMock.sandbox().patchOnce(
+      "https://api.github.com/applications/0123/token",
+      {
+        id: 2,
+        token: "token456",
+        scopes: ["repo"]
+      },
+      {
+        headers: {
+          authorization:
+            "basic " + Buffer.from("0123:0123secret").toString("base64")
+        },
+        body: {
+          access_token: "token123"
+        }
+      }
+    );
+
+    const Mocktokit = OAuthAppOctokit.defaults({
+      request: {
+        fetch: mock
+      }
+    });
+
+    const app = new OAuthApp({
+      clientId: "0123",
+      clientSecret: "0123secret",
+      Octokit: Mocktokit
+    });
+
+    const onTokenCallback = jest.fn();
+    app.on("token.reset", onTokenCallback);
+
+    const server = createServer(app.middleware).listen();
+    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/token`,
+      {
+        method: "PATCH",
+        headers: {
+          authorization: "token token123"
+        }
+      }
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(200);
+    expect(await response.json()).toStrictEqual({
+      id: 2,
+      token: "token456",
+      scopes: ["repo"]
+    });
+
+    expect(onTokenCallback.mock.calls.length).toEqual(1);
+    const [context] = onTokenCallback.mock.calls[0];
+
+    expect(context).toMatchObject({
+      name: "token",
+      action: "reset",
+      token: "token456",
+      scopes: ["repo"]
+    });
   });
 });
