@@ -331,4 +331,67 @@ describe("app.middleware", () => {
       scopes: ["repo"]
     });
   });
+  it("DELETE /api/github/oauth/token", async () => {
+    const mock = fetchMock
+      .sandbox()
+      .deleteOnce("https://api.github.com/applications/0123/token", 204, {
+        headers: {
+          authorization:
+            "basic " + Buffer.from("0123:0123secret").toString("base64")
+        },
+        body: {
+          access_token: "token123"
+        }
+      });
+
+    const Mocktokit = OAuthAppOctokit.defaults({
+      request: {
+        fetch: mock
+      }
+    });
+
+    const app = new OAuthApp({
+      clientId: "0123",
+      clientSecret: "0123secret",
+      Octokit: Mocktokit
+    });
+
+    const onTokenCallback = jest.fn();
+    app.on(["token.before_deleted", "token.deleted"], onTokenCallback);
+
+    const server = createServer(app.middleware).listen();
+    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/token`,
+      {
+        method: "DELETE",
+        headers: {
+          authorization: "token token123"
+        }
+      }
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(204);
+
+    expect(onTokenCallback.mock.calls.length).toEqual(2);
+    const [context_before_deleted] = onTokenCallback.mock.calls[0];
+    const [context_deleted] = onTokenCallback.mock.calls[1];
+
+    expect(context_before_deleted).toMatchObject({
+      name: "token",
+      action: "before_deleted",
+      token: "token123"
+    });
+    expect(context_before_deleted.octokit).toBeInstanceOf(Mocktokit);
+
+    expect(context_deleted).toStrictEqual({
+      name: "token",
+      action: "deleted",
+      token: "token123"
+    });
+  });
 });
