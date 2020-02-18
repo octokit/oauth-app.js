@@ -157,4 +157,64 @@ describe("app.middleware", () => {
     const { data } = await context.octokit.request("GET /user");
     expect(data.login).toEqual("octocat");
   });
+
+  it("POST /api/github/oauth/token", async () => {
+    const mock = fetchMock.sandbox().postOnce(
+      "https://github.com/login/oauth/access_token",
+      {
+        access_token: "token123",
+        scope: "",
+        token_type: "bearer"
+      },
+      {
+        body: {
+          client_id: "0123",
+          client_secret: "0123secret",
+          code: "012345",
+          state: "state123"
+        }
+      }
+    );
+
+    const Mocktokit = OAuthAppOctokit.defaults({
+      request: {
+        fetch: mock
+      }
+    });
+
+    const app = new OAuthApp({
+      clientId: "0123",
+      clientSecret: "0123secret",
+      Octokit: Mocktokit
+    });
+
+    const onTokenCallback = jest.fn();
+    app.onToken(onTokenCallback);
+
+    const server = createServer(app.middleware).listen();
+    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/token`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          code: "012345",
+          state: "state123"
+        })
+      }
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(201);
+    expect(onTokenCallback.mock.calls.length).toEqual(1);
+    const [context] = onTokenCallback.mock.calls[0];
+
+    expect(context).toMatchObject({
+      token: "token123",
+      scopes: []
+    });
+  });
 });
