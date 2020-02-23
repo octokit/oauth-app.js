@@ -5,7 +5,7 @@ import fetch from "node-fetch";
 import fetchMock from "fetch-mock";
 import { OAuthAppOctokit } from "../src/oauth-app-octokit";
 
-import { OAuthApp } from "../src";
+import { getNodeMiddleware } from "../src/middleware/node";
 
 describe("app.middleware", () => {
   it("GET /api/github/oauth/octokit.js", async () => {
