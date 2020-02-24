@@ -4,7 +4,9 @@ import {
   getAuthorizationUrl,
   createToken,
   checkToken,
-  resetToken
+  resetToken,
+  deleteToken,
+  deleteAuthorization
 } from "../src";
 
 describe("app", () => {
@@ -84,5 +86,41 @@ describe("app", () => {
     });
 
     expect(result).toStrictEqual({ ok: true });
+  });
+
+  it("deleteToken", () => {
+    expect(deleteToken).toBeInstanceOf(Function);
+  });
+
+  it("deleteToken(options)", async () => {
+    nock("https://api.github.com")
+      .delete("/applications/0123/token", {
+        access_token: "token123"
+      })
+      .reply(204);
+
+    await deleteToken({
+      clientId: "0123",
+      clientSecret: "0123secret",
+      token: "token123"
+    });
+  });
+
+  it("deleteAuthorization", () => {
+    expect(deleteAuthorization).toBeInstanceOf(Function);
+  });
+
+  it("deleteAuthorization(options)", async () => {
+    nock("https://api.github.com")
+      .delete("/applications/0123/grant", {
+        access_token: "token123"
+      })
+      .reply(204);
+
+    await deleteAuthorization({
+      clientId: "0123",
+      clientSecret: "0123secret",
+      token: "token123"
+    });
   });
 });
