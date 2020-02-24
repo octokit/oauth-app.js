@@ -85,4 +85,40 @@ describe("app", () => {
 
     expect(result).toStrictEqual({ ok: true });
   });
+
+  it("app.deleteToken", () => {
+    expect(app.deleteToken).toBeInstanceOf(Function);
+  });
+
+  it("app.deleteToken(options)", async () => {
+    nock("https://api.github.com")
+      .delete("/applications/0123/token", {
+        access_token: "token123"
+      })
+      .reply(200, { ok: true });
+
+    const result = await app.deleteToken({
+      token: "token123"
+    });
+
+    expect(result).toStrictEqual({ ok: true });
+  });
+
+  it("app.deleteAuthorization", () => {
+    expect(app.deleteAuthorization).toBeInstanceOf(Function);
+  });
+
+  it("app.deleteAuthorization(options)", async () => {
+    nock("https://api.github.com")
+      .delete("/applications/0123/grant", {
+        access_token: "token123"
+      })
+      .reply(200, { ok: true });
+
+    const result = await app.deleteAuthorization({
+      token: "token123"
+    });
+
+    expect(result).toStrictEqual({ ok: true });
+  });
 });
