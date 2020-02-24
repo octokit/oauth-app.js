@@ -1,6 +1,11 @@
 import nock from "nock";
 
-import { getAuthorizationUrl, createToken, checkToken } from "../src";
+import {
+  getAuthorizationUrl,
+  createToken,
+  checkToken,
+  resetToken
+} from "../src";
 
 describe("app", () => {
   it("getAuthorizationUrl", () => {
@@ -53,6 +58,26 @@ describe("app", () => {
       .reply(200, { ok: true });
 
     const result = await checkToken({
+      clientId: "0123",
+      clientSecret: "0123secret",
+      token: "token123"
+    });
+
+    expect(result).toStrictEqual({ ok: true });
+  });
+
+  it("resetToken", () => {
+    expect(resetToken).toBeInstanceOf(Function);
+  });
+
+  it("resetToken(options)", async () => {
+    nock("https://api.github.com")
+      .patch("/applications/0123/token", {
+        access_token: "token123"
+      })
+      .reply(200, { ok: true });
+
+    const result = await resetToken({
       clientId: "0123",
       clientSecret: "0123secret",
       token: "token123"
