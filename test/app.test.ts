@@ -67,4 +67,22 @@ describe("app", () => {
 
     expect(result).toStrictEqual({ ok: true });
   });
+
+  it("app.resetToken", () => {
+    expect(app.resetToken).toBeInstanceOf(Function);
+  });
+
+  it("app.resetToken(options)", async () => {
+    nock("https://api.github.com")
+      .patch("/applications/0123/token", {
+        access_token: "token123"
+      })
+      .reply(200, { ok: true });
+
+    const result = await app.resetToken({
+      token: "token123"
+    });
+
+    expect(result).toStrictEqual({ ok: true });
+  });
 });
