@@ -32,7 +32,7 @@ describe("app", () => {
     expect(app.createToken).toBeInstanceOf(Function);
   });
 
-  it("createToken(options)", async () => {
+  it("app.createToken(options)", async () => {
     nock("https://github.com")
       .post("/login/oauth/access_token")
       .reply(200, {
@@ -48,5 +48,23 @@ describe("app", () => {
 
     expect(token).toEqual("token123");
     expect(scopes).toEqual(["repo", "gist"]);
+  });
+
+  it("app.checkToken", () => {
+    expect(app.checkToken).toBeInstanceOf(Function);
+  });
+
+  it("app.checkToken(options)", async () => {
+    nock("https://api.github.com")
+      .post("/applications/0123/token", {
+        access_token: "token123"
+      })
+      .reply(200, { ok: true });
+
+    const result = await app.checkToken({
+      token: "token123"
+    });
+
+    expect(result).toStrictEqual({ ok: true });
   });
 });
