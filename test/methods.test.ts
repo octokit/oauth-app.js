@@ -1,6 +1,6 @@
 import nock from "nock";
 
-import { getAuthorizationUrl, createToken } from "../src";
+import { getAuthorizationUrl, createToken, checkToken } from "../src";
 
 describe("app", () => {
   it("getAuthorizationUrl", () => {
@@ -39,5 +39,25 @@ describe("app", () => {
 
     expect(token).toEqual("token123");
     expect(scopes).toEqual(["repo", "gist"]);
+  });
+
+  it("checkToken", () => {
+    expect(checkToken).toBeInstanceOf(Function);
+  });
+
+  it("checkToken(options)", async () => {
+    nock("https://api.github.com")
+      .post("/applications/0123/token", {
+        access_token: "token123"
+      })
+      .reply(200, { ok: true });
+
+    const result = await checkToken({
+      clientId: "0123",
+      clientSecret: "0123secret",
+      token: "token123"
+    });
+
+    expect(result).toStrictEqual({ ok: true });
   });
 });
