@@ -1,5 +1,8 @@
 import { IncomingMessage } from "http";
 
+// @ts-ignore remove once Node 10 is out maintenance. Replace with Object.fromEntries
+import fromEntries from "fromentries";
+
 type ParsedRequest = {
   route: string;
   headers: {
@@ -27,8 +30,7 @@ export async function parseRequest(
   );
   const route = [request.method, pathname].join(" ");
 
-  // @ts-ignore @types/node incomplete?
-  const query = Object.fromEntries(searchParams);
+  const query = fromEntries(searchParams);
   const headers = request.headers;
 
   if (!["POST", "PATCH"].includes(request.method as string)) {
