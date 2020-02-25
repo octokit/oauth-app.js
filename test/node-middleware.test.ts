@@ -5,25 +5,6 @@ import fetch from "node-fetch";
 import { OAuthApp, getNodeMiddleware } from "../src/";
 
 describe("getNodeMiddleware(app)", () => {
-  it("GET /api/github/oauth/octokit.js", async () => {
-    const app = new OAuthApp({
-      clientId: "0123",
-      clientSecret: "0123secret"
-    });
-
-    const server = createServer(getNodeMiddleware(app)).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
-    const { port } = server.address();
-
-    const response = await fetch(
-      `http://localhost:${port}/api/github/oauth/octokit.js`
-    );
-
-    server.close();
-
-    expect(await response.text()).toMatch(/Core.defaults/);
-  });
-
   it("GET /api/github/oauth/login", async () => {
     const app = new OAuthApp({
       clientId: "0123",
@@ -286,42 +267,177 @@ describe("getNodeMiddleware(app)", () => {
     });
   });
 
-    expect(context_deleted).toStrictEqual({
-      name: "token",
-      action: "deleted",
-      token: "token123"
+  // errors
+
+  it("GET /unknown", async () => {
+    const appMock = {};
+
+    const server = createServer(
+      getNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
+    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(`http://localhost:${port}/unknown`);
+
+    server.close();
+
+    expect(response.status).toEqual(404);
+  });
+
+  it("GET /api/github/oauth/callback without code or state", async () => {
+    const appMock = {};
+
+    const server = createServer(
+      getNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
+    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/callback`
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(400);
+    expect(await response.json()).toStrictEqual({
+      error:
+        '[@octokit/oauth-app] Both "code" & "state" parameters are required'
     });
   });
 
-  it("DELETE /api/github/oauth/grant", async () => {
-    const mock = fetchMock
-      .sandbox()
-      .deleteOnce("https://api.github.com/applications/0123/grant", 204, {
-        headers: {
-          authorization:
-            "basic " + Buffer.from("0123:0123secret").toString("base64")
-        },
-        body: {
-          access_token: "token123"
-        }
-      });
+  it("POST /api/github/oauth/token without state or code", async () => {
+    const appMock = {};
 
-    const Mocktokit = OAuthAppOctokit.defaults({
-      request: {
-        fetch: mock
+    const server = createServer(
+      getNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
+    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/token`,
+      {
+        method: "POST",
+        body: JSON.stringify({})
       }
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(400);
+    expect(await response.json()).toStrictEqual({
+      error:
+        '[@octokit/oauth-app] Both "code" & "state" parameters are required'
     });
+  });
 
-    const app = new OAuthApp({
-      clientId: "0123",
-      clientSecret: "0123secret",
-      Octokit: Mocktokit
+  it("POST /api/github/oauth/token with non-JSON request body", async () => {
+    const appMock = {};
+
+    const server = createServer(
+      getNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
+    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/token`,
+      {
+        method: "POST",
+        body: "foo"
+      }
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(400);
+    expect(await response.json()).toStrictEqual({
+      error: "[@octokit/oauth-app] request error"
     });
+  });
 
-    const onTokenCallback = jest.fn();
-    app.on(["token", "authorization"], onTokenCallback);
+  it("GET /api/github/oauth/token without Authorization header", async () => {
+    const appMock = {};
 
-    const server = createServer(app.middleware).listen();
+    const server = createServer(
+      getNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
+    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/token`,
+      {
+        headers: {}
+      }
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(400);
+    expect(await response.json()).toStrictEqual({
+      error: '[@octokit/oauth-app] "Authorization" header is required'
+    });
+  });
+
+  it("PATCH /api/github/oauth/token without authorization header", async () => {
+    const appMock = {};
+
+    const server = createServer(
+      getNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
+    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/token`,
+      {
+        method: "PATCH",
+        headers: {}
+      }
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(400);
+    expect(await response.json()).toStrictEqual({
+      error: '[@octokit/oauth-app] "Authorization" header is required'
+    });
+  });
+
+  it("DELETE /api/github/oauth/token without authorization header", async () => {
+    const appMock = {};
+
+    const server = createServer(
+      getNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
+    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/token`,
+      {
+        method: "DELETE",
+        headers: {}
+      }
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(400);
+    expect(await response.json()).toStrictEqual({
+      error: '[@octokit/oauth-app] "Authorization" header is required'
+    });
+  });
+
+  it("DELETE /api/github/oauth/grant without authorization header", async () => {
+    const appMock = {};
+
+    const server = createServer(
+      getNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
@@ -329,49 +445,15 @@ describe("getNodeMiddleware(app)", () => {
       `http://localhost:${port}/api/github/oauth/grant`,
       {
         method: "DELETE",
-        headers: {
-          authorization: "token token123"
-        }
+        headers: {}
       }
     );
 
     server.close();
 
-    expect(response.status).toEqual(204);
-
-    expect(onTokenCallback.mock.calls.length).toEqual(4);
-    const [
-      context_authorization_before_deleted
-    ] = onTokenCallback.mock.calls[0];
-    const [context_token_before_deleted] = onTokenCallback.mock.calls[1];
-    const [context_token_deleted] = onTokenCallback.mock.calls[2];
-    const [context_authorization_deleted] = onTokenCallback.mock.calls[3];
-
-    expect(context_authorization_before_deleted).toMatchObject({
-      name: "authorization",
-      action: "before_deleted",
-      token: "token123"
-    });
-    expect(context_authorization_before_deleted.octokit).toBeInstanceOf(
-      Mocktokit
-    );
-
-    expect(context_token_before_deleted).toMatchObject({
-      name: "token",
-      action: "before_deleted",
-      token: "token123"
-    });
-    expect(context_token_before_deleted.octokit).toBeInstanceOf(Mocktokit);
-
-    expect(context_token_deleted).toStrictEqual({
-      name: "token",
-      action: "deleted",
-      token: "token123"
-    });
-    expect(context_authorization_deleted).toStrictEqual({
-      name: "authorization",
-      action: "deleted",
-      token: "token123"
+    expect(response.status).toEqual(400);
+    expect(await response.json()).toStrictEqual({
+      error: '[@octokit/oauth-app] "Authorization" header is required'
     });
   });
 });
