@@ -9,6 +9,8 @@ import {
   deleteAuthorization
 } from "../src";
 
+nock.disableNetConnect();
+
 describe("app", () => {
   it("getAuthorizationUrl", () => {
     expect(getAuthorizationUrl).toBeInstanceOf(Function);
