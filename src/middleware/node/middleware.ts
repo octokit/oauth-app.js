@@ -30,7 +30,9 @@ export async function middleware(
     if (route === `GET ${options.pathPrefix}/login`) {
       const url = app.getAuthorizationUrl({
         state: query.state,
-        scopes: query.scopes?.split(",")
+        scopes: query.scopes?.split(","),
+        allowSignup: query.allowSignup,
+        redirectUrl: query.redirectUrl
       });
 
       response.writeHead(302, { location: url });
