@@ -21,7 +21,7 @@
   "dependencies": {
     "@octokit/auth-oauth-app": "^3.0.0",
     "@octokit/core": "^2.4.1",
-    "@octokit/oauth-login-url": "^2.1.2",
+    "@octokit/oauth-authorization-url": "^4.0.0",
     "fromentries": "^1.2.0",
     "universal-user-agent": "^4.0.0"
   },
