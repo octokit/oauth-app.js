@@ -2,19 +2,16 @@ import { createServer } from "http";
 import { URL } from "url";
 
 import fetch from "node-fetch";
-import fetchMock from "fetch-mock";
-import { OAuthAppOctokit } from "../src/oauth-app-octokit";
+import { OAuthApp, getNodeMiddleware } from "../src/";
 
-import { getNodeMiddleware } from "../src/middleware/node";
-
-describe("app.middleware", () => {
+describe("getNodeMiddleware(app)", () => {
   it("GET /api/github/oauth/octokit.js", async () => {
     const app = new OAuthApp({
       clientId: "0123",
       clientSecret: "0123secret"
     });
 
-    const server = createServer(app.middleware).listen();
+    const server = createServer(getNodeMiddleware(app)).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
@@ -33,7 +30,7 @@ describe("app.middleware", () => {
       clientSecret: "0123secret"
     });
 
-    const server = createServer(app.middleware).listen();
+    const server = createServer(getNodeMiddleware(app)).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
@@ -64,7 +61,7 @@ describe("app.middleware", () => {
       clientSecret: "0123secret"
     });
 
-    const server = createServer(app.middleware).listen();
+    const server = createServer(getNodeMiddleware(app)).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
@@ -91,50 +88,13 @@ describe("app.middleware", () => {
   });
 
   it("GET /api/github/oauth/callback?code=012345&state=mystate123", async () => {
-    const mock = fetchMock
-      .sandbox()
-      .postOnce(
-        "https://github.com/login/oauth/access_token",
-        {
-          access_token: "token123",
-          scope: "",
-          token_type: "bearer"
-        },
-        {
-          body: {
-            client_id: "0123",
-            client_secret: "0123secret",
-            code: "012345",
-            state: "state123"
-          }
-        }
-      )
-      .getOnce(
-        "https://api.github.com/user",
-        { login: "octocat" },
-        {
-          headers: {
-            authorization: "token token123"
-          }
-        }
-      );
+    const appMock = {
+      createToken: jest.fn().mockResolvedValue({ token: "token123" })
+    };
 
-    const Mocktokit = OAuthAppOctokit.defaults({
-      request: {
-        fetch: mock
-      }
-    });
-
-    const app = new OAuthApp({
-      clientId: "0123",
-      clientSecret: "0123secret",
-      Octokit: Mocktokit
-    });
-
-    const onTokenCallback = jest.fn();
-    app.on("token.created", onTokenCallback);
-
-    const server = createServer(app.middleware).listen();
+    const server = createServer(
+      getNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
@@ -145,53 +105,25 @@ describe("app.middleware", () => {
     server.close();
 
     expect(response.status).toEqual(200);
-    expect(onTokenCallback.mock.calls.length).toEqual(1);
-    const [context] = onTokenCallback.mock.calls[0];
+    expect(await response.text()).toMatch(/token123/);
 
-    expect(context).toMatchObject({
-      token: "token123",
-      scopes: []
+    expect(appMock.createToken.mock.calls.length).toEqual(1);
+    expect(appMock.createToken.mock.calls[0][0]).toStrictEqual({
+      state: "state123",
+      code: "012345"
     });
-    expect(context.octokit).toBeInstanceOf(Mocktokit);
-
-    const { data } = await context.octokit.request("GET /user");
-    expect(data.login).toEqual("octocat");
   });
 
   it("POST /api/github/oauth/token", async () => {
-    const mock = fetchMock.sandbox().postOnce(
-      "https://github.com/login/oauth/access_token",
-      {
-        access_token: "token123",
-        scope: "",
-        token_type: "bearer"
-      },
-      {
-        body: {
-          client_id: "0123",
-          client_secret: "0123secret",
-          code: "012345",
-          state: "state123"
-        }
-      }
-    );
+    const appMock = {
+      createToken: jest
+        .fn()
+        .mockResolvedValue({ token: "token123", scopes: ["repo", "gist"] })
+    };
 
-    const Mocktokit = OAuthAppOctokit.defaults({
-      request: {
-        fetch: mock
-      }
-    });
-
-    const app = new OAuthApp({
-      clientId: "0123",
-      clientSecret: "0123secret",
-      Octokit: Mocktokit
-    });
-
-    const onTokenCallback = jest.fn();
-    app.on("token.created", onTokenCallback);
-
-    const server = createServer(app.middleware).listen();
+    const server = createServer(
+      getNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
@@ -209,43 +141,26 @@ describe("app.middleware", () => {
     server.close();
 
     expect(response.status).toEqual(201);
-    expect(onTokenCallback.mock.calls.length).toEqual(1);
-    const [context] = onTokenCallback.mock.calls[0];
-
-    expect(context).toMatchObject({
+    expect(await response.json()).toStrictEqual({
       token: "token123",
-      scopes: []
+      scopes: ["repo", "gist"]
+    });
+
+    expect(appMock.createToken.mock.calls.length).toEqual(1);
+    expect(appMock.createToken.mock.calls[0][0]).toStrictEqual({
+      state: "state123",
+      code: "012345"
     });
   });
 
   it("GET /api/github/oauth/token", async () => {
-    const mock = fetchMock.sandbox().postOnce(
-      "https://api.github.com/applications/0123/token",
-      { id: 1 },
-      {
-        headers: {
-          authorization:
-            "basic " + Buffer.from("0123:0123secret").toString("base64")
-        },
-        body: {
-          access_token: "token123"
-        }
-      }
-    );
+    const appMock = {
+      checkToken: jest.fn().mockResolvedValue({ id: 1 })
+    };
 
-    const Mocktokit = OAuthAppOctokit.defaults({
-      request: {
-        fetch: mock
-      }
-    });
-
-    const app = new OAuthApp({
-      clientId: "0123",
-      clientSecret: "0123secret",
-      Octokit: Mocktokit
-    });
-
-    const server = createServer(app.middleware).listen();
+    const server = createServer(
+      getNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
@@ -262,43 +177,25 @@ describe("app.middleware", () => {
 
     expect(response.status).toEqual(200);
     expect(await response.json()).toStrictEqual({ id: 1 });
+
+    expect(appMock.checkToken.mock.calls.length).toEqual(1);
+    expect(appMock.checkToken.mock.calls[0][0]).toStrictEqual({
+      token: "token123"
+    });
   });
 
   it("PATCH /api/github/oauth/token", async () => {
-    const mock = fetchMock.sandbox().patchOnce(
-      "https://api.github.com/applications/0123/token",
-      {
+    const appMock = {
+      resetToken: jest.fn().mockResolvedValue({
         id: 2,
         token: "token456",
-        scopes: ["repo"]
-      },
-      {
-        headers: {
-          authorization:
-            "basic " + Buffer.from("0123:0123secret").toString("base64")
-        },
-        body: {
-          access_token: "token123"
-        }
-      }
-    );
+        scopes: ["repo", "gist"]
+      })
+    };
 
-    const Mocktokit = OAuthAppOctokit.defaults({
-      request: {
-        fetch: mock
-      }
-    });
-
-    const app = new OAuthApp({
-      clientId: "0123",
-      clientSecret: "0123secret",
-      Octokit: Mocktokit
-    });
-
-    const onTokenCallback = jest.fn();
-    app.on("token.reset", onTokenCallback);
-
-    const server = createServer(app.middleware).listen();
+    const server = createServer(
+      getNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
@@ -318,48 +215,23 @@ describe("app.middleware", () => {
     expect(await response.json()).toStrictEqual({
       id: 2,
       token: "token456",
-      scopes: ["repo"]
+      scopes: ["repo", "gist"]
     });
 
-    expect(onTokenCallback.mock.calls.length).toEqual(1);
-    const [context] = onTokenCallback.mock.calls[0];
-
-    expect(context).toMatchObject({
-      name: "token",
-      action: "reset",
-      token: "token456",
-      scopes: ["repo"]
+    expect(appMock.resetToken.mock.calls.length).toEqual(1);
+    expect(appMock.resetToken.mock.calls[0][0]).toStrictEqual({
+      token: "token123"
     });
   });
+
   it("DELETE /api/github/oauth/token", async () => {
-    const mock = fetchMock
-      .sandbox()
-      .deleteOnce("https://api.github.com/applications/0123/token", 204, {
-        headers: {
-          authorization:
-            "basic " + Buffer.from("0123:0123secret").toString("base64")
-        },
-        body: {
-          access_token: "token123"
-        }
-      });
+    const appMock = {
+      deleteToken: jest.fn().mockResolvedValue(undefined)
+    };
 
-    const Mocktokit = OAuthAppOctokit.defaults({
-      request: {
-        fetch: mock
-      }
-    });
-
-    const app = new OAuthApp({
-      clientId: "0123",
-      clientSecret: "0123secret",
-      Octokit: Mocktokit
-    });
-
-    const onTokenCallback = jest.fn();
-    app.on(["token.before_deleted", "token.deleted"], onTokenCallback);
-
-    const server = createServer(app.middleware).listen();
+    const server = createServer(
+      getNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
@@ -377,16 +249,42 @@ describe("app.middleware", () => {
 
     expect(response.status).toEqual(204);
 
-    expect(onTokenCallback.mock.calls.length).toEqual(2);
-    const [context_before_deleted] = onTokenCallback.mock.calls[0];
-    const [context_deleted] = onTokenCallback.mock.calls[1];
-
-    expect(context_before_deleted).toMatchObject({
-      name: "token",
-      action: "before_deleted",
+    expect(appMock.deleteToken.mock.calls.length).toEqual(1);
+    expect(appMock.deleteToken.mock.calls[0][0]).toStrictEqual({
       token: "token123"
     });
-    expect(context_before_deleted.octokit).toBeInstanceOf(Mocktokit);
+  });
+
+  it("DELETE /api/github/oauth/grant", async () => {
+    const appMock = {
+      deleteAuthorization: jest.fn().mockResolvedValue(undefined)
+    };
+
+    const server = createServer(
+      getNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
+    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/grant`,
+      {
+        method: "DELETE",
+        headers: {
+          authorization: "token token123"
+        }
+      }
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(204);
+
+    expect(appMock.deleteAuthorization.mock.calls.length).toEqual(1);
+    expect(appMock.deleteAuthorization.mock.calls[0][0]).toStrictEqual({
+      token: "token123"
+    });
+  });
 
     expect(context_deleted).toStrictEqual({
       name: "token",
