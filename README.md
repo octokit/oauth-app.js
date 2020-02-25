@@ -12,6 +12,7 @@
 <!-- toc -->
 
 - [Usage](#usage)
+- [Examples](#examples)
 - [Constructor options](#constructor-options)
 - [`app.on(eventName, eventHandler)`](#apponeventname-eventhandler)
 - [`app.octokit`](#appoctokit)
@@ -80,6 +81,10 @@ require("http")
 </td></tr>
 </tbody>
 </table>
+
+## Examples
+
+- Simple Node server with the default OAuth routes as well as static files served from a `public/` folder: https://glitch.com/~github-oauth-client
 
 ## Constructor options
 
