@@ -13,6 +13,7 @@ type ParsedRequest = {
     scopes?: string;
     code?: string;
     redirectUrl?: string;
+    allowSignup?: boolean;
   };
   body?: {
     code?: string;

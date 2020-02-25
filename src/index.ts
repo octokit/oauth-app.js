@@ -51,7 +51,6 @@ export class OAuthApp {
       defaultScopes: options.defaultScopes || [],
       allowSignup: options.allowSignup,
       baseUrl: options.baseUrl,
-      defaultRedirectUri: options.defaultRedirectUri,
       log: options.log,
       Octokit,
       octokit,

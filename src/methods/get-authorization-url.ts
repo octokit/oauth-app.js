@@ -1,12 +1,12 @@
-import { oauthLoginUrl } from "@octokit/oauth-login-url";
+import { oauthAuthorizationUrl } from "@octokit/oauth-authorization-url";
 
 import { State, RequiredExceptFor } from "../types";
 
-type StaticOptions = Parameters<typeof oauthLoginUrl>[0];
+type StaticOptions = Parameters<typeof oauthAuthorizationUrl>[0];
 type StateOptions = RequiredExceptFor<StaticOptions, "clientId">;
 
 export function getAuthorizationUrl(options: StaticOptions) {
-  const { url } = oauthLoginUrl(options);
+  const { url } = oauthAuthorizationUrl(options);
   return url;
 }
 
@@ -20,7 +20,6 @@ export function getAuthorizationUrlWithState(
         clientId: state.clientId,
         allowSignup: state.allowSignup,
         baseUrl: state.baseUrl,
-        defaultRedirectUri: state.defaultRedirectUri,
         log: state.log,
         scopes: state.defaultScopes
       },

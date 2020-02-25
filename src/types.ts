@@ -22,7 +22,6 @@ export type ConstructorOptions = {
   defaultScopes?: Scope[];
   allowSignup?: boolean;
   baseUrl?: string;
-  defaultRedirectUri?: string;
   log?: typeof console;
   Octokit?: typeof OAuthAppOctokit;
 };
@@ -34,7 +33,6 @@ export type State = {
   defaultScopes: Scope[];
   allowSignup?: boolean;
   baseUrl?: string;
-  defaultRedirectUri?: string;
   log?: typeof console;
   Octokit: typeof OAuthAppOctokit;
   octokit: OctokitInstance;
