@@ -12,10 +12,6 @@ import {
 nock.disableNetConnect();
 
 describe("app", () => {
-  it("getAuthorizationUrl", () => {
-    expect(getAuthorizationUrl).toBeInstanceOf(Function);
-  });
-
   it("getAuthorizationUrl(options)", () => {
     const url = getAuthorizationUrl({
       clientId: "0123",
@@ -24,10 +20,6 @@ describe("app", () => {
     expect(url).toStrictEqual(
       "https://github.com/login/oauth/authorize?allow_signup=true&client_id=0123&state=state123"
     );
-  });
-
-  it("createToken", () => {
-    expect(createToken).toBeInstanceOf(Function);
   });
 
   it("createToken(options)", async () => {
@@ -50,12 +42,12 @@ describe("app", () => {
     expect(scopes).toEqual(["repo", "gist"]);
   });
 
-  it("checkToken", () => {
-    expect(checkToken).toBeInstanceOf(Function);
-  });
-
   it("checkToken(options)", async () => {
-    nock("https://api.github.com")
+    nock("https://api.github.com", {
+      reqheaders: {
+        authorization: "basic MDEyMzowMTIzc2VjcmV0"
+      }
+    })
       .post("/applications/0123/token", {
         access_token: "token123"
       })
@@ -70,12 +62,12 @@ describe("app", () => {
     expect(result).toStrictEqual({ ok: true });
   });
 
-  it("resetToken", () => {
-    expect(resetToken).toBeInstanceOf(Function);
-  });
-
   it("resetToken(options)", async () => {
-    nock("https://api.github.com")
+    nock("https://api.github.com", {
+      reqheaders: {
+        authorization: "basic MDEyMzowMTIzc2VjcmV0"
+      }
+    })
       .patch("/applications/0123/token", {
         access_token: "token123"
       })
@@ -90,12 +82,12 @@ describe("app", () => {
     expect(result).toStrictEqual({ ok: true });
   });
 
-  it("deleteToken", () => {
-    expect(deleteToken).toBeInstanceOf(Function);
-  });
-
   it("deleteToken(options)", async () => {
-    nock("https://api.github.com")
+    nock("https://api.github.com", {
+      reqheaders: {
+        authorization: "basic MDEyMzowMTIzc2VjcmV0"
+      }
+    })
       .delete("/applications/0123/token", {
         access_token: "token123"
       })
@@ -106,10 +98,6 @@ describe("app", () => {
       clientSecret: "0123secret",
       token: "token123"
     });
-  });
-
-  it("deleteAuthorization", () => {
-    expect(deleteAuthorization).toBeInstanceOf(Function);
   });
 
   it("deleteAuthorization(options)", async () => {
