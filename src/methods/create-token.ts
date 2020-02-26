@@ -18,7 +18,7 @@ type StateOptions = {
 type Auth = ReturnType<typeof createOAuthAppAuth>;
 
 async function createTokenWithAuth(auth: Auth, options: StateOptions) {
-  // @ts-ignore fix return value for state.octokit.auth()
+  // @ts-ignore fix return types for auth()
   const { token, scopes } = await auth({
     type: "token",
     state: options.state,

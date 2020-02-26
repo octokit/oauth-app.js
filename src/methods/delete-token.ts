@@ -1,5 +1,5 @@
-import { createOAuthAppAuth } from "@octokit/auth-oauth-app";
 import { request as defaultRequest } from "@octokit/request";
+import btoa from "btoa-lite";
 
 import { emitEvent } from "../emit-event";
 import { State } from "../types";
@@ -32,11 +32,10 @@ async function sendDeleteTokenRequest(
 
 export function deleteToken(options: Options) {
   const request = defaultRequest.defaults({
-    request: {
-      hook: createOAuthAppAuth({
-        clientId: options.clientId,
-        clientSecret: options.clientSecret
-      }).hook
+    headers: {
+      authorization: `basic ${btoa(
+        `${options.clientId}:${options.clientSecret}`
+      )}`
     }
   });
 
