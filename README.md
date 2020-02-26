@@ -84,7 +84,8 @@ require("http")
 
 ## Examples
 
-- Simple Node server with the default OAuth routes as well as static files served from a `public/` folder: https://glitch.com/~github-oauth-client
+- Node server with static files served from `public/` folder, hosted on Glitch: https://glitch.com/~github-oauth-client
+- Serverless functions, hosted on now: https://github.com/gr2m/octokit-oauth-app-now-example
 
 ## Constructor options
 
