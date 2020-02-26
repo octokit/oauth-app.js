@@ -1,4 +1,5 @@
 import { request as defaultRequest } from "@octokit/request";
+import btoa from "btoa-lite";
 
 import { State } from "../types";
 
@@ -12,32 +13,42 @@ type StateOptions = {
   token: string;
 };
 
+type CheckTokenRequestOptions = {
+  client_id: string;
+  access_token: string;
+};
+
 async function sendCheckTokenRequest(
   request: typeof defaultRequest,
-  options: Options
+  options: CheckTokenRequestOptions
 ) {
-  const { data } = await request("POST /applications/:client_id/token", {
-    client_id: options.clientId,
-    access_token: options.token
-  });
+  const { data } = await request(
+    "POST /applications/:client_id/token",
+    options
+  );
   return data;
 }
 
 export async function checkToken(options: Options) {
-  return sendCheckTokenRequest(defaultRequest, options);
+  const request = defaultRequest.defaults({
+    headers: {
+      authorization: `basic ${btoa(
+        `${options.clientId}:${options.clientSecret}`
+      )}`
+    }
+  });
+
+  return sendCheckTokenRequest(request, {
+    client_id: options.clientId,
+    access_token: options.token
+  });
 }
 
 export function checkTokenWithState(state: State, options: StateOptions) {
-  return sendCheckTokenRequest(
-    state.octokit.request,
-    Object.assign(
-      {
-        clientId: state.clientId,
-        clientSecret: state.clientSecret
-      },
-      options
-    )
-  );
+  return sendCheckTokenRequest(state.octokit.request, {
+    client_id: state.clientId,
+    access_token: options.token
+  });
 }
 
 export type AppCheckToken = (
