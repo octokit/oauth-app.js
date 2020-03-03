@@ -86,6 +86,7 @@ require("http")
 
 - Node server with static files served from `public/` folder, hosted on Glitch: https://glitch.com/~github-oauth-client
 - Serverless functions, hosted on now: https://github.com/gr2m/octokit-oauth-app-now-example
+- Serverless functions, hosted on AWS (via [begin.com](https://begin.com/)): https://github.com/gr2m/octokit-oauth-app-begin-example/
 
 ## Constructor options
 
