@@ -40,6 +40,11 @@ export async function middleware(
     }
 
     if (route === `GET ${options.pathPrefix}/callback`) {
+      if (query.error) {
+        throw new Error(
+          `[@octokit/oauth-app] ${query.error} ${query.error_description}`
+        );
+      }
       if (!query.state || !query.code) {
         throw new Error(
           '[@octokit/oauth-app] Both "code" & "state" parameters are required'
