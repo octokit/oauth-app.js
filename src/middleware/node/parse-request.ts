@@ -14,6 +14,9 @@ type ParsedRequest = {
     code?: string;
     redirectUrl?: string;
     allowSignup?: boolean;
+    error?: string;
+    error_description?: string;
+    error_url?: string;
   };
   body?: {
     code?: string;

@@ -307,6 +307,28 @@ describe("getNodeMiddleware(app)", () => {
     });
   });
 
+  it("GET /api/github/oauth/callback with error", async () => {
+    const appMock = {};
+
+    const server = createServer(
+      getNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
+    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/callback?error=redirect_uri_mismatch&error_description=The+redirect_uri+MUST+match+the+registered+callback+URL+for+this+application.&error_uri=https://developer.github.com/apps/building-integrations/setting-up-and-registering-oauth-apps/troubleshooting-authorization-request-errors/%23redirect-uri-mismatch&state=xyz`
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(400);
+    expect(await response.json()).toStrictEqual({
+      error:
+        "[@octokit/oauth-app] redirect_uri_mismatch The redirect_uri MUST match the registered callback URL for this application."
+    });
+  });
+
   it("POST /api/github/oauth/token without state or code", async () => {
     const appMock = {};
 
