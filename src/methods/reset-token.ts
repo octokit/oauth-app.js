@@ -35,20 +35,20 @@ export function resetToken(options: Options) {
     headers: {
       authorization: `basic ${btoa(
         `${options.clientId}:${options.clientSecret}`
-      )}`
-    }
+      )}`,
+    },
   });
 
   return sendResetTokenRequest(request, {
     client_id: options.clientId,
-    access_token: options.token
+    access_token: options.token,
   });
 }
 
 export async function resetTokenWithState(state: State, options: StateOptions) {
   const result = await sendResetTokenRequest(state.octokit.request, {
     client_id: state.clientId,
-    access_token: options.token
+    access_token: options.token,
   });
 
   await emitEvent(state, {
@@ -58,9 +58,9 @@ export async function resetTokenWithState(state: State, options: StateOptions) {
     scopes: result.scopes,
     get octokit() {
       return new state.Octokit({
-        auth: result.token
+        auth: result.token,
       });
-    }
+    },
   });
 
   return result;

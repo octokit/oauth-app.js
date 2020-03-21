@@ -34,20 +34,20 @@ export async function checkToken(options: Options) {
     headers: {
       authorization: `basic ${btoa(
         `${options.clientId}:${options.clientSecret}`
-      )}`
-    }
+      )}`,
+    },
   });
 
   return sendCheckTokenRequest(request, {
     client_id: options.clientId,
-    access_token: options.token
+    access_token: options.token,
   });
 }
 
 export function checkTokenWithState(state: State, options: StateOptions) {
   return sendCheckTokenRequest(state.octokit.request, {
     client_id: state.clientId,
-    access_token: options.token
+    access_token: options.token,
   });
 }
 

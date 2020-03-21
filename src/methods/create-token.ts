@@ -22,7 +22,7 @@ async function createTokenWithAuth(auth: Auth, options: StateOptions) {
   const { token, scopes } = await auth({
     type: "token",
     state: options.state,
-    code: options.code
+    code: options.code,
   });
 
   return { token, scopes };
@@ -32,7 +32,7 @@ export function createToken(options: Options) {
   const { clientId, clientSecret, ...otherOptions } = options;
   const auth = createOAuthAppAuth({
     clientId,
-    clientSecret
+    clientSecret,
   });
 
   return createTokenWithAuth(auth, otherOptions);
@@ -51,7 +51,7 @@ export async function createTokenWithState(
     scopes: result.scopes,
     get octokit() {
       return new state.Octokit({ auth: result.token });
-    }
+    },
   });
 
   return result;
