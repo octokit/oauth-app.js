@@ -5,11 +5,11 @@ export function onUnhandledRequestDefault(
   response: ServerResponse
 ) {
   response.writeHead(404, {
-    "content-type": "application/json"
+    "content-type": "application/json",
   });
   response.end(
     JSON.stringify({
-      error: `Unknown route: ${request.method} ${request.url}`
+      error: `Unknown route: ${request.method} ${request.url}`,
     })
   );
 }

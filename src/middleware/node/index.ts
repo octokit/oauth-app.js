@@ -8,11 +8,11 @@ export function getNodeMiddleware(
   app: OAuthApp,
   {
     pathPrefix = "/api/github/oauth",
-    onUnhandledRequest = onUnhandledRequestDefault
+    onUnhandledRequest = onUnhandledRequestDefault,
   }: MiddlewareOptions = {}
 ) {
   return middleware.bind(null, app, {
     pathPrefix,
-    onUnhandledRequest
+    onUnhandledRequest,
   } as Required<MiddlewareOptions>);
 }

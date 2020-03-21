@@ -64,7 +64,7 @@ const { OAuthApp, getNodeMiddleware } = require("@octokit/oauth-app");
 
 const app = new OAuthApp({
   clientId: "0123",
-  clientSecret: "0123secret"
+  clientSecret: "0123secret",
 });
 
 app.on("token", async ({ token, octokit }) => {
@@ -72,9 +72,7 @@ app.on("token", async ({ token, octokit }) => {
   console.log(`Token retrieved for ${data.login}`);
 });
 
-require("http")
-  .createServer(getNodeMiddleware(app))
-  .listen(3000);
+require("http").createServer(getNodeMiddleware(app)).listen(3000);
 // can now receive user authorization callbacks at /api/github/oauth/callback
 ```
 
@@ -180,8 +178,8 @@ new OAuthApp({
   clientId: 123,
   clientSecret: "secret",
   Octokit: Octokit.defaults({
-    baseUrl: "https://ghe.my-company.com/api/v3"
-  })
+    baseUrl: "https://ghe.my-company.com/api/v3",
+  }),
 });
 ```
 
@@ -196,7 +194,7 @@ Defaults to [`@octokit/core`](https://github.com/octokit/core.js).
 Called whenever a new OAuth access token is created for a user. It accepts two parameters, an event name and a function with one argument
 
 ```js
-app.on("token.created", async context => {
+app.on("token.created", async (context) => {
   const { data } = await context.octokit.request("GET /user");
   app.log.info(`New token created for ${data.login}`);
 });
@@ -305,7 +303,7 @@ Returns a URL string.
 ```js
 const url = app.getAuthorizationUrl({
   state: "state123",
-  scopes: ["repo"]
+  scopes: ["repo"],
 });
 ```
 
@@ -388,7 +386,7 @@ const url = app.getAuthorizationUrl({
 ```js
 const { token, scopes } = await app.createToken({
   state: "state123",
-  code: "code123"
+  code: "code123",
 });
 ```
 
@@ -525,7 +523,7 @@ Resolves with response body from ["Check a token" request](https://developer.git
 
 ```js
 const { token } = await app.resetToken({
-  token: "token123"
+  token: "token123",
 });
 // "token123" is no longer valid. Use `token` instead
 ```
@@ -565,7 +563,7 @@ Resolves with response body from ["Reset a token" request](https://developer.git
 
 ```js
 await app.deleteToken({
-  token: "token123"
+  token: "token123",
 });
 // "token123" is no longer valid.
 ```
@@ -605,7 +603,7 @@ Resolves with response body from ["Delete a token" request](https://developer.gi
 
 ```js
 await app.deleteAuthorization({
-  token: "token123"
+  token: "token123",
 });
 // "token123" is no longer valid, and no tokens can be created until the app gets re-authorized.
 ```
@@ -652,7 +650,7 @@ const {
   checkToken,
   resetToken,
   deleteToken,
-  deleteAuthorization
+  deleteAuthorization,
 } = require("@octokit/oauth-app");
 ```
 
@@ -664,7 +662,7 @@ Returns a URL string.
 const { getAuthorizationUrl } = require("@octokit/oauth-app");
 const url = getAuthorizationUrl({
   clientId: "0123",
-  state: "state123"
+  state: "state123",
 });
 ```
 
@@ -783,7 +781,7 @@ const { token, scopes } = await createToken({
   clientId: "0123",
   clientSecret: "0123secret",
   state: "state123",
-  code: "code123"
+  code: "code123",
 });
 ```
 
@@ -899,7 +897,7 @@ try {
   const { created_at, app, user } = await checkToken({
     clientId: "0123",
     clientSecret: "0123secret",
-    token: "token123"
+    token: "token123",
   });
   console.log(
     `token valid, created on %s by %s for %s`,
@@ -972,7 +970,7 @@ const { resetToken } = require("@octokit/oauth-app");
 const { token } = await resetToken({
   clientId: "0123",
   clientSecret: "0123secret",
-  token: "token123"
+  token: "token123",
 });
 // "token123" is no longer valid. Use `token` instead
 ```
@@ -1037,7 +1035,7 @@ const { deleteToken } = require("@octokit/oauth-app");
 await deleteToken({
   clientId: "0123",
   clientSecret: "0123secret",
-  token: "token123"
+  token: "token123",
 });
 // "token123" is no longer valid
 ```
@@ -1102,7 +1100,7 @@ const { deleteAuthorization } = require("@octokit/oauth-app");
 await deleteAuthorization({
   clientId: "0123",
   clientSecret: "0123secret",
-  token: "token123"
+  token: "token123",
 });
 // "token123" is no longer valid
 ```
@@ -1184,16 +1182,14 @@ Native http server middleware for Node.js
 const { OAuthApp, getNodeMiddleware } = require("@octokit/oauth-app");
 const app = new OAuthApp({
   clientId: "0123",
-  clientSecret: "0123secret"
+  clientSecret: "0123secret",
 });
 
 const middleware = getNodeMiddleware(app, {
-  pathPrefix: "/api/github/oauth/"
+  pathPrefix: "/api/github/oauth/",
 });
 
-require("http")
-  .createServer(getNodeMiddleware(app))
-  .listen(3000);
+require("http").createServer(getNodeMiddleware(app)).listen(3000);
 // can now receive user authorization callbacks at /api/github/oauth/callback
 ```
 
@@ -1249,11 +1245,11 @@ Defaults to
 ```js
 function onUnhandledRequest(request, response) {
   response.writeHead(400, {
-    "content-type": "application/json"
+    "content-type": "application/json",
   });
   response.end(
     JSON.stringify({
-      error: error.message
+      error: error.message,
     })
   );
 }

@@ -42,7 +42,7 @@ export async function parseRequest(
     let bodyChunks: Uint8Array[] = [];
     request
       .on("error", reject)
-      .on("data", chunk => bodyChunks.push(chunk))
+      .on("data", (chunk) => bodyChunks.push(chunk))
       .on("end", async () => {
         const bodyString = Buffer.concat(bodyChunks).toString();
         if (!bodyString) return resolve({ route, headers, query });
