@@ -8,7 +8,7 @@ describe("getNodeMiddleware(app)", () => {
   it("GET /api/github/oauth/login", async () => {
     const app = new OAuthApp({
       clientId: "0123",
-      clientSecret: "0123secret"
+      clientSecret: "0123secret",
     });
 
     const server = createServer(getNodeMiddleware(app)).listen();
@@ -18,7 +18,7 @@ describe("getNodeMiddleware(app)", () => {
     const { status, headers } = await fetch(
       `http://localhost:${port}/api/github/oauth/login`,
       {
-        redirect: "manual"
+        redirect: "manual",
       }
     );
 
@@ -29,7 +29,7 @@ describe("getNodeMiddleware(app)", () => {
     const url = new URL(headers.get("location") as string);
     expect(url).toMatchObject({
       origin: "https://github.com",
-      pathname: "/login/oauth/authorize"
+      pathname: "/login/oauth/authorize",
     });
     expect(url.searchParams.get("client_id")).toEqual("0123");
     expect(url.searchParams.get("state")).toMatch(/^\w+$/);
@@ -39,7 +39,7 @@ describe("getNodeMiddleware(app)", () => {
   it("GET /api/github/oauth/login?state=mystate123&scopes=one,two,three", async () => {
     const app = new OAuthApp({
       clientId: "0123",
-      clientSecret: "0123secret"
+      clientSecret: "0123secret",
     });
 
     const server = createServer(getNodeMiddleware(app)).listen();
@@ -49,7 +49,7 @@ describe("getNodeMiddleware(app)", () => {
     const { status, headers } = await fetch(
       `http://localhost:${port}/api/github/oauth/login?state=mystate123&scopes=one,two,three`,
       {
-        redirect: "manual"
+        redirect: "manual",
       }
     );
 
@@ -60,7 +60,7 @@ describe("getNodeMiddleware(app)", () => {
     const url = new URL(headers.get("location") as string);
     expect(url).toMatchObject({
       origin: "https://github.com",
-      pathname: "/login/oauth/authorize"
+      pathname: "/login/oauth/authorize",
     });
 
     expect(url.searchParams.get("client_id")).toEqual("0123");
@@ -70,7 +70,7 @@ describe("getNodeMiddleware(app)", () => {
 
   it("GET /api/github/oauth/callback?code=012345&state=mystate123", async () => {
     const appMock = {
-      createToken: jest.fn().mockResolvedValue({ token: "token123" })
+      createToken: jest.fn().mockResolvedValue({ token: "token123" }),
     };
 
     const server = createServer(
@@ -91,7 +91,7 @@ describe("getNodeMiddleware(app)", () => {
     expect(appMock.createToken.mock.calls.length).toEqual(1);
     expect(appMock.createToken.mock.calls[0][0]).toStrictEqual({
       state: "state123",
-      code: "012345"
+      code: "012345",
     });
   });
 
@@ -99,7 +99,7 @@ describe("getNodeMiddleware(app)", () => {
     const appMock = {
       createToken: jest
         .fn()
-        .mockResolvedValue({ token: "token123", scopes: ["repo", "gist"] })
+        .mockResolvedValue({ token: "token123", scopes: ["repo", "gist"] }),
     };
 
     const server = createServer(
@@ -114,8 +114,8 @@ describe("getNodeMiddleware(app)", () => {
         method: "POST",
         body: JSON.stringify({
           code: "012345",
-          state: "state123"
-        })
+          state: "state123",
+        }),
       }
     );
 
@@ -124,19 +124,19 @@ describe("getNodeMiddleware(app)", () => {
     expect(response.status).toEqual(201);
     expect(await response.json()).toStrictEqual({
       token: "token123",
-      scopes: ["repo", "gist"]
+      scopes: ["repo", "gist"],
     });
 
     expect(appMock.createToken.mock.calls.length).toEqual(1);
     expect(appMock.createToken.mock.calls[0][0]).toStrictEqual({
       state: "state123",
-      code: "012345"
+      code: "012345",
     });
   });
 
   it("GET /api/github/oauth/token", async () => {
     const appMock = {
-      checkToken: jest.fn().mockResolvedValue({ id: 1 })
+      checkToken: jest.fn().mockResolvedValue({ id: 1 }),
     };
 
     const server = createServer(
@@ -149,8 +149,8 @@ describe("getNodeMiddleware(app)", () => {
       `http://localhost:${port}/api/github/oauth/token`,
       {
         headers: {
-          authorization: "token token123"
-        }
+          authorization: "token token123",
+        },
       }
     );
 
@@ -161,7 +161,7 @@ describe("getNodeMiddleware(app)", () => {
 
     expect(appMock.checkToken.mock.calls.length).toEqual(1);
     expect(appMock.checkToken.mock.calls[0][0]).toStrictEqual({
-      token: "token123"
+      token: "token123",
     });
   });
 
@@ -170,8 +170,8 @@ describe("getNodeMiddleware(app)", () => {
       resetToken: jest.fn().mockResolvedValue({
         id: 2,
         token: "token456",
-        scopes: ["repo", "gist"]
-      })
+        scopes: ["repo", "gist"],
+      }),
     };
 
     const server = createServer(
@@ -185,8 +185,8 @@ describe("getNodeMiddleware(app)", () => {
       {
         method: "PATCH",
         headers: {
-          authorization: "token token123"
-        }
+          authorization: "token token123",
+        },
       }
     );
 
@@ -196,18 +196,18 @@ describe("getNodeMiddleware(app)", () => {
     expect(await response.json()).toStrictEqual({
       id: 2,
       token: "token456",
-      scopes: ["repo", "gist"]
+      scopes: ["repo", "gist"],
     });
 
     expect(appMock.resetToken.mock.calls.length).toEqual(1);
     expect(appMock.resetToken.mock.calls[0][0]).toStrictEqual({
-      token: "token123"
+      token: "token123",
     });
   });
 
   it("DELETE /api/github/oauth/token", async () => {
     const appMock = {
-      deleteToken: jest.fn().mockResolvedValue(undefined)
+      deleteToken: jest.fn().mockResolvedValue(undefined),
     };
 
     const server = createServer(
@@ -221,8 +221,8 @@ describe("getNodeMiddleware(app)", () => {
       {
         method: "DELETE",
         headers: {
-          authorization: "token token123"
-        }
+          authorization: "token token123",
+        },
       }
     );
 
@@ -232,13 +232,13 @@ describe("getNodeMiddleware(app)", () => {
 
     expect(appMock.deleteToken.mock.calls.length).toEqual(1);
     expect(appMock.deleteToken.mock.calls[0][0]).toStrictEqual({
-      token: "token123"
+      token: "token123",
     });
   });
 
   it("DELETE /api/github/oauth/grant", async () => {
     const appMock = {
-      deleteAuthorization: jest.fn().mockResolvedValue(undefined)
+      deleteAuthorization: jest.fn().mockResolvedValue(undefined),
     };
 
     const server = createServer(
@@ -252,8 +252,8 @@ describe("getNodeMiddleware(app)", () => {
       {
         method: "DELETE",
         headers: {
-          authorization: "token token123"
-        }
+          authorization: "token token123",
+        },
       }
     );
 
@@ -263,7 +263,7 @@ describe("getNodeMiddleware(app)", () => {
 
     expect(appMock.deleteAuthorization.mock.calls.length).toEqual(1);
     expect(appMock.deleteAuthorization.mock.calls[0][0]).toStrictEqual({
-      token: "token123"
+      token: "token123",
     });
   });
 
@@ -303,7 +303,7 @@ describe("getNodeMiddleware(app)", () => {
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
       error:
-        '[@octokit/oauth-app] Both "code" & "state" parameters are required'
+        '[@octokit/oauth-app] Both "code" & "state" parameters are required',
     });
   });
 
@@ -320,7 +320,7 @@ describe("getNodeMiddleware(app)", () => {
       `http://localhost:${port}/api/github/oauth/token`,
       {
         method: "POST",
-        body: JSON.stringify({})
+        body: JSON.stringify({}),
       }
     );
 
@@ -329,7 +329,7 @@ describe("getNodeMiddleware(app)", () => {
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
       error:
-        '[@octokit/oauth-app] Both "code" & "state" parameters are required'
+        '[@octokit/oauth-app] Both "code" & "state" parameters are required',
     });
   });
 
@@ -346,7 +346,7 @@ describe("getNodeMiddleware(app)", () => {
       `http://localhost:${port}/api/github/oauth/token`,
       {
         method: "POST",
-        body: "foo"
+        body: "foo",
       }
     );
 
@@ -354,7 +354,7 @@ describe("getNodeMiddleware(app)", () => {
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
-      error: "[@octokit/oauth-app] request error"
+      error: "[@octokit/oauth-app] request error",
     });
   });
 
@@ -370,7 +370,7 @@ describe("getNodeMiddleware(app)", () => {
     const response = await fetch(
       `http://localhost:${port}/api/github/oauth/token`,
       {
-        headers: {}
+        headers: {},
       }
     );
 
@@ -378,7 +378,7 @@ describe("getNodeMiddleware(app)", () => {
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
-      error: '[@octokit/oauth-app] "Authorization" header is required'
+      error: '[@octokit/oauth-app] "Authorization" header is required',
     });
   });
 
@@ -395,7 +395,7 @@ describe("getNodeMiddleware(app)", () => {
       `http://localhost:${port}/api/github/oauth/token`,
       {
         method: "PATCH",
-        headers: {}
+        headers: {},
       }
     );
 
@@ -403,7 +403,7 @@ describe("getNodeMiddleware(app)", () => {
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
-      error: '[@octokit/oauth-app] "Authorization" header is required'
+      error: '[@octokit/oauth-app] "Authorization" header is required',
     });
   });
 
@@ -420,7 +420,7 @@ describe("getNodeMiddleware(app)", () => {
       `http://localhost:${port}/api/github/oauth/token`,
       {
         method: "DELETE",
-        headers: {}
+        headers: {},
       }
     );
 
@@ -428,7 +428,7 @@ describe("getNodeMiddleware(app)", () => {
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
-      error: '[@octokit/oauth-app] "Authorization" header is required'
+      error: '[@octokit/oauth-app] "Authorization" header is required',
     });
   });
 
@@ -445,7 +445,7 @@ describe("getNodeMiddleware(app)", () => {
       `http://localhost:${port}/api/github/oauth/grant`,
       {
         method: "DELETE",
-        headers: {}
+        headers: {},
       }
     );
 
@@ -453,7 +453,7 @@ describe("getNodeMiddleware(app)", () => {
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
-      error: '[@octokit/oauth-app] "Authorization" header is required'
+      error: '[@octokit/oauth-app] "Authorization" header is required',
     });
   });
 });

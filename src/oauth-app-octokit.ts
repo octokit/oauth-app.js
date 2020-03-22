@@ -3,5 +3,5 @@ import { getUserAgent } from "universal-user-agent";
 import { VERSION } from "./version";
 
 export const OAuthAppOctokit = Octokit.defaults({
-  userAgent: `octokit-oauth-app.js/${VERSION} ${getUserAgent()}`
+  userAgent: `octokit-oauth-app.js/${VERSION} ${getUserAgent()}`,
 });

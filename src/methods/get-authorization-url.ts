@@ -21,7 +21,7 @@ export function getAuthorizationUrlWithState(
         allowSignup: state.allowSignup,
         baseUrl: state.baseUrl,
         log: state.log,
-        scopes: state.defaultScopes
+        scopes: state.defaultScopes,
       },
       options
     )

@@ -16,11 +16,11 @@ export async function middleware(
     parsedRequest = await parseRequest(request);
   } catch (error) {
     response.writeHead(400, {
-      "content-type": "application/json"
+      "content-type": "application/json",
     });
     return response.end(
       JSON.stringify({
-        error: "[@octokit/oauth-app] request error"
+        error: "[@octokit/oauth-app] request error",
       })
     );
   }
@@ -32,7 +32,7 @@ export async function middleware(
         state: query.state,
         scopes: query.scopes?.split(","),
         allowSignup: query.allowSignup,
-        redirectUrl: query.redirectUrl
+        redirectUrl: query.redirectUrl,
       });
 
       response.writeHead(302, { location: url });
@@ -48,11 +48,11 @@ export async function middleware(
 
       const { token } = await app.createToken({
         state: query.state,
-        code: query.code
+        code: query.code,
       });
 
       response.writeHead(200, {
-        "content-type": "text/html"
+        "content-type": "text/html",
       });
       response.write(`<h1>Token created successfull</h1>
     
@@ -73,11 +73,11 @@ export async function middleware(
 
       const { token, scopes } = await app.createToken({
         state: oauthState,
-        code
+        code,
       });
 
       response.writeHead(201, {
-        "content-type": "application/json"
+        "content-type": "application/json",
       });
 
       return response.end(JSON.stringify({ token, scopes }));
@@ -93,11 +93,11 @@ export async function middleware(
       }
 
       const result = await app.checkToken({
-        token
+        token,
       });
 
       response.writeHead(200, {
-        "content-type": "application/json"
+        "content-type": "application/json",
       });
       return response.end(JSON.stringify(result));
     }
@@ -112,11 +112,11 @@ export async function middleware(
       }
 
       const result = await app.resetToken({
-        token
+        token,
       });
 
       response.writeHead(200, {
-        "content-type": "application/json"
+        "content-type": "application/json",
       });
       return response.end(JSON.stringify(result));
     }
@@ -131,7 +131,7 @@ export async function middleware(
       }
 
       await app.deleteToken({
-        token
+        token,
       });
 
       response.writeHead(204);
@@ -148,7 +148,7 @@ export async function middleware(
       }
 
       await app.deleteAuthorization({
-        token
+        token,
       });
 
       response.writeHead(204);
@@ -158,11 +158,11 @@ export async function middleware(
     options.onUnhandledRequest(request, response);
   } catch (error) {
     response.writeHead(400, {
-      "content-type": "application/json"
+      "content-type": "application/json",
     });
     response.end(
       JSON.stringify({
-        error: error.message
+        error: error.message,
       })
     );
   }

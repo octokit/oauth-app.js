@@ -35,13 +35,13 @@ export function deleteToken(options: Options) {
     headers: {
       authorization: `basic ${btoa(
         `${options.clientId}:${options.clientSecret}`
-      )}`
-    }
+      )}`,
+    },
   });
 
   return sendDeleteTokenRequest(request, {
     client_id: options.clientId,
-    access_token: options.token
+    access_token: options.token,
   });
 }
 
@@ -55,18 +55,18 @@ export async function deleteTokenWithState(
     token: options.token,
     get octokit() {
       return new state.Octokit({ auth: options.token });
-    }
+    },
   });
 
   const result = await sendDeleteTokenRequest(state.octokit.request, {
     client_id: state.clientId,
-    access_token: options.token
+    access_token: options.token,
   });
 
   await emitEvent(state, {
     name: "token",
     action: "deleted",
-    token: options.token
+    token: options.token,
   });
 
   return result;

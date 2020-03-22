@@ -6,7 +6,7 @@ import { OAuthAppOctokit } from "./oauth-app-octokit";
 
 import {
   getAuthorizationUrlWithState,
-  AppGetAuthorizationUrl
+  AppGetAuthorizationUrl,
 } from "./methods/get-authorization-url";
 import { createTokenWithState, AppCreateToken } from "./methods/create-token";
 import { checkTokenWithState, AppCheckToken } from "./methods/check-token";
@@ -14,14 +14,14 @@ import { resetTokenWithState, AppResetToken } from "./methods/reset-token";
 import { deleteTokenWithState, AppDeleteToken } from "./methods/delete-token";
 import {
   deleteAuthorizationWithState,
-  AppDeleteAuthorization
+  AppDeleteAuthorization,
 } from "./methods/delete-authorization";
 
 import {
   ConstructorOptions,
   OctokitInstance,
   AddEventHandler,
-  State
+  State,
 } from "./types";
 
 export { getAuthorizationUrl } from "./methods/get-authorization-url";
@@ -41,8 +41,8 @@ export class OAuthApp {
       authStrategy: createOAuthAppAuth,
       auth: {
         clientId: options.clientId,
-        clientSecret: options.clientSecret
-      }
+        clientSecret: options.clientSecret,
+      },
     });
 
     const state: State = {
@@ -54,7 +54,7 @@ export class OAuthApp {
       log: options.log,
       Octokit,
       octokit,
-      eventHandlers: {}
+      eventHandlers: {},
     };
 
     this.on = addEventHandler.bind(null, state);
