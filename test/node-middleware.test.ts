@@ -325,7 +325,7 @@ describe("getNodeMiddleware(app)", () => {
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
       error:
-        "[@octokit/oauth-app] redirect_uri_mismatch The redirect_uri MUST match the registered callback URL for this application."
+        "[@octokit/oauth-app] redirect_uri_mismatch The redirect_uri MUST match the registered callback URL for this application.",
     });
   });
 
