@@ -1189,7 +1189,7 @@ const middleware = getNodeMiddleware(app, {
   pathPrefix: "/api/github/oauth/",
 });
 
-require("http").createServer(getNodeMiddleware(app)).listen(3000);
+require("http").createServer(middleware).listen(3000);
 // can now receive user authorization callbacks at /api/github/oauth/callback
 ```
 
