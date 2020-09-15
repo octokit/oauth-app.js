@@ -14,18 +14,13 @@ export function getAuthorizationUrlWithState(
   state: State,
   options: StateOptions
 ) {
-  return getAuthorizationUrl(
-    Object.assign(
-      {
-        clientId: state.clientId,
-        allowSignup: state.allowSignup,
-        baseUrl: state.baseUrl,
-        log: state.log,
-        scopes: state.defaultScopes,
-      },
-      options
-    )
-  );
+  return getAuthorizationUrl({
+    ...options,
+    clientId: options.clientId || state.clientId,
+    allowSignup: options.allowSignup || state.allowSignup,
+    baseUrl: options.baseUrl || state.baseUrl,
+    scopes: options.scopes || state.defaultScopes,
+  });
 }
 
 export type AppGetAuthorizationUrl = (options: StateOptions) => string;
