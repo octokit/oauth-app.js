@@ -56,7 +56,7 @@ Node
 
 </th><td>
 
-Install with `npm install @octokit/core @octokit/oauth-app`
+Install with `npm install @octokit/oauth-app`
 
 ```js
 const { OAuthApp, getNodeMiddleware } = require("@octokit/oauth-app");
@@ -1159,9 +1159,9 @@ Resolves with response body from ["Delete an app authorization" request](https:/
 
 ## Middlewares
 
-A middle ware is a method or set of methods to handle requests for common environments.
+A middleware is a method or set of methods to handle requests for common environments.
 
-By default, all middlewares exposes the following routes
+By default, all middlewares expose the following routes
 
 | Route                            | Route Description                                                                                                                                                                                                                                                                         |
 | -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1229,7 +1229,8 @@ require("http").createServer(middleware).listen(3000);
 
 All exposed paths will be prefixed with the provided prefix. Defaults to `"/api/github/oauth"`
 
-</td></tr>
+</td>
+    </tr>
     <tr>
       <th>
         <code>options.onUnhandledRequest</code>
@@ -1257,8 +1258,6 @@ function onUnhandledRequest(request, response) {
 </td></tr>
   </tbody>
 </table>
-
-####
 
 ## Contributing
 
