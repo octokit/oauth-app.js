@@ -276,7 +276,7 @@ Not set for `"token.deleted"` and `"authorization.deleted"` events.
 </td></tr>
     <tr>
       <th>
-        <code>scopes</code>
+        <code>context.scopes</code>
       </th>
       <th>
         <code>Array of strings</code>
