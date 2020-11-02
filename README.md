@@ -271,7 +271,7 @@ All event handlers are awaited before continuing.
 
 Authenticated instance using the `Octokit` option passed to the constructor.
 
-Not set for `"token.deleted"` and `"authorization.deleted"` events.
+For `"token.deleted"` and `"authorization.deleted"` events the `octokit` instance is unauthenticated.
 
 </td></tr>
     <tr>

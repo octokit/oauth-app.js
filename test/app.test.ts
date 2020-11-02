@@ -216,11 +216,12 @@ describe("app", () => {
     });
     expect(context_before_deleted.octokit).toBeInstanceOf(Mocktokit);
 
-    expect(context_deleted).toStrictEqual({
+    expect(context_deleted).toMatchObject({
       name: "token",
       action: "deleted",
       token: "token123",
     });
+    expect(context_deleted.octokit).toBeInstanceOf(Mocktokit);
   });
 
   it("app.deleteAuthorization(options)", async () => {
@@ -281,16 +282,19 @@ describe("app", () => {
     });
     expect(context_token_before_deleted.octokit).toBeInstanceOf(Mocktokit);
 
-    expect(context_token_deleted).toStrictEqual({
+    expect(context_token_deleted).toMatchObject({
       name: "token",
       action: "deleted",
       token: "token123",
     });
-    expect(context_authorization_deleted).toStrictEqual({
+    expect(context_token_deleted.octokit).toBeInstanceOf(Mocktokit);
+
+    expect(context_authorization_deleted).toMatchObject({
       name: "authorization",
       action: "deleted",
       token: "token123",
     });
+    expect(context_authorization_deleted.octokit).toBeInstanceOf(Mocktokit);
   });
 
   it("app.on multiple events", async () => {
