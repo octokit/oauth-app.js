@@ -4,7 +4,6 @@ import { IncomingMessage } from "http";
 import fromEntries from "fromentries";
 
 type ParsedRequest = {
-  route: string;
   headers: {
     authorization?: string;
   };
@@ -28,17 +27,13 @@ type ParsedRequest = {
 export async function parseRequest(
   request: IncomingMessage
 ): Promise<ParsedRequest> {
-  const { pathname, searchParams } = new URL(
-    request.url as string,
-    "http://localhost"
-  );
-  const route = [request.method, pathname].join(" ");
+  const { searchParams } = new URL(request.url as string, "http://localhost");
 
   const query = fromEntries(searchParams);
   const headers = request.headers;
 
   if (!["POST", "PATCH"].includes(request.method as string)) {
-    return { route, headers, query };
+    return { headers, query };
   }
 
   return new Promise((resolve, reject) => {
@@ -48,10 +43,10 @@ export async function parseRequest(
       .on("data", (chunk) => bodyChunks.push(chunk))
       .on("end", async () => {
         const bodyString = Buffer.concat(bodyChunks).toString();
-        if (!bodyString) return resolve({ route, headers, query });
+        if (!bodyString) return resolve({ headers, query });
 
         try {
-          resolve({ route, headers, query, body: JSON.parse(bodyString) });
+          resolve({ headers, query, body: JSON.parse(bodyString) });
         } catch (error) {
           reject(error);
         }
