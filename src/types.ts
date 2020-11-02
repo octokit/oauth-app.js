@@ -46,7 +46,7 @@ export type EventHandlerContext = {
   action: ActionName;
   token: Token;
   scopes?: Scope[];
-  octokit?: InstanceType<typeof OAuthAppOctokit>;
+  octokit: InstanceType<typeof OAuthAppOctokit>;
 };
 export type EventHandler = (context: EventHandlerContext) => void;
 export type AddEventHandler = (

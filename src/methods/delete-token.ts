@@ -1,4 +1,5 @@
 import { request as defaultRequest } from "@octokit/request";
+import { createUnauthenticatedAuth } from "@octokit/auth-unauthenticated";
 import btoa from "btoa-lite";
 
 import { emitEvent } from "../emit-event";
@@ -67,6 +68,14 @@ export async function deleteTokenWithState(
     name: "token",
     action: "deleted",
     token: options.token,
+    get octokit() {
+      return new state.Octokit({
+        authStrategy: createUnauthenticatedAuth,
+        auth: {
+          reason: `Handling "token.deleted" event. The access for the token has been revoked.`,
+        },
+      });
+    },
   });
 
   return result;

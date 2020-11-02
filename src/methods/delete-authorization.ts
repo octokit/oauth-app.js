@@ -1,4 +1,5 @@
 import { createOAuthAppAuth } from "@octokit/auth-oauth-app";
+import { createUnauthenticatedAuth } from "@octokit/auth-unauthenticated";
 import { request as defaultRequest } from "@octokit/request";
 
 import { emitEvent } from "../emit-event";
@@ -77,12 +78,28 @@ export async function deleteAuthorizationWithState(
     name: "token",
     action: "deleted",
     token: options.token,
+    get octokit() {
+      return new state.Octokit({
+        authStrategy: createUnauthenticatedAuth,
+        auth: {
+          reason: `Handling "token.deleted" event. The access for the token has been revoked.`,
+        },
+      });
+    },
   });
 
   await emitEvent(state, {
     name: "authorization",
     action: "deleted",
     token: options.token,
+    get octokit() {
+      return new state.Octokit({
+        authStrategy: createUnauthenticatedAuth,
+        auth: {
+          reason: `Handling "authorization.deleted" event. The access for the app has been revoked.`,
+        },
+      });
+    },
   });
 
   return result;
