@@ -1,4 +1,4 @@
-import { createServer } from "http";
+import { createServer, IncomingMessage, ServerResponse } from "http";
 import { URL } from "url";
 
 import fetch from "node-fetch";
@@ -297,6 +297,47 @@ describe("getNodeMiddleware(app)", () => {
     expect(appMock.deleteAuthorization.mock.calls[0][0]).toStrictEqual({
       token: "token123",
     });
+  });
+
+  it("POST /unrelated", async () => {
+    expect.assertions(4);
+
+    const app = new OAuthApp({
+      clientId: "0123",
+      clientSecret: "0123secret",
+    });
+
+    const server = createServer(
+      getNodeMiddleware(app, {
+        onUnhandledRequest: (request, response) => {
+          expect(request.method).toEqual("POST");
+          expect(request.url).toEqual("/unrelated");
+
+          // test that the request has not yet been consumed with .on("data")
+          expect(request.complete).toEqual(false);
+
+          response.writeHead(200);
+          response.end();
+        },
+      })
+    ).listen();
+    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const { status, headers } = await fetch(
+      `http://localhost:${port}/unrelated`,
+      {
+        method: "POST",
+        body: JSON.stringify({ ok: true }),
+        headers: {
+          "content-type": "application/json",
+        },
+      }
+    );
+
+    server.close();
+
+    expect(status).toEqual(200);
   });
 
   // errors
