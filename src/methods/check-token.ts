@@ -23,7 +23,7 @@ async function sendCheckTokenRequest(
   options: CheckTokenRequestOptions
 ) {
   const { data } = await request(
-    "POST /applications/:client_id/token",
+    "POST /applications/{client_id}/token",
     options
   );
   return data;

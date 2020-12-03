@@ -25,7 +25,7 @@ async function sendDeleteTokenRequest(
   options: RequestOptions
 ) {
   const { data } = await request(
-    "DELETE /applications/:client_id/token",
+    "DELETE /applications/{client_id}/token",
     options
   );
   return data;

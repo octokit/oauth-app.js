@@ -24,7 +24,7 @@ async function sendResetTokenRequest(
   options: RequestOptions
 ) {
   const { data } = await request(
-    "PATCH /applications/:client_id/token",
+    "PATCH /applications/{client_id}/token",
     options
   );
   return data;

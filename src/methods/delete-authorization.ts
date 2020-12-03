@@ -25,7 +25,7 @@ async function sendDeleteAuthorizationRequest(
   options: RequestOptions
 ) {
   const { data } = await request(
-    "DELETE /applications/:client_id/grant",
+    "DELETE /applications/{client_id}/grant",
     options
   );
   return data;
