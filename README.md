@@ -76,7 +76,7 @@ require("http").createServer(getNodeMiddleware(app)).listen(3000);
 ```
 ## Endpoints
 
-- Redirect to authorization prompt at `api/github/oauth/login`
+- Redirect to authorization prompt at `/api/github/oauth/login`
 - Receive user authorization callbacks at `/api/github/oauth/callback`
 
 </td></tr>
