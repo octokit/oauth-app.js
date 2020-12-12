@@ -72,12 +72,8 @@ app.on("token", async ({ token, octokit }) => {
 });
 
 require("http").createServer(getNodeMiddleware(app)).listen(3000);
-// or `expressApp.use(getNodeMiddleware(app));` for Express apps
-```
-## Endpoints
-
-- Redirect to authorization prompt at `/api/github/oauth/login`
-- Receive user authorization callbacks at `/api/github/oauth/callback`
+// can now receive user authorization callbacks at /api/github/oauth/callback
+// See all endpoints at https://github.com/octokit/oauth-app.js#middlewares
 
 </td></tr>
 </tbody>
