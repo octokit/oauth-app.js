@@ -82,9 +82,9 @@ require("http").createServer(getNodeMiddleware(app)).listen(3000);
 
 ## Examples
 
-- Node server with static files served from `public/` folder, hosted on Glitch: https://glitch.com/~github-oauth-client
-- Serverless functions, hosted on [Zeit's now](https://zeit.co/): https://github.com/gr2m/octokit-oauth-app-now-example
-- Serverless functions, hosted on AWS (via [begin.com](https://begin.com/)): https://github.com/gr2m/octokit-oauth-app-begin-example/
+- Node server with static files served from `public/` folder, hosted on Glitch: <https://glitch.com/~github-oauth-client>
+- Serverless functions, hosted on [Zeit's now](https://zeit.co/): <https://github.com/gr2m/octokit-oauth-app-now-example>
+- Serverless functions, hosted on AWS (via [begin.com](https://begin.com/)): <https://github.com/gr2m/octokit-oauth-app-begin-example/>
 
 ## Constructor options
 
@@ -145,7 +145,7 @@ require("http").createServer(getNodeMiddleware(app)).listen(3000);
       </th>
       <td>
 
-Sets the default <code>scopes</code> value for <code>app.getAuthorizationUrl(options)</code>. See [available scopes](https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/#available-scopes)
+Sets the default <code>scopes</code> value for <code>app.getAuthorizationUrl(options)</code>. See [available scopes](https://docs.github.com/en/developers/apps/scopes-for-oauth-apps#available-scopes)
 
 </td></tr>
     <tr>
@@ -330,7 +330,7 @@ const url = app.getAuthorizationUrl({
         <code>string</code>
       </th>
       <td>
-        The URL in your application where users will be sent after authorization. See <a href="https://developer.github.com/enterprise/2.16/apps/building-oauth-apps/authorizing-oauth-apps/#redirect-urls">Redirect URLs</a> in GitHub’s Developer Guide.
+        The URL in your application where users will be sent after authorization. See <a href="https://docs.github.com/en/developers/apps/authorizing-oauth-apps#redirect-urls">Redirect URLs</a> in GitHub’s Developer Guide.
       </td>
     </tr>
     <tr>
@@ -517,7 +517,7 @@ try {
   </tbody>
 </table>
 
-Resolves with response body from ["Check a token" request](https://developer.github.com/v3/apps/oauth_applications/#check-a-token).
+Resolves with response body from ["Check a token" request](https://docs.github.com/en/rest/reference/apps#check-a-token).
 
 ## `app.resetToken(options)`
 
@@ -557,7 +557,7 @@ const { token } = await app.resetToken({
   </tbody>
 </table>
 
-Resolves with response body from ["Reset a token" request](https://developer.github.com/v3/apps/oauth_applications/#reset-a-token).
+Resolves with response body from ["Reset a token" request](https://docs.github.com/en/rest/reference/apps#reset-a-token).
 
 ## `app.deleteToken(options)`
 
@@ -597,7 +597,7 @@ await app.deleteToken({
   </tbody>
 </table>
 
-Resolves with response body from ["Delete a token" request](https://developer.github.com/v3/apps/oauth_applications/#delete-an-app-token).
+Resolves with response body from ["Delete a token" request](https://docs.github.com/en/rest/reference/apps#delete-an-app-token).
 
 ## `app.deleteAuthorization(options)`
 
@@ -637,7 +637,7 @@ await app.deleteAuthorization({
   </tbody>
 </table>
 
-Resolves with response body from ["Delete an app authorization" request](https://developer.github.com/v3/apps/oauth_applications/#delete-an-app-authorization).
+Resolves with response body from ["Delete an app authorization" request](https://docs.github.com/en/rest/reference/apps#delete-an-app-authorization).
 
 ## Stateless methods
 
@@ -712,7 +712,7 @@ const url = getAuthorizationUrl({
         <code>string</code>
       </th>
       <td>
-        The URL in your application where users will be sent after authorization. See <a href="https://developer.github.com/enterprise/2.16/apps/building-oauth-apps/authorizing-oauth-apps/#redirect-urls">Redirect URLs</a> in GitHub’s Developer Guide.
+        The URL in your application where users will be sent after authorization. See <a href="https://docs.github.com/en/developers/apps/authorizing-oauth-apps#redirect-urls">Redirect URLs</a> in GitHub’s Developer Guide.
       </td>
     </tr>
     <tr>
@@ -961,7 +961,7 @@ try {
   </tbody>
 </table>
 
-Resolves with response body from ["Check a token" request](https://developer.github.com/v3/apps/oauth_applications/#check-a-token).
+Resolves with response body from ["Check a token" request](https://docs.github.com/en/rest/reference/apps#check-a-token).
 
 ### `resetToken(options)`
 
@@ -1026,7 +1026,7 @@ const { token } = await resetToken({
   </tbody>
 </table>
 
-Resolves with response body from ["Reset a token" request](https://developer.github.com/v3/apps/oauth_applications/#reset-a-token).
+Resolves with response body from ["Reset a token" request](https://docs.github.com/en/rest/reference/apps#reset-a-token).
 
 ### `deleteToken(options)`
 
@@ -1091,7 +1091,7 @@ await deleteToken({
   </tbody>
 </table>
 
-Resolves with response body from ["Delete a token" request](https://developer.github.com/v3/apps/oauth_applications/#delete-a-token).
+Resolves with response body from ["Delete a token" request](https://docs.github.com/en/rest/reference/apps#delete-an-app-token).
 
 ### `deleteAuthorization(options)`
 
@@ -1156,7 +1156,7 @@ await deleteAuthorization({
   </tbody>
 </table>
 
-Resolves with response body from ["Delete an app authorization" request](https://developer.github.com/v3/apps/oauth_applications/#delete-an-app-authorization).
+Resolves with response body from ["Delete an app authorization" request](https://docs.github.com/en/rest/reference/apps#delete-an-app-authorization).
 
 ## Middlewares
 
@@ -1164,15 +1164,15 @@ A middleware is a method or set of methods to handle requests for common environ
 
 By default, all middlewares expose the following routes
 
-| Route                            | Route Description                                                                                                                                                                                                                                                                         |
-| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `GET /api/github/oauth/login`    | Redirects to GitHub's authorization endpoint. Accepts optional `?state` and `?scopes` query parameters. `?scopes` is a comma-separated list of [supported OAuth scope names](https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/#available-scopes) |
-| `GET /api/github/oauth/callback` | The client's redirect endpoint. This is where the `token` event gets triggered                                                                                                                                                                                                            |
-| `POST /api/github/oauth/token`   | Exchange an authorization code for an OAuth Access token. If successful, the `token` event gets triggered.                                                                                                                                                                                |
-| `GET /api/github/oauth/token`    | Check if token is valid. Must authenticate using token in `Authorization` header. Uses GitHub's [`POST /applications/{client_id}/token`](https://developer.github.com/v3/apps/oauth_applications/#check-a-token) endpoint                                                                 |
-| `PATCH /api/github/oauth/token`  | Resets a token (invalidates current one, returns new token). Must authenticate using token in `Authorization` header. Uses GitHub's [`PATCH /applications/{client_id}/token`](https://developer.github.com/v3/apps/oauth_applications/#reset-a-token) endpoint.                           |
-| `DELETE /api/github/oauth/token` | Invalidates current token, basically the equivalent of a logout. Must authenticate using token in `Authorization` header.                                                                                                                                                                 |
-| `DELETE /api/github/oauth/grant` | Revokes the user's grant, basically the equivalent of an uninstall. must authenticate using token in `Authorization` header.                                                                                                                                                              |
+| Route                            | Route Description                                                                                                                                                                                                                                               |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET /api/github/oauth/login`    | Redirects to GitHub's authorization endpoint. Accepts optional `?state` and `?scopes` query parameters. `?scopes` is a comma-separated list of [supported OAuth scope names](https://docs.github.com/en/developers/apps/scopes-for-oauth-apps#available-scopes) |
+| `GET /api/github/oauth/callback` | The client's redirect endpoint. This is where the `token` event gets triggered                                                                                                                                                                                  |
+| `POST /api/github/oauth/token`   | Exchange an authorization code for an OAuth Access token. If successful, the `token` event gets triggered.                                                                                                                                                      |
+| `GET /api/github/oauth/token`    | Check if token is valid. Must authenticate using token in `Authorization` header. Uses GitHub's [`POST /applications/{client_id}/token`](https://docs.github.com/en/rest/reference/apps#check-a-token) endpoint                                                 |
+| `PATCH /api/github/oauth/token`  | Resets a token (invalidates current one, returns new token). Must authenticate using token in `Authorization` header. Uses GitHub's [`PATCH /applications/{client_id}/token`](https://docs.github.com/en/rest/reference/apps#reset-a-token) endpoint.           |
+| `DELETE /api/github/oauth/token` | Invalidates current token, basically the equivalent of a logout. Must authenticate using token in `Authorization` header.                                                                                                                                       |
+| `DELETE /api/github/oauth/grant` | Revokes the user's grant, basically the equivalent of an uninstall. must authenticate using token in `Authorization` header.                                                                                                                                    |
 
 ### `getNodeMiddleware(app, options)`
 
