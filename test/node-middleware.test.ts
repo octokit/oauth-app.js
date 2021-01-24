@@ -390,7 +390,7 @@ describe("getNodeMiddleware(app)", () => {
     const { port } = server.address();
 
     const response = await fetch(
-      `http://localhost:${port}/api/github/oauth/callback?error=redirect_uri_mismatch&error_description=The+redirect_uri+MUST+match+the+registered+callback+URL+for+this+application.&error_uri=https://developer.github.com/apps/building-integrations/setting-up-and-registering-oauth-apps/troubleshooting-authorization-request-errors/%23redirect-uri-mismatch&state=xyz`
+      `http://localhost:${port}/api/github/oauth/callback?error=redirect_uri_mismatch&error_description=The+redirect_uri+MUST+match+the+registered+callback+URL+for+this+application.&error_uri=https://docs.github.com/en/developers/apps/troubleshooting-authorization-request-errors/%23redirect-uri-mismatch&state=xyz`
     );
 
     server.close();
