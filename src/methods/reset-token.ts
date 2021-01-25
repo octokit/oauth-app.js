@@ -55,7 +55,7 @@ export async function resetTokenWithState(state: State, options: StateOptions) {
     name: "token",
     action: "reset",
     token: result.token,
-    scopes: result.scopes,
+    scopes: result.scopes || undefined,
     get octokit() {
       return new state.Octokit({
         auth: result.token,
