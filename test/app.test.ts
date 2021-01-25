@@ -171,6 +171,60 @@ describe("app", () => {
     expect(context.octokit).toBeInstanceOf(Mocktokit);
   });
 
+  it("app.resetToken(options) with empty scopes", async () => {
+    const mock = fetchMock.sandbox().patchOnce(
+      "https://api.github.com/applications/0123/token",
+      {
+        id: 2,
+        token: "token456",
+        scopes: null,
+      },
+      {
+        headers: {
+          authorization:
+            "basic " + Buffer.from("0123:0123secret").toString("base64"),
+        },
+        body: {
+          access_token: "token123",
+        },
+      }
+    );
+
+    const Mocktokit = OAuthAppOctokit.defaults({
+      request: {
+        fetch: mock,
+      },
+    });
+
+    const app = new OAuthApp({
+      clientId: "0123",
+      clientSecret: "0123secret",
+      Octokit: Mocktokit,
+    });
+
+    const onTokenCallback = jest.fn();
+    app.on("token.reset", onTokenCallback);
+
+    const result = await app.resetToken({
+      token: "token123",
+    });
+
+    expect(result).toStrictEqual({
+      id: 2,
+      token: "token456",
+      scopes: null,
+    });
+    expect(onTokenCallback.mock.calls.length).toEqual(1);
+    const [context] = onTokenCallback.mock.calls[0];
+
+    expect(context).toMatchObject({
+      name: "token",
+      action: "reset",
+      token: "token456",
+    });
+    expect(context.octokit).toBeInstanceOf(Mocktokit);
+  });
+
   it("app.deleteToken(options)", async () => {
     const mock = fetchMock
       .sandbox()
