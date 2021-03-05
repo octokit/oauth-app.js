@@ -9,7 +9,7 @@
     "pretest": "npm run -s lint",
     "test": "jest --coverage"
   },
-  "repository": "https://github.com/octokit/oauth-app.js",
+  "repository": "github:octokit/oauth-app.js",
   "keywords": [
     "github",
     "api",
