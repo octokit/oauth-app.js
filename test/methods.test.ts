@@ -22,6 +22,16 @@ describe("app", () => {
     );
   });
 
+  it("getAuthorizationUrl(options) for GitHub App", () => {
+    const url = getAuthorizationUrl({
+      clientId: "lv1.0123",
+      state: "state123",
+    });
+    expect(url).toStrictEqual(
+      "https://github.com/login/oauth/authorize?allow_signup=true&client_id=lv1.0123&state=state123"
+    );
+  });
+
   it("createToken(options)", async () => {
     nock("https://github.com").post("/login/oauth/access_token").reply(200, {
       access_token: "token123",

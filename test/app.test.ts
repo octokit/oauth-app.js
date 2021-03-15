@@ -17,6 +17,19 @@ describe("app", () => {
     );
   });
 
+  it("app.getAuthorizationUrl(options) for GitHub App", () => {
+    const app = new OAuthApp({
+      clientId: "lv1.0123",
+      clientSecret: "0123secret",
+    });
+    const url = app.getAuthorizationUrl({
+      state: "state123",
+    });
+    expect(url).toStrictEqual(
+      "https://github.com/login/oauth/authorize?allow_signup=true&client_id=lv1.0123&state=state123"
+    );
+  });
+
   it("app.createToken(options)", async () => {
     const mock = fetchMock
       .sandbox()
