@@ -14,12 +14,33 @@ export function getAuthorizationUrlWithState(
   state: State,
   options: StateOptions
 ) {
+  const {
+    clientId = state.clientId,
+    allowSignup = state.allowSignup,
+    baseUrl = state.baseUrl,
+    scopes = state.defaultScopes,
+    // TODO: https://github.com/octokit/oauth-app.js/pull/203#issuecomment-799683991
+    clientType = /^lv1\./.test(clientId) ? "github-app" : "oauth-app",
+    ...otherOptions
+  } = options;
+
+  if (clientType === "oauth-app") {
+    return getAuthorizationUrl({
+      ...otherOptions,
+      clientType: "oauth-app",
+      clientId,
+      allowSignup,
+      baseUrl,
+      scopes,
+    });
+  }
+
   return getAuthorizationUrl({
-    ...options,
-    clientId: options.clientId || state.clientId,
-    allowSignup: options.allowSignup || state.allowSignup,
-    baseUrl: options.baseUrl || state.baseUrl,
-    scopes: options.scopes || state.defaultScopes,
+    ...otherOptions,
+    clientType: "github-app",
+    clientId,
+    allowSignup,
+    baseUrl,
   });
 }
 
