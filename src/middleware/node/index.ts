@@ -4,7 +4,7 @@ import { middleware } from "./middleware";
 import { MiddlewareOptions } from "./types";
 import { onUnhandledRequestDefault } from "./on-unhandled-request-default";
 
-export function getNodeMiddleware(
+export function createNodeMiddleware(
   app: OAuthApp,
   {
     pathPrefix = "/api/github/oauth",
