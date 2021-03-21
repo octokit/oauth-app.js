@@ -1,17 +1,17 @@
-import { createServer, IncomingMessage, ServerResponse } from "http";
+import { createServer } from "http";
 import { URL } from "url";
 
 import fetch from "node-fetch";
-import { OAuthApp, getNodeMiddleware } from "../src/";
+import { OAuthApp, createNodeMiddleware } from "../src/";
 
-describe("getNodeMiddleware(app)", () => {
+describe("createNodeMiddleware(app)", () => {
   it("GET /api/github/oauth/login", async () => {
     const app = new OAuthApp({
       clientId: "0123",
       clientSecret: "0123secret",
     });
 
-    const server = createServer(getNodeMiddleware(app)).listen();
+    const server = createServer(createNodeMiddleware(app)).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
@@ -43,7 +43,7 @@ describe("getNodeMiddleware(app)", () => {
       defaultScopes: ["repo"],
     });
 
-    const server = createServer(getNodeMiddleware(app)).listen();
+    const server = createServer(createNodeMiddleware(app)).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
@@ -74,7 +74,7 @@ describe("getNodeMiddleware(app)", () => {
       clientSecret: "0123secret",
     });
 
-    const server = createServer(getNodeMiddleware(app)).listen();
+    const server = createServer(createNodeMiddleware(app)).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
@@ -106,7 +106,7 @@ describe("getNodeMiddleware(app)", () => {
     };
 
     const server = createServer(
-      getNodeMiddleware((appMock as unknown) as OAuthApp)
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -135,7 +135,7 @@ describe("getNodeMiddleware(app)", () => {
     };
 
     const server = createServer(
-      getNodeMiddleware((appMock as unknown) as OAuthApp)
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -172,7 +172,7 @@ describe("getNodeMiddleware(app)", () => {
     };
 
     const server = createServer(
-      getNodeMiddleware((appMock as unknown) as OAuthApp)
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -207,7 +207,7 @@ describe("getNodeMiddleware(app)", () => {
     };
 
     const server = createServer(
-      getNodeMiddleware((appMock as unknown) as OAuthApp)
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -243,7 +243,7 @@ describe("getNodeMiddleware(app)", () => {
     };
 
     const server = createServer(
-      getNodeMiddleware((appMock as unknown) as OAuthApp)
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -274,7 +274,7 @@ describe("getNodeMiddleware(app)", () => {
     };
 
     const server = createServer(
-      getNodeMiddleware((appMock as unknown) as OAuthApp)
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -308,7 +308,7 @@ describe("getNodeMiddleware(app)", () => {
     });
 
     const server = createServer(
-      getNodeMiddleware(app, {
+      createNodeMiddleware(app, {
         onUnhandledRequest: (request, response) => {
           expect(request.method).toEqual("POST");
           expect(request.url).toEqual("/unrelated");
@@ -346,7 +346,7 @@ describe("getNodeMiddleware(app)", () => {
     const appMock = {};
 
     const server = createServer(
-      getNodeMiddleware((appMock as unknown) as OAuthApp)
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -362,7 +362,7 @@ describe("getNodeMiddleware(app)", () => {
     const appMock = {};
 
     const server = createServer(
-      getNodeMiddleware((appMock as unknown) as OAuthApp)
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -384,7 +384,7 @@ describe("getNodeMiddleware(app)", () => {
     const appMock = {};
 
     const server = createServer(
-      getNodeMiddleware((appMock as unknown) as OAuthApp)
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -406,7 +406,7 @@ describe("getNodeMiddleware(app)", () => {
     const appMock = {};
 
     const server = createServer(
-      getNodeMiddleware((appMock as unknown) as OAuthApp)
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -432,7 +432,7 @@ describe("getNodeMiddleware(app)", () => {
     const appMock = {};
 
     const server = createServer(
-      getNodeMiddleware((appMock as unknown) as OAuthApp)
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -457,7 +457,7 @@ describe("getNodeMiddleware(app)", () => {
     const appMock = {};
 
     const server = createServer(
-      getNodeMiddleware((appMock as unknown) as OAuthApp)
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -481,7 +481,7 @@ describe("getNodeMiddleware(app)", () => {
     const appMock = {};
 
     const server = createServer(
-      getNodeMiddleware((appMock as unknown) as OAuthApp)
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -506,7 +506,7 @@ describe("getNodeMiddleware(app)", () => {
     const appMock = {};
 
     const server = createServer(
-      getNodeMiddleware((appMock as unknown) as OAuthApp)
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -531,7 +531,7 @@ describe("getNodeMiddleware(app)", () => {
     const appMock = {};
 
     const server = createServer(
-      getNodeMiddleware((appMock as unknown) as OAuthApp)
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
     // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
