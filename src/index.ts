@@ -23,6 +23,8 @@ import {
   AddEventHandler,
   State,
 } from "./types";
+import { createNodeMiddleware } from "./middleware/node/index";
+import { MiddlewareOptions } from "./middleware/node/types";
 
 export { getAuthorizationUrl } from "./methods/get-authorization-url";
 export { createToken } from "./methods/create-token";
@@ -30,7 +32,14 @@ export { checkToken } from "./methods/check-token";
 export { resetToken } from "./methods/reset-token";
 export { deleteToken } from "./methods/delete-token";
 export { deleteAuthorization } from "./methods/delete-authorization";
-export { getNodeMiddleware } from "./middleware/node/index";
+export { createNodeMiddleware } from "./middleware/node/index";
+
+export function getNodeMiddleware(app: OAuthApp, options?: MiddlewareOptions) {
+  console.warn(
+    `[@octokit/oauth-app] getNodeMiddleWare() is deprecated. Use createNodeMiddleware() instead`
+  );
+  return createNodeMiddleware(app, options);
+}
 
 export class OAuthApp {
   static VERSION = VERSION;
