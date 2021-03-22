@@ -1,5 +1,10 @@
 import { createOAuthAppAuth } from "@octokit/auth-oauth-app";
 
+import { checkToken } from "@octokit/oauth-methods";
+export type AppCheckToken = (options: {
+  token: string;
+}) => ReturnType<typeof checkToken>;
+
 import { VERSION } from "./version";
 import { addEventHandler } from "./add-event-handler";
 import { OAuthAppOctokit } from "./oauth-app-octokit";
@@ -9,7 +14,7 @@ import {
   AppGetAuthorizationUrl,
 } from "./methods/get-authorization-url";
 import { createTokenWithState, AppCreateToken } from "./methods/create-token";
-import { checkTokenWithState, AppCheckToken } from "./methods/check-token";
+// import { checkTokenWithState, AppCheckToken } from "./methods/check-token";
 import { resetTokenWithState, AppResetToken } from "./methods/reset-token";
 import { deleteTokenWithState, AppDeleteToken } from "./methods/delete-token";
 import {
@@ -23,23 +28,7 @@ import {
   AddEventHandler,
   State,
 } from "./types";
-import { createNodeMiddleware } from "./middleware/node/index";
-import { MiddlewareOptions } from "./middleware/node/types";
-
-export { getAuthorizationUrl } from "./methods/get-authorization-url";
-export { createToken } from "./methods/create-token";
-export { checkToken } from "./methods/check-token";
-export { resetToken } from "./methods/reset-token";
-export { deleteToken } from "./methods/delete-token";
-export { deleteAuthorization } from "./methods/delete-authorization";
 export { createNodeMiddleware } from "./middleware/node/index";
-
-export function getNodeMiddleware(app: OAuthApp, options?: MiddlewareOptions) {
-  console.warn(
-    `[@octokit/oauth-app] getNodeMiddleWare() is deprecated. Use createNodeMiddleware() instead`
-  );
-  return createNodeMiddleware(app, options);
-}
 
 export class OAuthApp {
   static VERSION = VERSION;
@@ -55,6 +44,7 @@ export class OAuthApp {
     });
 
     const state: State = {
+      clientType: options.clientType || "oauth-app",
       clientId: options.clientId,
       clientSecret: options.clientSecret,
       defaultScopes: options.defaultScopes || [],
@@ -70,7 +60,17 @@ export class OAuthApp {
     this.octokit = octokit;
     this.getAuthorizationUrl = getAuthorizationUrlWithState.bind(null, state);
     this.createToken = createTokenWithState.bind(null, state);
-    this.checkToken = checkTokenWithState.bind(null, state);
+    // this.checkToken = checkTokenWithState.bind(null, state);
+    this.checkToken = ({ token }) => {
+      return checkToken({
+        // @ts-expect-error
+        clientType: state.clientType,
+        clientId: state.clientId,
+        clientSecret: state.clientSecret,
+        request: octokit.request,
+        token,
+      });
+    };
     this.resetToken = resetTokenWithState.bind(null, state);
     this.deleteToken = deleteTokenWithState.bind(null, state);
     this.deleteAuthorization = deleteAuthorizationWithState.bind(null, state);

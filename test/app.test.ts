@@ -95,7 +95,7 @@ describe("app", () => {
     expect(data.login).toEqual("octocat");
   });
 
-  it("app.checkToken(options)", async () => {
+  it.only("app.checkToken(options)", async () => {
     const mock = fetchMock.sandbox().postOnce(
       "https://api.github.com/applications/0123/token",
       { id: 1 },
@@ -126,7 +126,26 @@ describe("app", () => {
       token: "token123",
     });
 
-    expect(result).toStrictEqual({ id: 1 });
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "authentication": Object {
+          "clientId": "0123",
+          "clientSecret": "0123secret",
+          "clientType": "oauth-app",
+          "scopes": undefined,
+          "token": "token123",
+        },
+        "data": Object {
+          "id": 1,
+        },
+        "headers": Object {
+          "content-length": "8",
+          "content-type": "application/json",
+        },
+        "status": 200,
+        "url": "https://api.github.com/applications/0123/token",
+      }
+    `);
   });
 
   it("app.resetToken(options)", async () => {

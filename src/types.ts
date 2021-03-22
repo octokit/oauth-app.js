@@ -1,5 +1,7 @@
 import { OAuthAppOctokit } from "./oauth-app-octokit";
 
+type ClientType = "oauth-app" | "github-app";
+
 export type Scope = string;
 export type ClientId = string;
 export type ClientSecret = string;
@@ -19,6 +21,7 @@ export type EventAndActionName =
 export type ConstructorOptions = {
   clientId: ClientId;
   clientSecret: ClientSecret;
+  clientType?: ClientType;
   defaultScopes?: Scope[];
   allowSignup?: boolean;
   baseUrl?: string;
@@ -28,6 +31,7 @@ export type ConstructorOptions = {
 
 export type OctokitInstance = InstanceType<typeof OAuthAppOctokit>;
 export type State = {
+  clientType: ClientType;
   clientId: ClientId;
   clientSecret: ClientSecret;
   defaultScopes: Scope[];
