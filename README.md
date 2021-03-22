@@ -17,8 +17,8 @@
 - [Constructor options](#constructor-options)
 - [`app.on(eventName, eventHandler)`](#apponeventname-eventhandler)
 - [`app.octokit`](#appoctokit)
-- [`app.getWebFlowAuthorizationUrl(options)`](#appgetwebflowauthorizationurloptions)
 - [`app.getUserOctokit()`](#appgetuseroctokit)
+- [`app.getWebFlowAuthorizationUrl(options)`](#appgetwebflowauthorizationurloptions)
 - [`app.exchangeWebFlowCode(options)`](#appexchangewebflowcodeoptions)
 - [`app.checkToken(options)`](#appchecktokenoptions)
 - [`app.resetToken(options)`](#appresettokenoptions)
@@ -322,6 +322,16 @@ For `"token.deleted"` and `"authorization.deleted"` events the `octokit` instanc
 
 Octokit instance with [OAuth App authentication](https://github.com/octokit/auth-oauth-app.js/#readme). Uses `Octokit` constructor option
 
+## `app.getUserOctokit()`
+
+```js
+const { octokit } = await app.getUserOctokit(options);
+```
+
+`options` are [`@octokit/auth-oauth-user`'s strategy options](https://github.com/octokit/auth-oauth-user.js/tree/initial-version#createoauthuserauthoptions-or-new-octokit-auth-)
+
+The `octokit` instance is authorized using the user access token if the app is an OAuth app and a user-to-server token if the app is a GitHub app. If the token expires it will be refreshed automatically.
+
 ## `app.getWebFlowAuthorizationUrl(options)`
 
 Returns and object with all options and a `url` property which is the authorization URL. See https://github.com/octokit/oauth-methods.js/#getwebflowauthorizationurl
@@ -406,16 +416,6 @@ const { url } = app.getWebFlowAuthorizationUrl({
     </tr>
   </tbody>
 </table>
-
-## `app.getUserOctokit()`
-
-```js
-const { octokit } = await app.getUserOctokit(options);
-```
-
-`options` are [`@octokit/auth-oauth-user`'s strategy options](https://github.com/octokit/auth-oauth-user.js/tree/initial-version#createoauthuserauthoptions-or-new-octokit-auth-)
-
-The `octokit` instance is authorized using the user access token if the app is an OAuth app and a user-to-server token if the app is a GitHub app. If the token expires it will be refreshed automatically.
 
 ## `app.exchangeWebFlowCode(options)`
 
