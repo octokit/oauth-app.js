@@ -1,77 +1,63 @@
-import * as OAuthMethods from "@octokit/oauth-methods";
+import * as OAuthAppAuth from "@octokit/auth-oauth-app";
 
 import { State } from "../types";
 import { emitEvent } from "../emit-event";
-import { Octokit } from "@octokit/core";
 
 type StateOptions = "clientType" | "clientId" | "clientSecret" | "request";
 
-export type ExchangeWebFlowCodeOAuthAppOptions = Omit<
-  OAuthMethods.ExchangeWebFlowCodeOAuthAppOptions,
-  StateOptions
+export type CreateTokenWebFlowOptions = Omit<
+  OAuthAppAuth.WebFlowAuthOptions,
+  "type"
 >;
-export type ExchangeWebFlowCodeGitHubAppOptions = Omit<
-  OAuthMethods.ExchangeWebFlowCodeGitHubAppOptions,
-  StateOptions
+export type CreateTokenOAuthAppDeviceFlowOptions = Omit<
+  OAuthAppAuth.OAuthAppDeviceFlowAuthOptions,
+  "type"
+>;
+export type CreateTokenGitHubAppDeviceFlowOptions = Omit<
+  OAuthAppAuth.GitHubAppDeviceFlowAuthOptions,
+  "type"
 >;
 
 export async function createTokenWithState(
   state: State,
   options:
-    | ExchangeWebFlowCodeOAuthAppOptions
-    | ExchangeWebFlowCodeGitHubAppOptions
+    | CreateTokenWebFlowOptions
+    | CreateTokenOAuthAppDeviceFlowOptions
+    | CreateTokenGitHubAppDeviceFlowOptions
 ): Promise<
-  | OAuthMethods.ExchangeWebFlowCodeOAuthAppResponse
-  | OAuthMethods.ExchangeWebFlowCodeGitHubAppResponse
+  | OAuthAppAuth.OAuthAppUserAuthentication
+  | OAuthAppAuth.GitHubAppUserAuthentication
+  | OAuthAppAuth.GitHubAppUserAuthenticationWithExpiration
 > {
-  const optionsWithDefaults = {
-    clientId: state.clientId,
-    clientSecret: state.clientSecret,
-    request: state.octokit.request,
+  const result: any = await state.octokit.auth({
+    type: "oauth-user",
     ...options,
-  };
-
-  if (state.clientType === "oauth-app") {
-    const response = await OAuthMethods.exchangeWebFlowCode({
-      clientType: "oauth-app",
-      ...optionsWithDefaults,
-    });
-
-    await emitEvent(state, {
-      name: "token",
-      action: "created",
-      token: response.authentication.token,
-      scopes: response.authentication.scopes,
-      get octokit() {
-        return new state.Octokit({ auth: response.authentication.token });
-      },
-    });
-
-    return response;
-  }
-
-  const response = await OAuthMethods.exchangeWebFlowCode({
-    clientType: "github-app",
-    ...optionsWithDefaults,
   });
 
   await emitEvent(state, {
     name: "token",
     action: "created",
-    token: response.authentication.token,
+    token: result.token,
+    scopes: result.scopes,
     get octokit() {
-      return new state.Octokit({ auth: response.authentication.token });
+      return new state.Octokit({ auth: result.token });
     },
   });
 
-  return response;
+  return result;
 }
 
 export interface CreateTokenInterface {
+  (options: CreateTokenWebFlowOptions): Promise<
+    | OAuthAppAuth.OAuthAppUserAuthentication
+    | OAuthAppAuth.GitHubAppUserAuthentication
+    | OAuthAppAuth.GitHubAppUserAuthenticationWithExpiration
+  >;
   (
-    options: ExchangeWebFlowCodeOAuthAppOptions
-  ): Promise<OAuthMethods.ExchangeWebFlowCodeOAuthAppResponse>;
-  (
-    options: ExchangeWebFlowCodeGitHubAppOptions
-  ): Promise<OAuthMethods.ExchangeWebFlowCodeGitHubAppResponse>;
+    options: CreateTokenOAuthAppDeviceFlowOptions
+  ): Promise<OAuthAppAuth.OAuthAppUserAuthentication>;
+  (options: CreateTokenGitHubAppDeviceFlowOptions): Promise<
+    | OAuthAppAuth.GitHubAppUserAuthentication
+    | OAuthAppAuth.GitHubAppUserAuthenticationWithExpiration
+  >;
 }

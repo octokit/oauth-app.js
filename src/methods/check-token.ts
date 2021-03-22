@@ -10,8 +10,8 @@ export async function checkTokenWithState(
   state: State,
   options: CheckTokenOptions
 ): Promise<
-  | OAuthMethods.CheckTokenOAuthAppResponse
-  | OAuthMethods.CheckTokenGitHubAppResponse
+  | OAuthMethods.CheckTokenOAuthAppResponse["authentication"]
+  | OAuthMethods.CheckTokenGitHubAppResponse["authentication"]
 > {
   const optionsWithDefaults = {
     clientId: state.clientId,
@@ -20,22 +20,23 @@ export async function checkTokenWithState(
     ...options,
   };
 
-  if (state.clientType === "oauth-app") {
-    return OAuthMethods.checkToken({
-      clientType: "oauth-app",
-      ...optionsWithDefaults,
-    });
-  }
+  const { authentication } =
+    state.clientType === "oauth-app"
+      ? await OAuthMethods.checkToken({
+          clientType: "oauth-app",
+          ...optionsWithDefaults,
+        })
+      : await OAuthMethods.checkToken({
+          clientType: "github-app",
+          ...optionsWithDefaults,
+        });
 
-  return OAuthMethods.checkToken({
-    clientType: "github-app",
-    ...optionsWithDefaults,
-  });
+  return authentication;
 }
 
 export interface CheckTokenInterface {
   (options: CheckTokenOptions): Promise<
-    | OAuthMethods.CheckTokenOAuthAppResponse
-    | OAuthMethods.CheckTokenGitHubAppResponse
+    | OAuthMethods.CheckTokenOAuthAppResponse["authentication"]
+    | OAuthMethods.CheckTokenGitHubAppResponse["authentication"]
   >;
 }

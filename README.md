@@ -18,8 +18,8 @@
 - [`app.on(eventName, eventHandler)`](#apponeventname-eventhandler)
 - [`app.octokit`](#appoctokit)
 - [`app.getUserOctokit()`](#appgetuseroctokit)
+- [`app.getWebFlowAuthorizationUrl(options)`](#appgetwebflowauthorizationurloptions)
 - [`app.createToken(options)`](#appcreatetokenoptions)
-- [`app.exchangeWebFlowCode(options)`](#appexchangewebflowcodeoptions)
 - [`app.checkToken(options)`](#appchecktokenoptions)
 - [`app.resetToken(options)`](#appresettokenoptions)
 - [`app.deleteToken(options)`](#appdeletetokenoptions)
@@ -166,7 +166,7 @@ require("http").createServer(createNodeMiddleware(app)).listen(3000);
         <code>boolean</code>
       </th>
       <td>
-        Sets the default value for <code>app.createToken(options)</code>.
+        Sets the default value for <code>app.getWebFlowAuthorizationUrl(options)</code>.
       </td>
     </tr>
     <tr>
@@ -180,7 +180,7 @@ require("http").createServer(createNodeMiddleware(app)).listen(3000);
 
 Only relevant when `clientType` is set to `"oauth-app"`.
 
-Sets the default `scopes` value for `app.createToken(options)`. See [available scopes](https://docs.github.com/en/developers/apps/scopes-for-oauth-apps#available-scopes)
+Sets the default `scopes` value for `app.getWebFlowAuthorizationUrl(options)`. See [available scopes](https://docs.github.com/en/developers/apps/scopes-for-oauth-apps#available-scopes)
 
 </td></tr>
     <tr>
@@ -332,12 +332,12 @@ const { octokit } = await app.getUserOctokit(options);
 
 The `octokit` instance is authorized using the user access token if the app is an OAuth app and a user-to-server token if the app is a GitHub app. If the token expires it will be refreshed automatically.
 
-## `app.createToken(options)`
+## `app.getWebFlowAuthorizationUrl(options)`
 
 Returns and object with all options and a `url` property which is the authorization URL. See https://github.com/octokit/oauth-methods.js/#getwebflowauthorizationurl
 
 ```js
-const { url } = app.createToken({
+const { url } = app.getWebFlowAuthorizationUrl({
   state: "state123",
   scopes: ["repo"],
 });
@@ -417,10 +417,16 @@ const { url } = app.createToken({
   </tbody>
 </table>
 
-## `app.exchangeWebFlowCode(options)`
+## `app.createToken(options)`
+
+The method can be used for both, the [OAuth Web Flow](https://docs.github.com/en/developers/apps/authorizing-oauth-apps#web-application-flow) and the [OAuth Device Flow](https://docs.github.com/en/developers/apps/authorizing-oauth-apps#device-flow).
+
+### For OAuth Web flow
+
+For the web flow, you have to pass the `code` from URL redirect described in [step 2](https://docs.github.com/en/developers/apps/authorizing-oauth-apps#2-users-are-redirected-back-to-your-site-by-github).
 
 ```js
-const { token } = await app.exchangeWebFlowCode({
+const { token } = await app.createToken({
   state: "state123",
   code: "code123",
 });
@@ -466,7 +472,74 @@ const { token } = await app.exchangeWebFlowCode({
   </tbody>
 </table>
 
-Resolves with with an [authentication object](https://github.com/octokit/auth-oauth-user.js/tree/initial-version#authentication-object)
+Resolves with with an [user authentication object](https://github.com/octokit/auth-oauth-app.js#authentication-object)
+
+### For OAuth Device flow
+
+For the device flow, you have to pass a `onVerification` callback function, which prompts the user to enter the received user code at the received authorization URL.
+
+<table width="100%">
+  <thead align=left>
+    <tr>
+      <th width=150>
+        name
+      </th>
+      <th width=70>
+        type
+      </th>
+      <th>
+        description
+      </th>
+    </tr>
+  </thead>
+  <tbody align=left valign=top>
+    <tr>
+      <th>
+        <code>onVerification</code>
+      </th>
+      <th>
+        <code>function</code>
+      </th>
+      <td>
+
+**Required**. A function that is called once the device and user codes were retrieved
+
+The `onVerification()` callback can be used to pause until the user completes step 2, which might result in a better user experience.
+
+```js
+const auth = createOAuthUserAuth({
+  clientId: "1234567890abcdef1234",
+  clientSecret: "1234567890abcdef1234567890abcdef12345678",
+  onVerification(verification) {
+    console.log("Open %s", verification.verification_uri);
+    console.log("Enter code: %s", verification.user_code);
+
+    await prompt("press enter when you are ready to continue")
+  },
+});
+```
+
+</td>
+    </tr>
+    <tr>
+      <th>
+        <code>scopes</code>
+      </th>
+      <th>
+        <code>array of strings</code>
+      </th>
+      <td>
+
+Only relevant if `app.type` is `"oauth-app"`. Scopes are not supported by GitHub apps.
+
+Array of OAuth scope names that the user access token should be granted. Defaults to no scopes (`[]`).
+
+</td>
+    </tr>
+  </tbody>
+</table>
+
+Resolves with with an [user authentication object](https://github.com/octokit/auth-oauth-app.js#authentication-object)
 
 ## `app.checkToken(options)`
 

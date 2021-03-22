@@ -103,9 +103,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("GET /api/github/oauth/callback?code=012345&state=mystate123", async () => {
     const appMock = {
-      exchangeWebFlowCode: jest
-        .fn()
-        .mockResolvedValue({ authentication: { token: "token123" } }),
+      createToken: jest.fn().mockResolvedValue({ token: "token123" }),
     };
 
     const server = createServer(
@@ -123,8 +121,8 @@ describe("createNodeMiddleware(app)", () => {
     expect(response.status).toEqual(200);
     expect(await response.text()).toMatch(/token123/);
 
-    expect(appMock.exchangeWebFlowCode.mock.calls.length).toEqual(1);
-    expect(appMock.exchangeWebFlowCode.mock.calls[0][0]).toStrictEqual({
+    expect(appMock.createToken.mock.calls.length).toEqual(1);
+    expect(appMock.createToken.mock.calls[0][0]).toStrictEqual({
       state: "state123",
       code: "012345",
     });
@@ -132,8 +130,9 @@ describe("createNodeMiddleware(app)", () => {
 
   it("POST /api/github/oauth/token", async () => {
     const appMock = {
-      exchangeWebFlowCode: jest.fn().mockResolvedValue({
-        authentication: { token: "token123", scopes: ["repo", "gist"] },
+      createToken: jest.fn().mockResolvedValue({
+        token: "token123",
+        scopes: ["repo", "gist"],
       }),
     };
 
@@ -163,8 +162,8 @@ describe("createNodeMiddleware(app)", () => {
       scopes: ["repo", "gist"],
     });
 
-    expect(appMock.exchangeWebFlowCode.mock.calls.length).toEqual(1);
-    expect(appMock.exchangeWebFlowCode.mock.calls[0][0]).toStrictEqual({
+    expect(appMock.createToken.mock.calls.length).toEqual(1);
+    expect(appMock.createToken.mock.calls[0][0]).toStrictEqual({
       state: "state123",
       code: "012345",
       redirectUrl: "http://example.com",

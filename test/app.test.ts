@@ -30,14 +30,14 @@ describe("app", () => {
     );
   });
 
-  it("app.exchangeWebFlowCode(options)", async () => {
+  it("app.createToken(options) for web flow", async () => {
     const mock = fetchMock
       .sandbox()
       .postOnce(
         "https://github.com/login/oauth/access_token",
         {
           access_token: "token123",
-          scope: "repo,gist",
+          scope: "repo gist",
           token_type: "bearer",
         },
         {
@@ -74,34 +74,23 @@ describe("app", () => {
     const onTokenCallback = jest.fn();
     app.on("token.created", onTokenCallback);
 
-    const result = await app.exchangeWebFlowCode({
+    const result = await app.createToken({
       state: "state123",
       code: "code123",
     });
 
     expect(result).toMatchInlineSnapshot(`
       Object {
-        "authentication": Object {
-          "clientId": "0123",
-          "clientSecret": "0123secret",
-          "clientType": "oauth-app",
-          "scopes": Array [
-            "repo",
-            "gist",
-          ],
-          "token": "token123",
-        },
-        "data": Object {
-          "access_token": "token123",
-          "scope": "repo,gist",
-          "token_type": "bearer",
-        },
-        "headers": Object {
-          "content-length": "69",
-          "content-type": "application/json",
-        },
-        "status": 200,
-        "url": "https://github.com/login/oauth/access_token",
+        "clientId": "0123",
+        "clientSecret": "0123secret",
+        "clientType": "oauth-app",
+        "scopes": Array [
+          "repo",
+          "gist",
+        ],
+        "token": "token123",
+        "tokenType": "oauth",
+        "type": "token",
       }
     `);
 
@@ -116,6 +105,87 @@ describe("app", () => {
 
     const { data } = await context.octokit.request("GET /user");
     expect(data.login).toEqual("octocat");
+  });
+
+  it("app.createToken(options) for device flow", async () => {
+    const mock = fetchMock
+      .sandbox()
+
+      .postOnce(
+        "https://github.com/login/device/code",
+        {
+          device_code: "devicecode123",
+          user_code: "usercode123",
+          verification_uri: "https://github.com/login/device",
+          expires_in: 900,
+          interval: 5,
+        },
+        {
+          body: {
+            client_id: "1234567890abcdef1234",
+            scope: "repo gist",
+          },
+        }
+      )
+      .postOnce(
+        "https://github.com/login/oauth/access_token",
+        {
+          access_token: "token123",
+          scope: "repo gist",
+        },
+        {
+          body: {
+            client_id: "1234567890abcdef1234",
+            device_code: "devicecode123",
+            grant_type: "urn:ietf:params:oauth:grant-type:device_code",
+          },
+        }
+      );
+
+    const Mocktokit = OAuthAppOctokit.defaults({
+      request: {
+        fetch: mock,
+      },
+    });
+
+    const app = new OAuthApp({
+      clientId: "1234567890abcdef1234",
+      clientSecret: "1234567890abcdef1234567890abcdef12345678",
+      Octokit: Mocktokit,
+    });
+
+    const onTokenCallback = jest.fn();
+    app.on("token.created", onTokenCallback);
+
+    const onVerification = jest.fn();
+    const result = await app.createToken({
+      onVerification,
+      scopes: ["repo", "gist"],
+    });
+
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "clientId": "1234567890abcdef1234",
+        "clientSecret": "1234567890abcdef1234567890abcdef12345678",
+        "clientType": "oauth-app",
+        "scopes": Array [
+          "repo",
+          "gist",
+        ],
+        "token": "token123",
+        "tokenType": "oauth",
+        "type": "token",
+      }
+    `);
+
+    expect(onTokenCallback.mock.calls.length).toEqual(1);
+    const [context] = onTokenCallback.mock.calls[0];
+
+    expect(context).toMatchObject({
+      token: "token123",
+      scopes: ["repo", "gist"],
+    });
+    expect(context.octokit).toBeInstanceOf(Mocktokit);
   });
 
   it("app.checkToken(options)", async () => {
@@ -151,22 +221,11 @@ describe("app", () => {
 
     expect(result).toMatchInlineSnapshot(`
       Object {
-        "authentication": Object {
-          "clientId": "0123",
-          "clientSecret": "0123secret",
-          "clientType": "oauth-app",
-          "scopes": undefined,
-          "token": "token123",
-        },
-        "data": Object {
-          "id": 1,
-        },
-        "headers": Object {
-          "content-length": "8",
-          "content-type": "application/json",
-        },
-        "status": 200,
-        "url": "https://api.github.com/applications/0123/token",
+        "clientId": "0123",
+        "clientSecret": "0123secret",
+        "clientType": "oauth-app",
+        "scopes": undefined,
+        "token": "token123",
       }
     `);
   });
@@ -467,7 +526,7 @@ describe("app", () => {
         "https://github.com/login/oauth/access_token",
         {
           access_token: "token123",
-          scope: "repo,gist",
+          scope: "repo gist",
           token_type: "bearer",
         },
         {
@@ -515,7 +574,7 @@ describe("app", () => {
     app.on("token.created", onTokenCallback1);
     app.on("token.created", onTokenCallback2);
 
-    await app.exchangeWebFlowCode({
+    await app.createToken({
       state: "state123",
       code: "code123",
     });

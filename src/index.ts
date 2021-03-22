@@ -73,7 +73,7 @@ export class OAuthApp {
       state
     ) as GetWebFlowAuthorizationUrlInterface;
 
-    this.exchangeWebFlowCode = createTokenWithState.bind(
+    this.createToken = createTokenWithState.bind(
       null,
       state
     ) as CreateTokenInterface;
@@ -88,7 +88,7 @@ export class OAuthApp {
   octokit: OctokitInstance;
   type: ClientType;
   getWebFlowAuthorizationUrl: GetWebFlowAuthorizationUrlInterface;
-  exchangeWebFlowCode: CreateTokenInterface;
+  createToken: CreateTokenInterface;
   checkToken: CheckTokenInterface;
   resetToken: ResetTokenInterface;
   deleteToken: DeleteTokenInterface;
