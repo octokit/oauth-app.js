@@ -1,56 +1,41 @@
-import { request as defaultRequest } from "@octokit/request";
-import btoa from "btoa-lite";
+import * as OAuthMethods from "@octokit/oauth-methods";
 
 import { State } from "../types";
 
-type Options = {
-  clientId: string;
-  clientSecret: string;
+export type CheckTokenOptions = {
   token: string;
 };
 
-type StateOptions = {
-  token: string;
-};
+export async function checkTokenWithState(
+  state: State,
+  options: CheckTokenOptions
+): Promise<
+  | OAuthMethods.CheckTokenOAuthAppResponse
+  | OAuthMethods.CheckTokenGitHubAppResponse
+> {
+  const optionsWithDefaults = {
+    clientId: state.clientId,
+    clientSecret: state.clientSecret,
+    request: state.octokit.request,
+    ...options,
+  };
 
-type CheckTokenRequestOptions = {
-  client_id: string;
-  access_token: string;
-};
+  if (state.clientType === "oauth-app") {
+    return OAuthMethods.checkToken({
+      clientType: "oauth-app",
+      ...optionsWithDefaults,
+    });
+  }
 
-async function sendCheckTokenRequest(
-  request: typeof defaultRequest,
-  options: CheckTokenRequestOptions
-) {
-  const { data } = await request(
-    "POST /applications/{client_id}/token",
-    options
-  );
-  return data;
-}
-
-export async function checkToken(options: Options) {
-  const request = defaultRequest.defaults({
-    headers: {
-      authorization: `basic ${btoa(
-        `${options.clientId}:${options.clientSecret}`
-      )}`,
-    },
-  });
-
-  return sendCheckTokenRequest(request, {
-    client_id: options.clientId,
-    access_token: options.token,
+  return OAuthMethods.checkToken({
+    clientType: "github-app",
+    ...optionsWithDefaults,
   });
 }
 
-export function checkTokenWithState(state: State, options: StateOptions) {
-  return sendCheckTokenRequest(state.octokit.request, {
-    client_id: state.clientId,
-    access_token: options.token,
-  });
+export interface CheckTokenInterface {
+  (options: CheckTokenOptions): Promise<
+    | OAuthMethods.CheckTokenOAuthAppResponse
+    | OAuthMethods.CheckTokenGitHubAppResponse
+  >;
 }
-
-export type AppCheckToken = (
-  options: StateOptions
-) => ReturnType<typeof checkTokenWithState>;

@@ -1,71 +1,69 @@
-import { request as defaultRequest } from "@octokit/request";
-import btoa from "btoa-lite";
+import * as OAuthMethods from "@octokit/oauth-methods";
 
-import { emitEvent } from "../emit-event";
 import { State } from "../types";
+import { emitEvent } from "../emit-event";
 
-type Options = {
-  clientId: string;
-  clientSecret: string;
+export type ResetTokenOptions = {
   token: string;
 };
 
-type StateOptions = {
-  token: string;
-};
+export async function resetTokenWithState(
+  state: State,
+  options: ResetTokenOptions
+): Promise<
+  | OAuthMethods.ResetTokenOAuthAppResponse
+  | OAuthMethods.ResetTokenGitHubAppResponse
+> {
+  const optionsWithDefaults = {
+    clientId: state.clientId,
+    clientSecret: state.clientSecret,
+    request: state.octokit.request,
+    ...options,
+  };
 
-type RequestOptions = {
-  client_id: string;
-  access_token: string;
-};
+  if (state.clientType === "oauth-app") {
+    const response = await OAuthMethods.resetToken({
+      clientType: "oauth-app",
+      ...optionsWithDefaults,
+    });
 
-async function sendResetTokenRequest(
-  request: typeof defaultRequest,
-  options: RequestOptions
-) {
-  const { data } = await request(
-    "PATCH /applications/{client_id}/token",
-    options
-  );
-  return data;
-}
+    await emitEvent(state, {
+      name: "token",
+      action: "reset",
+      token: response.authentication.token,
+      scopes: response.authentication.scopes || undefined,
+      get octokit() {
+        return new state.Octokit({
+          auth: response.authentication.token,
+        });
+      },
+    });
 
-export function resetToken(options: Options) {
-  const request = defaultRequest.defaults({
-    headers: {
-      authorization: `basic ${btoa(
-        `${options.clientId}:${options.clientSecret}`
-      )}`,
-    },
-  });
+    return response;
+  }
 
-  return sendResetTokenRequest(request, {
-    client_id: options.clientId,
-    access_token: options.token,
-  });
-}
-
-export async function resetTokenWithState(state: State, options: StateOptions) {
-  const result = await sendResetTokenRequest(state.octokit.request, {
-    client_id: state.clientId,
-    access_token: options.token,
+  const response = await OAuthMethods.resetToken({
+    clientType: "github-app",
+    ...optionsWithDefaults,
   });
 
   await emitEvent(state, {
     name: "token",
     action: "reset",
-    token: result.token,
-    scopes: result.scopes || undefined,
+    token: response.authentication.token,
     get octokit() {
       return new state.Octokit({
-        auth: result.token,
+        auth: response.authentication.token,
       });
     },
   });
 
-  return result;
+  return response;
 }
 
-export type AppResetToken = (
-  options: StateOptions
-) => ReturnType<typeof resetTokenWithState>;
+export interface ResetTokenInterface {
+  (options: ResetTokenOptions): Promise<
+    | OAuthMethods.ResetTokenOAuthAppResponse
+    | OAuthMethods.ResetTokenGitHubAppResponse
+  >;
+}

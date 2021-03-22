@@ -1,6 +1,6 @@
 import { OAuthAppOctokit } from "./oauth-app-octokit";
 
-type ClientType = "oauth-app" | "github-app";
+export type ClientType = "oauth-app" | "github-app";
 
 export type Scope = string;
 export type ClientId = string;

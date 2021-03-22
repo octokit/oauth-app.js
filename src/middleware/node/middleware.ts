@@ -47,7 +47,7 @@ export async function middleware(
 
   try {
     if (route === routes.getLogin) {
-      const url = app.getAuthorizationUrl({
+      const { url } = app.getWebFlowAuthorizationUrl({
         state: query.state,
         scopes: query.scopes?.split(","),
         allowSignup: query.allowSignup,
@@ -98,11 +98,11 @@ export async function middleware(
       }
 
       const {
-        // @ts-expect-error scopes is not defined for GitHub Apps, but we just pass that on.
         authentication: { token, scopes },
       } = await app.exchangeWebFlowCode({
         state: oauthState,
         code,
+        redirectUrl,
       });
 
       response.writeHead(201, {

@@ -4,12 +4,12 @@ import { OAuthApp } from "../src";
 import { OAuthAppOctokit } from "../src/oauth-app-octokit";
 
 describe("app", () => {
-  it("app.getAuthorizationUrl(options)", () => {
+  it("app.getWebFlowAuthorizationUrl(options)", () => {
     const app = new OAuthApp({
       clientId: "0123",
       clientSecret: "0123secret",
     });
-    const url = app.getAuthorizationUrl({
+    const { url } = app.getWebFlowAuthorizationUrl({
       state: "state123",
     });
     expect(url).toStrictEqual(
@@ -17,12 +17,12 @@ describe("app", () => {
     );
   });
 
-  it("app.getAuthorizationUrl(options) for GitHub App", () => {
+  it("app.getWebFlowAuthorizationUrl(options) for GitHub App", () => {
     const app = new OAuthApp({
       clientId: "lv1.0123",
       clientSecret: "0123secret",
     });
-    const url = app.getAuthorizationUrl({
+    const { url } = app.getWebFlowAuthorizationUrl({
       state: "state123",
     });
     expect(url).toStrictEqual(
@@ -209,11 +209,34 @@ describe("app", () => {
       token: "token123",
     });
 
-    expect(result).toStrictEqual({
-      id: 2,
-      token: "token456",
-      scopes: ["repo", "gist"],
-    });
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "authentication": Object {
+          "clientId": "0123",
+          "clientSecret": "0123secret",
+          "clientType": "oauth-app",
+          "scopes": Array [
+            "repo",
+            "gist",
+          ],
+          "token": "token456",
+        },
+        "data": Object {
+          "id": 2,
+          "scopes": Array [
+            "repo",
+            "gist",
+          ],
+          "token": "token456",
+        },
+        "headers": Object {
+          "content-length": "52",
+          "content-type": "application/json",
+        },
+        "status": 200,
+        "url": "https://api.github.com/applications/0123/token",
+      }
+    `);
     expect(onTokenCallback.mock.calls.length).toEqual(1);
     const [context] = onTokenCallback.mock.calls[0];
 
@@ -264,11 +287,28 @@ describe("app", () => {
       token: "token123",
     });
 
-    expect(result).toStrictEqual({
-      id: 2,
-      token: "token456",
-      scopes: null,
-    });
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "authentication": Object {
+          "clientId": "0123",
+          "clientSecret": "0123secret",
+          "clientType": "oauth-app",
+          "scopes": null,
+          "token": "token456",
+        },
+        "data": Object {
+          "id": 2,
+          "scopes": null,
+          "token": "token456",
+        },
+        "headers": Object {
+          "content-length": "41",
+          "content-type": "application/json",
+        },
+        "status": 200,
+        "url": "https://api.github.com/applications/0123/token",
+      }
+    `);
     expect(onTokenCallback.mock.calls.length).toEqual(1);
     const [context] = onTokenCallback.mock.calls[0];
 

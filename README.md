@@ -17,15 +17,15 @@
 - [Constructor options](#constructor-options)
 - [`app.on(eventName, eventHandler)`](#apponeventname-eventhandler)
 - [`app.octokit`](#appoctokit)
-- [`app.getAuthorizationUrl(options)`](#appgetauthorizationurloptions)
+- [`app.getWebFlowAuthorizationUrl(options)`](#appgetwebflowauthorizationurloptions)
 - [`app.getUserOctokit()`](#appgetuseroctokit)
-- [`app.createToken(options)`](#appcreatetokenoptions)
+- [`app.exchangeWebFlowCode(options)`](#appexchangewebflowcodeoptions)
 - [`app.checkToken(options)`](#appchecktokenoptions)
 - [`app.resetToken(options)`](#appresettokenoptions)
 - [`app.deleteToken(options)`](#appdeletetokenoptions)
 - [`app.deleteAuthorization(options)`](#appdeleteauthorizationoptions)
 - [Middlewares](#middlewares)
-  - [`createNodeMiddleware(app, options)`](#getnodemiddlewareapp-options)
+  - [`createNodeMiddleware(app, options)`](#createnodemiddlewareapp-options)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -84,7 +84,7 @@ require("http").createServer(createNodeMiddleware(app)).listen(3000);
 GitHub Apps do not support `scopes`. If the GitHub App has expiring user tokens enabled, the token used for the `octokit` instance will be refreshed automatically, and the additional refresh-releated properties will be passed to the `"token"` event handler.
 
 ```js
-const { OAuthApp, getNodeMiddleware } = require("@octokit/oauth-app");
+const { OAuthApp, createNodeMiddleware } = require("@octokit/oauth-app");
 
 const app = new OAuthApp({
   clientType: "github-app",
@@ -97,7 +97,7 @@ app.on("token", async ({ token, octokit, expiresAt }) => {
   console.log(`Token retrieved for ${data.login}`);
 });
 
-require("http").createServer(getNodeMiddleware(app)).listen(3000);
+require("http").createServer(createNodeMiddleware(app)).listen(3000);
 // can now receive user authorization callbacks at /api/github/oauth/callback
 // See all endpoints at https://github.com/octokit/oauth-app.js#middlewares
 ```
@@ -166,7 +166,7 @@ require("http").createServer(getNodeMiddleware(app)).listen(3000);
         <code>boolean</code>
       </th>
       <td>
-        Sets the default value for <code>app.getAuthorizationUrl(options)</code>.
+        Sets the default value for <code>app.getWebFlowAuthorizationUrl(options)</code>.
       </td>
     </tr>
     <tr>
@@ -180,7 +180,7 @@ require("http").createServer(getNodeMiddleware(app)).listen(3000);
 
 Only relevant when `clientType` is set to `"oauth-app"`.
 
-Sets the default `scopes` value for `app.getAuthorizationUrl(options)`. See [available scopes](https://docs.github.com/en/developers/apps/scopes-for-oauth-apps#available-scopes)
+Sets the default `scopes` value for `app.getWebFlowAuthorizationUrl(options)`. See [available scopes](https://docs.github.com/en/developers/apps/scopes-for-oauth-apps#available-scopes)
 
 </td></tr>
     <tr>
@@ -322,12 +322,12 @@ For `"token.deleted"` and `"authorization.deleted"` events the `octokit` instanc
 
 Octokit instance with [OAuth App authentication](https://github.com/octokit/auth-oauth-app.js/#readme). Uses `Octokit` constructor option
 
-## `app.getAuthorizationUrl(options)`
+## `app.getWebFlowAuthorizationUrl(options)`
 
-Returns a URL string.
+Returns and object with all options and a `url` property which is the authorization URL. See https://github.com/octokit/oauth-methods.js/#getwebflowauthorizationurl
 
 ```js
-const url = app.getAuthorizationUrl({
+const { url } = app.getWebFlowAuthorizationUrl({
   state: "state123",
   scopes: ["repo"],
 });
@@ -417,10 +417,10 @@ const { octokit } = await app.getUserOctokit(options);
 
 The `octokit` instance is authorized using the user access token if the app is an OAuth app and a user-to-server token if the app is a GitHub app. If the token expires it will be refreshed automatically.
 
-## `app.createToken(options)`
+## `app.exchangeWebFlowCode(options)`
 
 ```js
-const { token } = await app.createToken({
+const { token } = await app.exchangeWebFlowCode({
   state: "state123",
   code: "code123",
 });

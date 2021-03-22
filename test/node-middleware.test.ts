@@ -27,6 +27,7 @@ describe("createNodeMiddleware(app)", () => {
     expect(status).toEqual(302);
 
     const url = new URL(headers.get("location") as string);
+
     expect(url).toMatchObject({
       origin: "https://github.com",
       pathname: "/login/oauth/authorize",
@@ -102,7 +103,9 @@ describe("createNodeMiddleware(app)", () => {
 
   it("GET /api/github/oauth/callback?code=012345&state=mystate123", async () => {
     const appMock = {
-      createToken: jest.fn().mockResolvedValue({ token: "token123" }),
+      exchangeWebFlowCode: jest
+        .fn()
+        .mockResolvedValue({ authentication: { token: "token123" } }),
     };
 
     const server = createServer(
@@ -120,8 +123,8 @@ describe("createNodeMiddleware(app)", () => {
     expect(response.status).toEqual(200);
     expect(await response.text()).toMatch(/token123/);
 
-    expect(appMock.createToken.mock.calls.length).toEqual(1);
-    expect(appMock.createToken.mock.calls[0][0]).toStrictEqual({
+    expect(appMock.exchangeWebFlowCode.mock.calls.length).toEqual(1);
+    expect(appMock.exchangeWebFlowCode.mock.calls[0][0]).toStrictEqual({
       state: "state123",
       code: "012345",
     });
@@ -129,15 +132,15 @@ describe("createNodeMiddleware(app)", () => {
 
   it("POST /api/github/oauth/token", async () => {
     const appMock = {
-      createToken: jest
-        .fn()
-        .mockResolvedValue({ token: "token123", scopes: ["repo", "gist"] }),
+      exchangeWebFlowCode: jest.fn().mockResolvedValue({
+        authentication: { token: "token123", scopes: ["repo", "gist"] },
+      }),
     };
 
     const server = createServer(
       createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(
@@ -147,6 +150,7 @@ describe("createNodeMiddleware(app)", () => {
         body: JSON.stringify({
           code: "012345",
           state: "state123",
+          redirectUrl: "http://example.com",
         }),
       }
     );
@@ -159,10 +163,11 @@ describe("createNodeMiddleware(app)", () => {
       scopes: ["repo", "gist"],
     });
 
-    expect(appMock.createToken.mock.calls.length).toEqual(1);
-    expect(appMock.createToken.mock.calls[0][0]).toStrictEqual({
+    expect(appMock.exchangeWebFlowCode.mock.calls.length).toEqual(1);
+    expect(appMock.exchangeWebFlowCode.mock.calls[0][0]).toStrictEqual({
       state: "state123",
       code: "012345",
+      redirectUrl: "http://example.com",
     });
   });
 
@@ -174,7 +179,7 @@ describe("createNodeMiddleware(app)", () => {
     const server = createServer(
       createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(
