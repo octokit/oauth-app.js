@@ -9,14 +9,13 @@ import {
   GetWebFlowAuthorizationUrlInterface,
 } from "./methods/get-web-flow-authorization-url";
 import {
-  exchangeWebFlowCodeWithState,
-  ExchangeWebFlowCodeInterface,
-} from "./methods/exchange-web-flow-token";
+  createTokenWithState,
+  CreateTokenInterface,
+} from "./methods/create-token";
 import {
   checkTokenWithState,
   CheckTokenInterface,
 } from "./methods/check-token";
-
 import {
   resetTokenWithState,
   ResetTokenInterface,
@@ -74,10 +73,10 @@ export class OAuthApp {
       state
     ) as GetWebFlowAuthorizationUrlInterface;
 
-    this.exchangeWebFlowCode = exchangeWebFlowCodeWithState.bind(
+    this.exchangeWebFlowCode = createTokenWithState.bind(
       null,
       state
-    ) as ExchangeWebFlowCodeInterface;
+    ) as CreateTokenInterface;
     this.checkToken = checkTokenWithState.bind(null, state);
     this.resetToken = resetTokenWithState.bind(null, state);
     this.deleteToken = deleteTokenWithState.bind(null, state);
@@ -89,7 +88,7 @@ export class OAuthApp {
   octokit: OctokitInstance;
   type: ClientType;
   getWebFlowAuthorizationUrl: GetWebFlowAuthorizationUrlInterface;
-  exchangeWebFlowCode: ExchangeWebFlowCodeInterface;
+  exchangeWebFlowCode: CreateTokenInterface;
   checkToken: CheckTokenInterface;
   resetToken: ResetTokenInterface;
   deleteToken: DeleteTokenInterface;

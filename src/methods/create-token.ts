@@ -2,6 +2,7 @@ import * as OAuthMethods from "@octokit/oauth-methods";
 
 import { State } from "../types";
 import { emitEvent } from "../emit-event";
+import { Octokit } from "@octokit/core";
 
 type StateOptions = "clientType" | "clientId" | "clientSecret" | "request";
 
@@ -14,7 +15,7 @@ export type ExchangeWebFlowCodeGitHubAppOptions = Omit<
   StateOptions
 >;
 
-export async function exchangeWebFlowCodeWithState(
+export async function createTokenWithState(
   state: State,
   options:
     | ExchangeWebFlowCodeOAuthAppOptions
@@ -66,7 +67,7 @@ export async function exchangeWebFlowCodeWithState(
   return response;
 }
 
-export interface ExchangeWebFlowCodeInterface {
+export interface CreateTokenInterface {
   (
     options: ExchangeWebFlowCodeOAuthAppOptions
   ): Promise<OAuthMethods.ExchangeWebFlowCodeOAuthAppResponse>;
