@@ -21,7 +21,10 @@ import {
   resetTokenWithState,
   ResetTokenInterface,
 } from "./methods/reset-token";
-import { deleteTokenWithState, AppDeleteToken } from "./methods/delete-token";
+import {
+  deleteTokenWithState,
+  DeleteTokenInterface,
+} from "./methods/delete-token";
 import {
   deleteAuthorizationWithState,
   AppDeleteAuthorization,
@@ -77,8 +80,8 @@ export class OAuthApp {
     ) as ExchangeWebFlowCodeInterface;
     this.checkToken = checkTokenWithState.bind(null, state);
     this.resetToken = resetTokenWithState.bind(null, state);
-
     this.deleteToken = deleteTokenWithState.bind(null, state);
+
     this.deleteAuthorization = deleteAuthorizationWithState.bind(null, state);
   }
 
@@ -90,6 +93,6 @@ export class OAuthApp {
   exchangeWebFlowCode: ExchangeWebFlowCodeInterface;
   checkToken: CheckTokenInterface;
   resetToken: ResetTokenInterface;
-  deleteToken: AppDeleteToken;
+  deleteToken: DeleteTokenInterface;
   deleteAuthorization: AppDeleteAuthorization;
 }

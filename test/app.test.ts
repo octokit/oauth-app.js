@@ -352,7 +352,14 @@ describe("app", () => {
       token: "token123",
     });
 
-    expect(result).toBeUndefined();
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "data": undefined,
+        "headers": Object {},
+        "status": 204,
+        "url": "https://api.github.com/applications/0123/token",
+      }
+    `);
 
     expect(onTokenCallback.mock.calls.length).toEqual(2);
     const [context_before_deleted] = onTokenCallback.mock.calls[0];
