@@ -1,9 +1,61 @@
 import fetchMock from "fetch-mock";
+import { Octokit } from "@octokit/core";
 
 import { OAuthApp } from "../src";
 import { OAuthAppOctokit } from "../src/oauth-app-octokit";
 
 describe("app", () => {
+  it("app.getUserOctokit(options)", async () => {
+    const mock = fetchMock
+      .sandbox()
+      .postOnce(
+        "https://github.com/login/oauth/access_token",
+        {
+          access_token: "token123",
+          scope: "",
+          token_type: "bearer",
+        },
+        {
+          body: {
+            client_id: "0123",
+            client_secret: "0123secret",
+            code: "code123",
+          },
+        }
+      )
+      .getOnce(
+        "https://api.github.com/user",
+        { login: "octocat" },
+        {
+          headers: {
+            authorization: "token token123",
+          },
+        }
+      );
+
+    const Mocktokit = OAuthAppOctokit.defaults({
+      request: {
+        fetch: mock,
+      },
+    });
+
+    const app = new OAuthApp({
+      clientId: "0123",
+      clientSecret: "0123secret",
+      Octokit: Mocktokit,
+    });
+
+    const octokit = await app.getUserOctokit({
+      code: "code123",
+    });
+    expect(octokit).toBeInstanceOf(Octokit);
+
+    const {
+      data: { login },
+    } = await octokit.request("GET /user");
+    expect(login).toEqual("octocat");
+  });
+
   it("app.getWebFlowAuthorizationUrl(options)", () => {
     const app = new OAuthApp({
       clientId: "0123",

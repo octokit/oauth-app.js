@@ -17,9 +17,11 @@
 - [Constructor options](#constructor-options)
 - [`app.on(eventName, eventHandler)`](#apponeventname-eventhandler)
 - [`app.octokit`](#appoctokit)
-- [`app.getUserOctokit()`](#appgetuseroctokit)
+- [`app.getUserOctokit(options)`](#appgetuseroctokitoptions)
 - [`app.getWebFlowAuthorizationUrl(options)`](#appgetwebflowauthorizationurloptions)
 - [`app.createToken(options)`](#appcreatetokenoptions)
+  - [For OAuth Web flow](#for-oauth-web-flow)
+  - [For OAuth Device flow](#for-oauth-device-flow)
 - [`app.checkToken(options)`](#appchecktokenoptions)
 - [`app.resetToken(options)`](#appresettokenoptions)
 - [`app.deleteToken(options)`](#appdeletetokenoptions)
@@ -322,13 +324,13 @@ For `"token.deleted"` and `"authorization.deleted"` events the `octokit` instanc
 
 Octokit instance with [OAuth App authentication](https://github.com/octokit/auth-oauth-app.js/#readme). Uses `Octokit` constructor option
 
-## `app.getUserOctokit()`
+## `app.getUserOctokit(options)`
 
 ```js
-const { octokit } = await app.getUserOctokit(options);
+const { octokit } = await app.getUserOctokit({ code: "code123" });
 ```
 
-`options` are [`@octokit/auth-oauth-user`'s strategy options](https://github.com/octokit/auth-oauth-user.js/tree/initial-version#createoauthuserauthoptions-or-new-octokit-auth-)
+`options` are the same as in [`app.createToken(options)`](#appcreatetokenoptions)
 
 The `octokit` instance is authorized using the user access token if the app is an OAuth app and a user-to-server token if the app is a GitHub app. If the token expires it will be refreshed automatically.
 

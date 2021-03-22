@@ -1,4 +1,7 @@
-import { createOAuthAppAuth } from "@octokit/auth-oauth-app";
+import {
+  createOAuthAppAuth,
+  createOAuthUserAuth,
+} from "@octokit/auth-oauth-app";
 
 import { VERSION } from "./version";
 import { addEventHandler } from "./add-event-handler";
@@ -68,6 +71,19 @@ export class OAuthApp {
 
     this.on = addEventHandler.bind(null, state);
     this.octokit = octokit;
+    this.getUserOctokit = async (options: any) => {
+      return octokit.auth({
+        type: "oauth-user",
+        ...options,
+        factory(options: any) {
+          return new Octokit({
+            authStrategy: createOAuthUserAuth,
+            auth: options,
+          });
+        },
+      }) as Promise<OctokitInstance>;
+    };
+
     this.getWebFlowAuthorizationUrl = getWebFlowAuthorizationUrlWithState.bind(
       null,
       state
@@ -84,9 +100,10 @@ export class OAuthApp {
   }
 
   // assigned during constructor
+  type: ClientType;
   on: AddEventHandler;
   octokit: OctokitInstance;
-  type: ClientType;
+  getUserOctokit: (options: any) => Promise<OctokitInstance>;
   getWebFlowAuthorizationUrl: GetWebFlowAuthorizationUrlInterface;
   createToken: CreateTokenInterface;
   checkToken: CheckTokenInterface;
