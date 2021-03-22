@@ -1,19 +1,25 @@
 import { createOAuthAppAuth } from "@octokit/auth-oauth-app";
 
-import { checkToken } from "@octokit/oauth-methods";
-export type AppCheckToken = (options: {
+import { checkToken, exchangeWebFlowCode } from "@octokit/oauth-methods";
+export type AppCheckTokenOptions = (options: {
   token: string;
 }) => ReturnType<typeof checkToken>;
+export type ExchangeWebFlowCodeOptions = (options: {
+  code: string;
+  state?: string;
+  redirectUrl?: string;
+}) => ReturnType<typeof exchangeWebFlowCode>;
 
 import { VERSION } from "./version";
 import { addEventHandler } from "./add-event-handler";
 import { OAuthAppOctokit } from "./oauth-app-octokit";
+import { emitEvent } from "./emit-event";
 
 import {
   getAuthorizationUrlWithState,
   AppGetAuthorizationUrl,
 } from "./methods/get-authorization-url";
-import { createTokenWithState, AppCreateToken } from "./methods/create-token";
+// import { createTokenWithState, AppCreateToken } from "./methods/create-token";
 // import { checkTokenWithState, AppCheckToken } from "./methods/check-token";
 import { resetTokenWithState, AppResetToken } from "./methods/reset-token";
 import { deleteTokenWithState, AppDeleteToken } from "./methods/delete-token";
@@ -59,7 +65,56 @@ export class OAuthApp {
     this.on = addEventHandler.bind(null, state);
     this.octokit = octokit;
     this.getAuthorizationUrl = getAuthorizationUrlWithState.bind(null, state);
-    this.createToken = createTokenWithState.bind(null, state);
+    // @ts-expect-error whatever TS
+    this.exchangeWebFlowCode = async ({
+      code,
+      state: oauthState,
+      redirectUrl,
+    }) => {
+      const common = {
+        clientId: state.clientId,
+        clientSecret: state.clientSecret,
+        request: octokit.request,
+        code,
+        state: oauthState,
+        redirectUrl,
+      };
+
+      if (state.clientType === "oauth-app") {
+        const result = await exchangeWebFlowCode({
+          clientType: state.clientType,
+          ...common,
+        });
+
+        await emitEvent(state, {
+          name: "token",
+          action: "created",
+          token: result.authentication.token,
+          scopes: result.authentication.scopes,
+          get octokit() {
+            return new state.Octokit({ auth: result.authentication.token });
+          },
+        });
+
+        return result;
+      }
+
+      const result = await exchangeWebFlowCode({
+        clientType: state.clientType,
+        ...common,
+      });
+
+      await emitEvent(state, {
+        name: "token",
+        action: "created",
+        token: result.authentication.token,
+        get octokit() {
+          return new state.Octokit({ auth: result.authentication.token });
+        },
+      });
+
+      return result;
+    };
     // this.checkToken = checkTokenWithState.bind(null, state);
     this.checkToken = ({ token }) => {
       return checkToken({
@@ -80,8 +135,8 @@ export class OAuthApp {
   on: AddEventHandler;
   octokit: OctokitInstance;
   getAuthorizationUrl: AppGetAuthorizationUrl;
-  createToken: AppCreateToken;
-  checkToken: AppCheckToken;
+  exchangeWebFlowCode: ExchangeWebFlowCodeOptions;
+  checkToken: AppCheckTokenOptions;
   resetToken: AppResetToken;
   deleteToken: AppDeleteToken;
   deleteAuthorization: AppDeleteAuthorization;

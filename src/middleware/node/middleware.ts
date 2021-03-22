@@ -70,7 +70,9 @@ export async function middleware(
         );
       }
 
-      const { token } = await app.createToken({
+      const {
+        authentication: { token },
+      } = await app.exchangeWebFlowCode({
         state: query.state,
         code: query.code,
       });
@@ -95,7 +97,10 @@ export async function middleware(
         );
       }
 
-      const { token, scopes } = await app.createToken({
+      const {
+        // @ts-expect-error scopes is not defined for GitHub Apps, but we just pass that on.
+        authentication: { token, scopes },
+      } = await app.exchangeWebFlowCode({
         state: oauthState,
         code,
       });

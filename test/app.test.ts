@@ -30,7 +30,7 @@ describe("app", () => {
     );
   });
 
-  it("app.createToken(options)", async () => {
+  it("app.exchangeWebFlowCode(options)", async () => {
     const mock = fetchMock
       .sandbox()
       .postOnce(
@@ -74,13 +74,36 @@ describe("app", () => {
     const onTokenCallback = jest.fn();
     app.on("token.created", onTokenCallback);
 
-    const { token, scopes } = await app.createToken({
+    const result = await app.exchangeWebFlowCode({
       state: "state123",
       code: "code123",
     });
 
-    expect(token).toEqual("token123");
-    expect(scopes).toEqual(["repo", "gist"]);
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "authentication": Object {
+          "clientId": "0123",
+          "clientSecret": "0123secret",
+          "clientType": "oauth-app",
+          "scopes": Array [
+            "repo",
+            "gist",
+          ],
+          "token": "token123",
+        },
+        "data": Object {
+          "access_token": "token123",
+          "scope": "repo,gist",
+          "token_type": "bearer",
+        },
+        "headers": Object {
+          "content-length": "69",
+          "content-type": "application/json",
+        },
+        "status": 200,
+        "url": "https://github.com/login/oauth/access_token",
+      }
+    `);
 
     expect(onTokenCallback.mock.calls.length).toEqual(1);
     const [context] = onTokenCallback.mock.calls[0];
@@ -95,7 +118,7 @@ describe("app", () => {
     expect(data.login).toEqual("octocat");
   });
 
-  it.only("app.checkToken(options)", async () => {
+  it("app.checkToken(options)", async () => {
     const mock = fetchMock.sandbox().postOnce(
       "https://api.github.com/applications/0123/token",
       { id: 1 },
@@ -438,7 +461,7 @@ describe("app", () => {
     app.on("token.created", onTokenCallback1);
     app.on("token.created", onTokenCallback2);
 
-    await app.createToken({
+    await app.exchangeWebFlowCode({
       state: "state123",
       code: "code123",
     });
