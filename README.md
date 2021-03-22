@@ -29,7 +29,7 @@
   - [`deleteToken(options)`](#deletetokenoptions)
   - [`deleteAuthorization(options)`](#deleteauthorizationoptions)
 - [Middlewares](#middlewares)
-  - [`getNodeMiddleware(app, options)`](#getnodemiddlewareapp-options)
+  - [`createNodeMiddleware(app, options)`](#getnodemiddlewareapp-options)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -59,7 +59,7 @@ Node
 Install with `npm install @octokit/oauth-app`
 
 ```js
-const { OAuthApp, getNodeMiddleware } = require("@octokit/oauth-app");
+const { OAuthApp, createNodeMiddleware } = require("@octokit/oauth-app");
 
 const app = new OAuthApp({
   clientId: "0123",
@@ -71,7 +71,7 @@ app.on("token", async ({ token, octokit }) => {
   console.log(`Token retrieved for ${data.login}`);
 });
 
-require("http").createServer(getNodeMiddleware(app)).listen(3000);
+require("http").createServer(createNodeMiddleware(app)).listen(3000);
 // can now receive user authorization callbacks at /api/github/oauth/callback
 // See all endpoints at https://github.com/octokit/oauth-app.js#middlewares
 ```
@@ -1174,18 +1174,18 @@ By default, all middlewares expose the following routes
 | `DELETE /api/github/oauth/token` | Invalidates current token, basically the equivalent of a logout. Must authenticate using token in `Authorization` header.                                                                                                                                       |
 | `DELETE /api/github/oauth/grant` | Revokes the user's grant, basically the equivalent of an uninstall. must authenticate using token in `Authorization` header.                                                                                                                                    |
 
-### `getNodeMiddleware(app, options)`
+### `createNodeMiddleware(app, options)`
 
 Native http server middleware for Node.js
 
 ```js
-const { OAuthApp, getNodeMiddleware } = require("@octokit/oauth-app");
+const { OAuthApp, createNodeMiddleware } = require("@octokit/oauth-app");
 const app = new OAuthApp({
   clientId: "0123",
   clientSecret: "0123secret",
 });
 
-const middleware = getNodeMiddleware(app, {
+const middleware = createNodeMiddleware(app, {
   pathPrefix: "/api/github/oauth/",
 });
 
