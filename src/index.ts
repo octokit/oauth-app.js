@@ -27,7 +27,7 @@ import {
 } from "./methods/delete-token";
 import {
   deleteAuthorizationWithState,
-  AppDeleteAuthorization,
+  DeleteAuthorizationInterface,
 } from "./methods/delete-authorization";
 
 import {
@@ -81,7 +81,6 @@ export class OAuthApp {
     this.checkToken = checkTokenWithState.bind(null, state);
     this.resetToken = resetTokenWithState.bind(null, state);
     this.deleteToken = deleteTokenWithState.bind(null, state);
-
     this.deleteAuthorization = deleteAuthorizationWithState.bind(null, state);
   }
 
@@ -94,5 +93,5 @@ export class OAuthApp {
   checkToken: CheckTokenInterface;
   resetToken: ResetTokenInterface;
   deleteToken: DeleteTokenInterface;
-  deleteAuthorization: AppDeleteAuthorization;
+  deleteAuthorization: DeleteAuthorizationInterface;
 }

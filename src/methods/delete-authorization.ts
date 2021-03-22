@@ -1,56 +1,24 @@
-import { createOAuthAppAuth } from "@octokit/auth-oauth-app";
+import * as OAuthMethods from "@octokit/oauth-methods";
 import { createUnauthenticatedAuth } from "@octokit/auth-unauthenticated";
-import { request as defaultRequest } from "@octokit/request";
 
-import { emitEvent } from "../emit-event";
 import { State } from "../types";
+import { emitEvent } from "../emit-event";
 
-type Options = {
-  clientId: string;
-  clientSecret: string;
+export type DeleteAuthorizationOptions = {
   token: string;
 };
-
-type StateOptions = {
-  token: string;
-};
-
-type RequestOptions = {
-  client_id: string;
-  access_token: string;
-};
-
-async function sendDeleteAuthorizationRequest(
-  request: typeof defaultRequest,
-  options: RequestOptions
-) {
-  const { data } = await request(
-    "DELETE /applications/{client_id}/grant",
-    options
-  );
-  return data;
-}
-
-export function deleteAuthorization(options: Options) {
-  const request = defaultRequest.defaults({
-    request: {
-      hook: createOAuthAppAuth({
-        clientId: options.clientId,
-        clientSecret: options.clientSecret,
-      }).hook,
-    },
-  });
-
-  return sendDeleteAuthorizationRequest(request, {
-    client_id: options.clientId,
-    access_token: options.token,
-  });
-}
 
 export async function deleteAuthorizationWithState(
   state: State,
-  options: StateOptions
-) {
+  options: DeleteAuthorizationOptions
+): Promise<OAuthMethods.DeleteAuthorizationResponse> {
+  const optionsWithDefaults = {
+    clientId: state.clientId,
+    clientSecret: state.clientSecret,
+    request: state.octokit.request,
+    ...options,
+  };
+
   await emitEvent(state, {
     name: "authorization",
     action: "before_deleted",
@@ -69,10 +37,16 @@ export async function deleteAuthorizationWithState(
     },
   });
 
-  const result = await sendDeleteAuthorizationRequest(state.octokit.request, {
-    client_id: state.clientId,
-    access_token: options.token,
-  });
+  const response =
+    state.clientType === "oauth-app"
+      ? await OAuthMethods.deleteAuthorization({
+          clientType: "oauth-app",
+          ...optionsWithDefaults,
+        })
+      : await OAuthMethods.deleteAuthorization({
+          clientType: "github-app",
+          ...optionsWithDefaults,
+        });
 
   await emitEvent(state, {
     name: "token",
@@ -102,9 +76,11 @@ export async function deleteAuthorizationWithState(
     },
   });
 
-  return result;
+  return response;
 }
 
-export type AppDeleteAuthorization = (
-  options: StateOptions
-) => ReturnType<typeof deleteAuthorizationWithState>;
+export interface DeleteAuthorizationInterface {
+  (
+    options: DeleteAuthorizationOptions
+  ): Promise<OAuthMethods.DeleteAuthorizationResponse>;
+}

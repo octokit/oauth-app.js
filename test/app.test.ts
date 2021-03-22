@@ -412,7 +412,14 @@ describe("app", () => {
       token: "token123",
     });
 
-    expect(result).toBeUndefined();
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "data": undefined,
+        "headers": Object {},
+        "status": 204,
+        "url": "https://api.github.com/applications/0123/grant",
+      }
+    `);
 
     expect(onTokenCallback.mock.calls.length).toEqual(4);
     const [
