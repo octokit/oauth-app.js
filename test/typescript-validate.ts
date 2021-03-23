@@ -18,7 +18,7 @@ export async function OAuthAppTest() {
     onVerification() {},
     scopes: [],
   });
-  result.scopes;
+  result.authentication.scopes;
 
   oauthApp.on("token.created", (context) => {
     context.scopes;
