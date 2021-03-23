@@ -133,16 +133,18 @@ describe("app", () => {
 
     expect(result).toMatchInlineSnapshot(`
       Object {
-        "clientId": "0123",
-        "clientSecret": "0123secret",
-        "clientType": "oauth-app",
-        "scopes": Array [
-          "repo",
-          "gist",
-        ],
-        "token": "token123",
-        "tokenType": "oauth",
-        "type": "token",
+        "authentication": Object {
+          "clientId": "0123",
+          "clientSecret": "0123secret",
+          "clientType": "oauth-app",
+          "scopes": Array [
+            "repo",
+            "gist",
+          ],
+          "token": "token123",
+          "tokenType": "oauth",
+          "type": "token",
+        },
       }
     `);
 
@@ -217,16 +219,18 @@ describe("app", () => {
 
     expect(result).toMatchInlineSnapshot(`
       Object {
-        "clientId": "1234567890abcdef1234",
-        "clientSecret": "1234567890abcdef1234567890abcdef12345678",
-        "clientType": "oauth-app",
-        "scopes": Array [
-          "repo",
-          "gist",
-        ],
-        "token": "token123",
-        "tokenType": "oauth",
-        "type": "token",
+        "authentication": Object {
+          "clientId": "1234567890abcdef1234",
+          "clientSecret": "1234567890abcdef1234567890abcdef12345678",
+          "clientType": "oauth-app",
+          "scopes": Array [
+            "repo",
+            "gist",
+          ],
+          "token": "token123",
+          "tokenType": "oauth",
+          "type": "token",
+        },
       }
     `);
 
