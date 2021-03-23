@@ -592,7 +592,7 @@ Resolves with response body from ["Check a token" request](https://docs.github.c
 ## `app.resetToken(options)`
 
 ```js
-const { token } = await app.resetToken({
+const { data, authentication } = await app.resetToken({
   token: "token123",
 });
 // "token123" is no longer valid. Use `token` instead
@@ -634,7 +634,7 @@ Resolves with response body from ["Reset a token" request](https://docs.github.c
 Expiring tokens are only supported by GitHub Apps, and only if expiring user tokens are enabled.
 
 ```js
-const { token } = await app.refreshToken({
+const { data, authentication } = await app.refreshToken({
   refreshToken: "refreshtoken123",
 });
 ```
@@ -669,6 +669,101 @@ const { token } = await app.refreshToken({
 </table>
 
 Resolves with response body from ["Renewing a user token with a refresh token" request](https://docs.github.com/en/developers/apps/refreshing-user-to-server-access-tokens#renewing-a-user-token-with-a-refresh-token) (JSON) with an additional `authentication` property which is a [user authentication object](https://github.com/octokit/auth-oauth-app.js#authentication-object).
+
+## `app.scopeToken(options)`
+
+Scoping a token is only supported by GitHub Apps. "Scoping" in this context means to limit access to a selected installation, with a subset of repositories and permissions.
+
+```js
+const { data, authentication } = await app.scopeToken({
+  clientType: "github-app",
+  clientId: "lv1.1234567890abcdef",
+  clientSecret: "1234567890abcdef12347890abcdef12345678",
+  token: "usertoken123",
+  target: "octokit",
+  repositories: ["oauth-app.js"],
+  permissions: {
+    issues: "write",
+  },
+});
+```
+
+Options
+
+<table width="100%">
+  <thead align=left>
+    <tr>
+      <th width=150>
+        name
+      </th>
+      <th width=70>
+        type
+      </th>
+      <th>
+        description
+      </th>
+    </tr>
+  </thead>
+  <tbody align=left valign=top>
+    <tr>
+      <th>
+        <code>target</code>
+      </th>
+      <th>
+        <code>string</code>
+      </th>
+      <td>
+        <strong>Required unless <code>targetId</code> is set</strong>. The name of the user or organization to scope the user-to-server access token to.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <code>targetId</code>
+      </th>
+      <th>
+        <code>integer</code>
+      </th>
+      <td>
+        <strong>Required unless <code>target</code> is set</strong>. The ID of the user or organization to scope the user-to-server access token to.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <code>repositories</code>
+      </th>
+      <th>
+        <code>array of strings</code>
+      </th>
+      <td>
+        The list of repository names to scope the user-to-server access token to. <code>repositories</code> may not be specified if <code>repository_ids</code> is specified.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <code>repository_ids</code>
+      </th>
+      <th>
+        <code>array of integers</code>
+      </th>
+      <td>
+        The list of repository IDs to scope the user-to-server access token to. <code>repositories</code> may not be specified if <code>repositories</code> is specified.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <code>permissions</code>
+      </th>
+      <th>
+        <code>object</code>
+      </th>
+      <td>
+        The permissions granted to the user-to-server access token. See <a href="https://docs.github.com/en/rest/reference/permissions-required-for-github-apps">GitHub App Permissions</a>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+Resolves with response body from ["Create a scoped access token" request](https://docs.github.com/en/rest/reference/apps#create-a-scoped-access-token) with an additional `authentication` property which is a [user authentication object](https://github.com/octokit/auth-oauth-app.js#authentication-object).
 
 ## `app.deleteToken(options)`
 
@@ -764,6 +859,7 @@ By default, all middlewares expose the following routes
 | `GET /api/github/oauth/token`           | Check if token is valid. Must authenticate using token in `Authorization` header. Uses GitHub's [`POST /applications/{client_id}/token`](https://docs.github.com/en/rest/reference/apps#check-a-token) endpoint                                                                                                                                                               |
 | `PATCH /api/github/oauth/token`         | Resets a token (invalidates current one, returns new token). Must authenticate using token in `Authorization` header. Uses GitHub's [`PATCH /applications/{client_id}/token`](https://docs.github.com/en/rest/reference/apps#reset-a-token) endpoint.                                                                                                                         |
 | `PATCH /api/github/oauth/refresh-token` | Refreshes an expiring token (invalidates current one, returns new access token and refresh token). Must authenticate using token in `Authorization` header. Uses GitHub's [`POST https://github.com/login/oauth/access_token`](https://docs.github.com/en/developers/apps/refreshing-user-to-server-access-tokens#renewing-a-user-token-with-a-refresh-token) OAuth endpoint. |
+| `POST /api/github/oauth/token/scoped`   | Creates a scoped token (does not invalidate the current one). Must authenticate using token in `Authorization` header. Uses GitHub's [`POST /applications/{client_id}/token/scoped`](https://docs.github.com/en/rest/reference/apps#create-a-scoped-access-token) endpoint.                                                                                                   |
 | `DELETE /api/github/oauth/token`        | Invalidates current token, basically the equivalent of a logout. Must authenticate using token in `Authorization` header.                                                                                                                                                                                                                                                     |
 | `DELETE /api/github/oauth/grant`        | Revokes the user's grant, basically the equivalent of an uninstall. must authenticate using token in `Authorization` header.                                                                                                                                                                                                                                                  |
 

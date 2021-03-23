@@ -12,12 +12,18 @@ export type ClientId = string;
 export type ClientSecret = string;
 export type Token = string;
 export type EventName = "token" | "authorization";
-export type ActionName = "created" | "reset" | "deleted" | "refreshed";
+export type ActionName =
+  | "created"
+  | "reset"
+  | "deleted"
+  | "refreshed"
+  | "scoped";
 export type EventAndActionName =
   | "token"
   | "token.created"
   | "token.reset"
   | "token.refreshed"
+  | "token.scoped"
   | "token.deleted"
   | "authorization"
   | "authorization.deleted";

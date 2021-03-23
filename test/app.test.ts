@@ -616,6 +616,101 @@ describe("app", () => {
     );
   });
 
+  it("app.scopeToken(options)", async () => {
+    const mock = fetchMock.sandbox().postOnce(
+      "https://api.github.com/applications/lv1.1234567890abcdef/token/scoped",
+      {
+        token: "token456",
+        account: {
+          login: "octokit",
+          id: 1,
+        },
+      },
+      {
+        body: {
+          access_token: "token123",
+          target: "octokit",
+          repositories: ["oauth-methods.js"],
+          permissions: { issues: "write" },
+        },
+      }
+    );
+
+    const Mocktokit = OAuthAppOctokit.defaults({
+      request: {
+        fetch: mock,
+      },
+    });
+
+    const app = new OAuthApp({
+      clientType: "github-app",
+      clientId: "lv1.1234567890abcdef",
+      clientSecret: "1234567890abcdef12347890abcdef12345678",
+      Octokit: Mocktokit,
+    });
+
+    const onTokenCallback = jest.fn();
+    app.on("token.scoped", onTokenCallback);
+
+    const result = await app.scopeToken({
+      token: "token123",
+      // @ts-expect-error TBD fix this in @octokit/oauth-methods
+      target: "octokit",
+      repositories: ["oauth-methods.js"],
+      permissions: { issues: "write" },
+    });
+
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "authentication": Object {
+          "clientId": "lv1.1234567890abcdef",
+          "clientSecret": "1234567890abcdef12347890abcdef12345678",
+          "clientType": "github-app",
+          "token": "token456",
+        },
+        "data": Object {
+          "account": Object {
+            "id": 1,
+            "login": "octokit",
+          },
+          "token": "token456",
+        },
+        "headers": Object {
+          "content-length": "57",
+          "content-type": "application/json",
+        },
+        "status": 200,
+        "url": "https://api.github.com/applications/lv1.1234567890abcdef/token/scoped",
+      }
+    `);
+    expect(onTokenCallback.mock.calls.length).toEqual(1);
+    const [context] = onTokenCallback.mock.calls[0];
+
+    expect(context).toMatchObject({
+      name: "token",
+      action: "scoped",
+      token: "token456",
+    });
+    expect(context.octokit).toBeInstanceOf(Mocktokit);
+  });
+
+  it("app.scopeToken() for OAuth App", async () => {
+    const app = new OAuthApp({
+      clientType: "oauth-app",
+      clientId: "1234567890abcdef1234",
+      clientSecret: "1234567890abcdef12347890abcdef12345678",
+    });
+
+    await expect(
+      async () =>
+        await app.scopeToken({
+          token: "token123",
+        })
+    ).rejects.toThrow(
+      "[@octokit/oauth-app] app.scopeToken() is not supported for OAuth Apps"
+    );
+  });
+
   it("app.deleteToken(options)", async () => {
     const mock = fetchMock
       .sandbox()
