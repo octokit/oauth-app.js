@@ -25,6 +25,10 @@ import {
   ResetTokenInterface,
 } from "./methods/reset-token";
 import {
+  refreshTokenWithState,
+  RefreshTokenInterface,
+} from "./methods/refresh-token";
+import {
   deleteTokenWithState,
   DeleteTokenInterface,
 } from "./methods/delete-token";
@@ -92,6 +96,10 @@ export class OAuthApp<TClientType extends ClientType = "oauth-app"> {
       null,
       state
     ) as ResetTokenInterface<TClientType>;
+    this.refreshToken = refreshTokenWithState.bind(
+      null,
+      state
+    ) as RefreshTokenInterface;
     this.deleteToken = deleteTokenWithState.bind(null, state);
     this.deleteAuthorization = deleteAuthorizationWithState.bind(null, state);
   }
@@ -105,6 +113,7 @@ export class OAuthApp<TClientType extends ClientType = "oauth-app"> {
   createToken: CreateTokenInterface<TClientType>;
   checkToken: CheckTokenInterface<TClientType>;
   resetToken: ResetTokenInterface<TClientType>;
+  refreshToken: RefreshTokenInterface;
   deleteToken: DeleteTokenInterface;
   deleteAuthorization: DeleteAuthorizationInterface;
 }

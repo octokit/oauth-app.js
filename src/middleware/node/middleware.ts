@@ -21,6 +21,7 @@ export async function middleware(
     createToken: `POST ${options.pathPrefix}/token`,
     getToken: `GET ${options.pathPrefix}/token`,
     patchToken: `PATCH ${options.pathPrefix}/token`,
+    patchRefreshToken: `PATCH ${options.pathPrefix}/refresh-token`,
     deleteToken: `DELETE ${options.pathPrefix}/token`,
     deleteGrant: `DELETE ${options.pathPrefix}/grant`,
   };
@@ -138,6 +139,31 @@ export async function middleware(
       const result = await app.resetToken({
         token,
       });
+
+      response.writeHead(200, {
+        "content-type": "application/json",
+      });
+      return response.end(JSON.stringify(result));
+    }
+
+    if (route === routes.patchRefreshToken) {
+      const token = headers.authorization?.substr("token ".length);
+
+      if (!token) {
+        throw new Error(
+          '[@octokit/oauth-app] "Authorization" header is required'
+        );
+      }
+
+      const { refreshToken } = body;
+
+      if (!refreshToken) {
+        throw new Error(
+          "[@octokit/oauth-app] refreshToken must be sent in request body"
+        );
+      }
+
+      const result = await app.refreshToken({ refreshToken });
 
       response.writeHead(200, {
         "content-type": "application/json",

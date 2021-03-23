@@ -241,6 +241,84 @@ describe("createNodeMiddleware(app)", () => {
     });
   });
 
+  it("PATCH /api/github/oauth/refresh-token", async () => {
+    const appMock = {
+      refreshToken: jest.fn().mockResolvedValue({
+        ok: true,
+      }),
+    };
+
+    const server = createServer(
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
+    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/refresh-token`,
+      {
+        method: "PATCH",
+        headers: {
+          authorization: "token token123",
+        },
+        body: JSON.stringify({
+          refreshToken: "r1.refreshtoken123",
+        }),
+      }
+    );
+
+    server.close();
+
+    expect(await response.json()).toStrictEqual({
+      ok: true,
+    });
+    expect(response.status).toEqual(200);
+
+    expect(appMock.refreshToken.mock.calls.length).toEqual(1);
+    expect(appMock.refreshToken.mock.calls[0][0]).toStrictEqual({
+      refreshToken: "r1.refreshtoken123",
+    });
+  });
+  it("PATCH /api/github/oauth/token", async () => {
+    const appMock = {
+      resetToken: jest.fn().mockResolvedValue({
+        id: 2,
+        token: "token456",
+        scopes: ["repo", "gist"],
+      }),
+    };
+
+    const server = createServer(
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
+    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/token`,
+      {
+        method: "PATCH",
+        headers: {
+          authorization: "token token123",
+        },
+      }
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(200);
+    expect(await response.json()).toStrictEqual({
+      id: 2,
+      token: "token456",
+      scopes: ["repo", "gist"],
+    });
+
+    expect(appMock.resetToken.mock.calls.length).toEqual(1);
+    expect(appMock.resetToken.mock.calls[0][0]).toStrictEqual({
+      token: "token123",
+    });
+  });
+
   it("DELETE /api/github/oauth/token", async () => {
     const appMock = {
       deleteToken: jest.fn().mockResolvedValue(undefined),
