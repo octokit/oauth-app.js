@@ -21,6 +21,8 @@ export async function middleware(
     createToken: `POST ${options.pathPrefix}/token`,
     getToken: `GET ${options.pathPrefix}/token`,
     patchToken: `PATCH ${options.pathPrefix}/token`,
+    patchRefreshToken: `PATCH ${options.pathPrefix}/refresh-token`,
+    scopeToken: `POST ${options.pathPrefix}/token/scoped`,
     deleteToken: `DELETE ${options.pathPrefix}/token`,
     deleteGrant: `DELETE ${options.pathPrefix}/grant`,
   };
@@ -43,11 +45,11 @@ export async function middleware(
       })
     );
   }
-  const { headers, query, body } = parsedRequest;
+  const { headers, query, body = {} } = parsedRequest;
 
   try {
     if (route === routes.getLogin) {
-      const url = app.getAuthorizationUrl({
+      const { url } = app.getWebFlowAuthorizationUrl({
         state: query.state,
         scopes: query.scopes?.split(","),
         allowSignup: query.allowSignup,
@@ -70,7 +72,9 @@ export async function middleware(
         );
       }
 
-      const { token } = await app.createToken({
+      const {
+        authentication: { token },
+      } = await app.createToken({
         state: query.state,
         code: query.code,
       });
@@ -86,7 +90,6 @@ export async function middleware(
     }
 
     if (route === routes.createToken) {
-      // @ts-ignore body is guaraenteed to exist
       const { state: oauthState, code, redirectUrl } = body;
 
       if (!oauthState || !code) {
@@ -95,9 +98,12 @@ export async function middleware(
         );
       }
 
-      const { token, scopes } = await app.createToken({
+      const {
+        authentication: { token, scopes },
+      } = await app.createToken({
         state: oauthState,
         code,
+        redirectUrl,
       });
 
       response.writeHead(201, {
@@ -137,6 +143,51 @@ export async function middleware(
 
       const result = await app.resetToken({
         token,
+      });
+
+      response.writeHead(200, {
+        "content-type": "application/json",
+      });
+      return response.end(JSON.stringify(result));
+    }
+
+    if (route === routes.patchRefreshToken) {
+      const token = headers.authorization?.substr("token ".length);
+
+      if (!token) {
+        throw new Error(
+          '[@octokit/oauth-app] "Authorization" header is required'
+        );
+      }
+
+      const { refreshToken } = body;
+
+      if (!refreshToken) {
+        throw new Error(
+          "[@octokit/oauth-app] refreshToken must be sent in request body"
+        );
+      }
+
+      const result = await app.refreshToken({ refreshToken });
+
+      response.writeHead(200, {
+        "content-type": "application/json",
+      });
+      return response.end(JSON.stringify(result));
+    }
+
+    if (route === routes.scopeToken) {
+      const token = headers.authorization?.substr("token ".length);
+
+      if (!token) {
+        throw new Error(
+          '[@octokit/oauth-app] "Authorization" header is required'
+        );
+      }
+
+      const result = await app.scopeToken({
+        token,
+        ...body,
       });
 
       response.writeHead(200, {

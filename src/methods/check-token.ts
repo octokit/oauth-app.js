@@ -1,56 +1,27 @@
-import { request as defaultRequest } from "@octokit/request";
-import btoa from "btoa-lite";
+import * as OAuthMethods from "@octokit/oauth-methods";
 
-import { State } from "../types";
+import { ClientType, State } from "../types";
 
-type Options = {
-  clientId: string;
-  clientSecret: string;
+export type CheckTokenOptions = {
   token: string;
 };
 
-type StateOptions = {
-  token: string;
-};
-
-type CheckTokenRequestOptions = {
-  client_id: string;
-  access_token: string;
-};
-
-async function sendCheckTokenRequest(
-  request: typeof defaultRequest,
-  options: CheckTokenRequestOptions
-) {
-  const { data } = await request(
-    "POST /applications/{client_id}/token",
-    options
-  );
-  return data;
-}
-
-export async function checkToken(options: Options) {
-  const request = defaultRequest.defaults({
-    headers: {
-      authorization: `basic ${btoa(
-        `${options.clientId}:${options.clientSecret}`
-      )}`,
-    },
-  });
-
-  return sendCheckTokenRequest(request, {
-    client_id: options.clientId,
-    access_token: options.token,
+export async function checkTokenWithState(
+  state: State,
+  options: CheckTokenOptions
+): Promise<any> {
+  return await OAuthMethods.checkToken({
+    // @ts-expect-error not worth the extra code to appease TS
+    clientType: state.clientType,
+    clientId: state.clientId,
+    clientSecret: state.clientSecret,
+    request: state.octokit.request,
+    ...options,
   });
 }
 
-export function checkTokenWithState(state: State, options: StateOptions) {
-  return sendCheckTokenRequest(state.octokit.request, {
-    client_id: state.clientId,
-    access_token: options.token,
-  });
+export interface CheckTokenInterface<TClientType extends ClientType> {
+  (options: CheckTokenOptions): TClientType extends "oauth-app"
+    ? Promise<OAuthMethods.CheckTokenOAuthAppResponse>
+    : Promise<OAuthMethods.CheckTokenGitHubAppResponse>;
 }
-
-export type AppCheckToken = (
-  options: StateOptions
-) => ReturnType<typeof checkTokenWithState>;

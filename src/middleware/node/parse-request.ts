@@ -21,6 +21,7 @@ type ParsedRequest = {
     code?: string;
     state?: string;
     redirectUrl?: string;
+    refreshToken?: string;
   };
 };
 

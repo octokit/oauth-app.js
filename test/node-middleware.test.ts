@@ -12,7 +12,7 @@ describe("createNodeMiddleware(app)", () => {
     });
 
     const server = createServer(createNodeMiddleware(app)).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const { status, headers } = await fetch(
@@ -27,6 +27,7 @@ describe("createNodeMiddleware(app)", () => {
     expect(status).toEqual(302);
 
     const url = new URL(headers.get("location") as string);
+
     expect(url).toMatchObject({
       origin: "https://github.com",
       pathname: "/login/oauth/authorize",
@@ -44,7 +45,7 @@ describe("createNodeMiddleware(app)", () => {
     });
 
     const server = createServer(createNodeMiddleware(app)).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const { status, headers } = await fetch(
@@ -75,7 +76,7 @@ describe("createNodeMiddleware(app)", () => {
     });
 
     const server = createServer(createNodeMiddleware(app)).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const { status, headers } = await fetch(
@@ -102,13 +103,15 @@ describe("createNodeMiddleware(app)", () => {
 
   it("GET /api/github/oauth/callback?code=012345&state=mystate123", async () => {
     const appMock = {
-      createToken: jest.fn().mockResolvedValue({ token: "token123" }),
+      createToken: jest
+        .fn()
+        .mockResolvedValue({ authentication: { token: "token123" } }),
     };
 
     const server = createServer(
       createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(
@@ -129,15 +132,18 @@ describe("createNodeMiddleware(app)", () => {
 
   it("POST /api/github/oauth/token", async () => {
     const appMock = {
-      createToken: jest
-        .fn()
-        .mockResolvedValue({ token: "token123", scopes: ["repo", "gist"] }),
+      createToken: jest.fn().mockResolvedValue({
+        authentication: {
+          token: "token123",
+          scopes: ["repo", "gist"],
+        },
+      }),
     };
 
     const server = createServer(
       createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(
@@ -147,6 +153,7 @@ describe("createNodeMiddleware(app)", () => {
         body: JSON.stringify({
           code: "012345",
           state: "state123",
+          redirectUrl: "http://example.com",
         }),
       }
     );
@@ -163,6 +170,7 @@ describe("createNodeMiddleware(app)", () => {
     expect(appMock.createToken.mock.calls[0][0]).toStrictEqual({
       state: "state123",
       code: "012345",
+      redirectUrl: "http://example.com",
     });
   });
 
@@ -174,7 +182,7 @@ describe("createNodeMiddleware(app)", () => {
     const server = createServer(
       createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(
@@ -209,7 +217,147 @@ describe("createNodeMiddleware(app)", () => {
     const server = createServer(
       createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/token`,
+      {
+        method: "PATCH",
+        headers: {
+          authorization: "token token123",
+        },
+      }
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(200);
+    expect(await response.json()).toStrictEqual({
+      id: 2,
+      token: "token456",
+      scopes: ["repo", "gist"],
+    });
+
+    expect(appMock.resetToken.mock.calls.length).toEqual(1);
+    expect(appMock.resetToken.mock.calls[0][0]).toStrictEqual({
+      token: "token123",
+    });
+  });
+
+  it("POST /api/github/oauth/token/scoped", async () => {
+    const appMock = {
+      scopeToken: jest.fn().mockResolvedValue({
+        data: {
+          id: 1,
+        },
+        authentication: {
+          token: "scopedtoken456",
+        },
+      }),
+    };
+
+    const server = createServer(
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/token/scoped`,
+      {
+        method: "POST",
+        headers: {
+          authorization: "token token123",
+        },
+        body: JSON.stringify({
+          target: "octokit",
+          repositories: ["oauth-methods.js"],
+          permissions: { issues: "write" },
+        }),
+      }
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(200);
+    expect(await response.json()).toMatchInlineSnapshot(`
+      Object {
+        "authentication": Object {
+          "token": "scopedtoken456",
+        },
+        "data": Object {
+          "id": 1,
+        },
+      }
+    `);
+
+    expect(appMock.scopeToken.mock.calls.length).toEqual(1);
+    expect(appMock.scopeToken.mock.calls[0][0]).toMatchInlineSnapshot(`
+      Object {
+        "permissions": Object {
+          "issues": "write",
+        },
+        "repositories": Array [
+          "oauth-methods.js",
+        ],
+        "target": "octokit",
+        "token": "token123",
+      }
+    `);
+  });
+
+  it("PATCH /api/github/oauth/refresh-token", async () => {
+    const appMock = {
+      refreshToken: jest.fn().mockResolvedValue({
+        ok: true,
+      }),
+    };
+
+    const server = createServer(
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/refresh-token`,
+      {
+        method: "PATCH",
+        headers: {
+          authorization: "token token123",
+        },
+        body: JSON.stringify({
+          refreshToken: "r1.refreshtoken123",
+        }),
+      }
+    );
+
+    server.close();
+
+    expect(await response.json()).toStrictEqual({
+      ok: true,
+    });
+    expect(response.status).toEqual(200);
+
+    expect(appMock.refreshToken.mock.calls.length).toEqual(1);
+    expect(appMock.refreshToken.mock.calls[0][0]).toStrictEqual({
+      refreshToken: "r1.refreshtoken123",
+    });
+  });
+  it("PATCH /api/github/oauth/token", async () => {
+    const appMock = {
+      resetToken: jest.fn().mockResolvedValue({
+        id: 2,
+        token: "token456",
+        scopes: ["repo", "gist"],
+      }),
+    };
+
+    const server = createServer(
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(
@@ -245,7 +393,7 @@ describe("createNodeMiddleware(app)", () => {
     const server = createServer(
       createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(
@@ -276,7 +424,7 @@ describe("createNodeMiddleware(app)", () => {
     const server = createServer(
       createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(
@@ -321,7 +469,7 @@ describe("createNodeMiddleware(app)", () => {
         },
       })
     ).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const { status, headers } = await fetch(
@@ -348,7 +496,7 @@ describe("createNodeMiddleware(app)", () => {
     const server = createServer(
       createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(`http://localhost:${port}/unknown`);
@@ -364,7 +512,7 @@ describe("createNodeMiddleware(app)", () => {
     const server = createServer(
       createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(
@@ -386,7 +534,7 @@ describe("createNodeMiddleware(app)", () => {
     const server = createServer(
       createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(
@@ -408,7 +556,7 @@ describe("createNodeMiddleware(app)", () => {
     const server = createServer(
       createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(
@@ -434,7 +582,7 @@ describe("createNodeMiddleware(app)", () => {
     const server = createServer(
       createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(
@@ -459,7 +607,7 @@ describe("createNodeMiddleware(app)", () => {
     const server = createServer(
       createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(
@@ -483,7 +631,7 @@ describe("createNodeMiddleware(app)", () => {
     const server = createServer(
       createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(
@@ -502,13 +650,100 @@ describe("createNodeMiddleware(app)", () => {
     });
   });
 
+  it("POST /api/github/oauth/token/scoped without authorization header", async () => {
+    const appMock = {};
+
+    const server = createServer(
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/token/scoped`,
+      {
+        method: "POST",
+        headers: {},
+      }
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(400);
+    expect(await response.json()).toStrictEqual({
+      error: '[@octokit/oauth-app] "Authorization" header is required',
+    });
+  });
+
+  it("PATCH /api/github/oauth/refresh-token without authorization header", async () => {
+    const appMock = {
+      refreshToken: jest.fn().mockResolvedValue({
+        ok: true,
+      }),
+    };
+
+    const server = createServer(
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/refresh-token`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({
+          refreshToken: "r1.refreshtoken123",
+        }),
+      }
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(400);
+    expect(await response.json()).toStrictEqual({
+      error: '[@octokit/oauth-app] "Authorization" header is required',
+    });
+  });
+
+  it("PATCH /api/github/oauth/refresh-token without refreshToken", async () => {
+    const appMock = {
+      refreshToken: jest.fn().mockResolvedValue({
+        ok: true,
+      }),
+    };
+
+    const server = createServer(
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/refresh-token`,
+      {
+        method: "PATCH",
+        headers: {
+          authorization: "token token123",
+        },
+      }
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(400);
+    expect(await response.json()).toStrictEqual({
+      error: "[@octokit/oauth-app] refreshToken must be sent in request body",
+    });
+  });
+
   it("DELETE /api/github/oauth/token without authorization header", async () => {
     const appMock = {};
 
     const server = createServer(
       createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(
@@ -533,7 +768,7 @@ describe("createNodeMiddleware(app)", () => {
     const server = createServer(
       createNodeMiddleware((appMock as unknown) as OAuthApp)
     ).listen();
-    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(

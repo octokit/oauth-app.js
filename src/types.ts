@@ -1,33 +1,56 @@
+import {
+  OAuthAppUserAuthentication,
+  GitHubAppUserAuthentication,
+  GitHubAppUserAuthenticationWithExpiration,
+} from "@octokit/auth-oauth-app";
 import { OAuthAppOctokit } from "./oauth-app-octokit";
+
+export type ClientType = "oauth-app" | "github-app";
 
 export type Scope = string;
 export type ClientId = string;
 export type ClientSecret = string;
 export type Token = string;
 export type EventName = "token" | "authorization";
-export type ActionName = "created" | "reset" | "deleted" | "before_deleted";
+export type ActionName =
+  | "created"
+  | "reset"
+  | "deleted"
+  | "refreshed"
+  | "scoped";
 export type EventAndActionName =
   | "token"
   | "token.created"
   | "token.reset"
+  | "token.refreshed"
+  | "token.scoped"
   | "token.deleted"
-  | "token.before_deleted"
   | "authorization"
-  | "authorization.before_deleted"
   | "authorization.deleted";
 
-export type ConstructorOptions = {
+type CommonConstructorOptions = {
   clientId: ClientId;
   clientSecret: ClientSecret;
-  defaultScopes?: Scope[];
   allowSignup?: boolean;
   baseUrl?: string;
   log?: typeof console;
   Octokit?: typeof OAuthAppOctokit;
 };
 
+export type ConstructorOptions<
+  TClientType extends ClientType
+> = TClientType extends "oauth-app"
+  ? CommonConstructorOptions & {
+      clientType?: TClientType;
+      defaultScopes?: Scope[];
+    }
+  : CommonConstructorOptions & {
+      clientType?: TClientType;
+    };
+
 export type OctokitInstance = InstanceType<typeof OAuthAppOctokit>;
 export type State = {
+  clientType: ClientType;
   clientId: ClientId;
   clientSecret: ClientSecret;
   defaultScopes: Scope[];
@@ -37,27 +60,34 @@ export type State = {
   Octokit: typeof OAuthAppOctokit;
   octokit: OctokitInstance;
   eventHandlers: {
-    [key: string]: EventHandler[];
+    [key: string]: EventHandler<ClientType>[];
   };
 };
 
-export type EventHandlerContext = {
-  name: EventName;
-  action: ActionName;
-  token: Token;
-  scopes?: Scope[];
-  octokit: InstanceType<typeof OAuthAppOctokit>;
-};
-export type EventHandler = (context: EventHandlerContext) => void;
-export type AddEventHandler = (
-  eventName: EventAndActionName | EventAndActionName[],
-  eventHandler: EventHandler
+export type EventHandlerContext<
+  TClientType extends ClientType
+> = TClientType extends "oauth-app"
+  ? {
+      name: EventName;
+      action: ActionName;
+      token: Token;
+      scopes?: Scope[];
+      octokit: InstanceType<typeof OAuthAppOctokit>;
+      authentication?: OAuthAppUserAuthentication;
+    }
+  : {
+      name: EventName;
+      action: ActionName;
+      token: Token;
+      octokit: InstanceType<typeof OAuthAppOctokit>;
+      authentication?:
+        | GitHubAppUserAuthentication
+        | GitHubAppUserAuthenticationWithExpiration;
+    };
+export type EventHandler<TClientType extends ClientType> = (
+  context: EventHandlerContext<TClientType>
 ) => void;
-
-// https://stackoverflow.com/questions/52703321/make-some-properties-optional-in-a-typescript-type#comment96954632_52703444
-type Diff<T, U> = T extends U ? never : T;
-export type RequiredExceptFor<T, TOptional extends keyof T> = Pick<
-  T,
-  Diff<keyof T, TOptional>
-> &
-  Partial<T>;
+export type AddEventHandler<TClientType extends ClientType> = (
+  eventName: EventAndActionName | EventAndActionName[],
+  eventHandler: EventHandler<TClientType>
+) => void;

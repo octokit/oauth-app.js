@@ -1,6 +1,9 @@
-import { State, EventHandlerContext } from "./types";
+import { State, EventHandlerContext, ClientType } from "./types";
 
-export async function emitEvent(state: State, context: EventHandlerContext) {
+export async function emitEvent(
+  state: State,
+  context: EventHandlerContext<ClientType>
+) {
   const { name, action } = context;
 
   if (state.eventHandlers[`${name}.${action}`]) {
