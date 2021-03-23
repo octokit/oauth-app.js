@@ -1,6 +1,6 @@
 import * as OAuthMethods from "@octokit/oauth-methods";
 
-import { State } from "../types";
+import { ClientType, State } from "../types";
 
 export type CheckTokenOptions = {
   token: string;
@@ -9,34 +9,19 @@ export type CheckTokenOptions = {
 export async function checkTokenWithState(
   state: State,
   options: CheckTokenOptions
-): Promise<
-  | OAuthMethods.CheckTokenOAuthAppResponse["authentication"]
-  | OAuthMethods.CheckTokenGitHubAppResponse["authentication"]
-> {
-  const optionsWithDefaults = {
+): Promise<any> {
+  return await OAuthMethods.checkToken({
+    // @ts-expect-error not worth the extra code to appease TS
+    clientType: state.clientType,
     clientId: state.clientId,
     clientSecret: state.clientSecret,
     request: state.octokit.request,
     ...options,
-  };
-
-  const { authentication } =
-    state.clientType === "oauth-app"
-      ? await OAuthMethods.checkToken({
-          clientType: "oauth-app",
-          ...optionsWithDefaults,
-        })
-      : await OAuthMethods.checkToken({
-          clientType: "github-app",
-          ...optionsWithDefaults,
-        });
-
-  return authentication;
+  });
 }
 
-export interface CheckTokenInterface {
-  (options: CheckTokenOptions): Promise<
-    | OAuthMethods.CheckTokenOAuthAppResponse["authentication"]
-    | OAuthMethods.CheckTokenGitHubAppResponse["authentication"]
-  >;
+export interface CheckTokenInterface<TClientType extends ClientType> {
+  (options: CheckTokenOptions): TClientType extends "oauth-app"
+    ? Promise<OAuthMethods.CheckTokenOAuthAppResponse>
+    : Promise<OAuthMethods.CheckTokenGitHubAppResponse>;
 }

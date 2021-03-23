@@ -1,6 +1,6 @@
 import * as OAuthMethods from "@octokit/oauth-methods";
 
-import { State } from "../types";
+import { ClientType, State } from "../types";
 
 type StateOptions = "clientType" | "clientId" | "clientSecret" | "request";
 
@@ -15,39 +15,30 @@ export type GetWebFlowAuthorizationUrlGitHubAppOptions = Omit<
 
 export function getWebFlowAuthorizationUrlWithState(
   state: State,
-  options:
-    | GetWebFlowAuthorizationUrlOAuthAppOptions
-    | GetWebFlowAuthorizationUrlGitHubAppOptions
-):
-  | OAuthMethods.GetWebFlowAuthorizationUrlOAuthAppResult
-  | OAuthMethods.GetWebFlowAuthorizationUrlGitHubAppResult {
+  options: any
+): any {
   const optionsWithDefaults = {
     clientId: state.clientId,
     request: state.octokit.request,
     ...options,
     allowSignup: options.allowSignup || state.allowSignup,
-    // @ts-expect-error options.scopes not set for GitHub Apps
     scopes: options.scopes || state.defaultScopes,
   };
 
-  if (state.clientType === "oauth-app") {
-    return OAuthMethods.getWebFlowAuthorizationUrl({
-      clientType: "oauth-app",
-      ...optionsWithDefaults,
-    });
-  }
-
   return OAuthMethods.getWebFlowAuthorizationUrl({
-    clientType: "github-app",
+    clientType: state.clientType,
     ...optionsWithDefaults,
   });
 }
 
-export interface GetWebFlowAuthorizationUrlInterface {
+export interface GetWebFlowAuthorizationUrlInterface<
+  TClientType extends ClientType
+> {
   (
-    options: GetWebFlowAuthorizationUrlOAuthAppOptions
-  ): OAuthMethods.GetWebFlowAuthorizationUrlOAuthAppResult;
-  (
-    options: GetWebFlowAuthorizationUrlGitHubAppOptions
-  ): OAuthMethods.GetWebFlowAuthorizationUrlGitHubAppResult;
+    options: TClientType extends "oauth-app"
+      ? GetWebFlowAuthorizationUrlOAuthAppOptions
+      : GetWebFlowAuthorizationUrlGitHubAppOptions
+  ): TClientType extends "oauth-app"
+    ? OAuthMethods.GetWebFlowAuthorizationUrlOAuthAppResult
+    : OAuthMethods.GetWebFlowAuthorizationUrlGitHubAppResult;
 }

@@ -43,7 +43,7 @@ export async function middleware(
       })
     );
   }
-  const { headers, query, body } = parsedRequest;
+  const { headers, query, body = {} } = parsedRequest;
 
   try {
     if (route === routes.getLogin) {
@@ -86,7 +86,6 @@ export async function middleware(
     }
 
     if (route === routes.createToken) {
-      // @ts-expect-error body is guaraenteed to exist
       const { state: oauthState, code, redirectUrl } = body;
 
       if (!oauthState || !code) {
@@ -95,7 +94,6 @@ export async function middleware(
         );
       }
 
-      // @ts-expect-error scopes is not set for GitHub Apps but we just pass it through
       const { token, scopes } = await app.createToken({
         state: oauthState,
         code,

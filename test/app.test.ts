@@ -273,11 +273,22 @@ describe("app", () => {
 
     expect(result).toMatchInlineSnapshot(`
       Object {
-        "clientId": "0123",
-        "clientSecret": "0123secret",
-        "clientType": "oauth-app",
-        "scopes": undefined,
-        "token": "token123",
+        "authentication": Object {
+          "clientId": "0123",
+          "clientSecret": "0123secret",
+          "clientType": "oauth-app",
+          "scopes": undefined,
+          "token": "token123",
+        },
+        "data": Object {
+          "id": 1,
+        },
+        "headers": Object {
+          "content-length": "8",
+          "content-type": "application/json",
+        },
+        "status": 200,
+        "url": "https://api.github.com/applications/0123/token",
       }
     `);
   });

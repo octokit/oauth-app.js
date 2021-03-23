@@ -1,6 +1,6 @@
 import * as OAuthAppAuth from "@octokit/auth-oauth-app";
 
-import { State } from "../types";
+import { ClientType, State } from "../types";
 import { emitEvent } from "../emit-event";
 
 export type CreateTokenWebFlowOptions = Omit<
@@ -38,37 +38,42 @@ export async function createTokenWithState(
     token: result.token,
     scopes: result.scopes,
     authentication: result,
-    get octokit() {
-      return new state.Octokit({
-        authStrategy: OAuthAppAuth.createOAuthUserAuth,
-        auth: {
-          clientType: state.clientType,
-          clientId: state.clientId,
-          clientSecret: state.clientSecret,
-          token: result.token,
-          scopes: result.scopes,
-          refreshToken: result.refreshToken,
-          expiresAt: result.expiresAt,
-          refreshTokenExpiresAt: result.refreshTokenExpiresAt,
-        },
-      });
-    },
+    octokit: new state.Octokit({
+      authStrategy: OAuthAppAuth.createOAuthUserAuth,
+      auth: {
+        clientType: state.clientType,
+        clientId: state.clientId,
+        clientSecret: state.clientSecret,
+        token: result.token,
+        scopes: result.scopes,
+        refreshToken: result.refreshToken,
+        expiresAt: result.expiresAt,
+        refreshTokenExpiresAt: result.refreshTokenExpiresAt,
+      },
+    }),
   });
 
   return result;
 }
 
-export interface CreateTokenInterface {
-  (options: CreateTokenWebFlowOptions): Promise<
-    | OAuthAppAuth.OAuthAppUserAuthentication
-    | OAuthAppAuth.GitHubAppUserAuthentication
-    | OAuthAppAuth.GitHubAppUserAuthenticationWithExpiration
-  >;
+export interface CreateTokenInterface<TClientType extends ClientType> {
+  // web flow
+  (options: CreateTokenWebFlowOptions): TClientType extends "oauth-app"
+    ? Promise<OAuthAppAuth.OAuthAppUserAuthentication>
+    : Promise<
+        | OAuthAppAuth.GitHubAppUserAuthentication
+        | OAuthAppAuth.GitHubAppUserAuthenticationWithExpiration
+      >;
+
+  // device flow
   (
-    options: CreateTokenOAuthAppDeviceFlowOptions
-  ): Promise<OAuthAppAuth.OAuthAppUserAuthentication>;
-  (options: CreateTokenGitHubAppDeviceFlowOptions): Promise<
-    | OAuthAppAuth.GitHubAppUserAuthentication
-    | OAuthAppAuth.GitHubAppUserAuthenticationWithExpiration
-  >;
+    options: TClientType extends "oauth-app"
+      ? CreateTokenOAuthAppDeviceFlowOptions
+      : CreateTokenGitHubAppDeviceFlowOptions
+  ): TClientType extends "oauth-app"
+    ? Promise<OAuthAppAuth.OAuthAppUserAuthentication>
+    : Promise<
+        | OAuthAppAuth.GitHubAppUserAuthentication
+        | OAuthAppAuth.GitHubAppUserAuthenticationWithExpiration
+      >;
 }

@@ -1,9 +1,9 @@
-import { EventHandler, EventAndActionName, State } from "./types";
+import { EventHandler, EventAndActionName, State, ClientType } from "./types";
 
 export function addEventHandler(
   state: State,
   eventName: EventAndActionName | EventAndActionName[],
-  eventHandler: EventHandler
+  eventHandler: EventHandler<ClientType>
 ) {
   if (Array.isArray(eventName)) {
     for (const singleEventName of eventName) {

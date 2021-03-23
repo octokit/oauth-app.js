@@ -34,14 +34,12 @@ export async function deleteTokenWithState(
     name: "token",
     action: "deleted",
     token: options.token,
-    get octokit() {
-      return new state.Octokit({
-        authStrategy: createUnauthenticatedAuth,
-        auth: {
-          reason: `Handling "token.deleted" event. The access for the token has been revoked.`,
-        },
-      });
-    },
+    octokit: new state.Octokit({
+      authStrategy: createUnauthenticatedAuth,
+      auth: {
+        reason: `Handling "token.deleted" event. The access for the token has been revoked.`,
+      },
+    }),
   });
 
   return response;

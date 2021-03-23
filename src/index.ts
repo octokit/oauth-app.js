@@ -1,12 +1,13 @@
-import {
-  createOAuthAppAuth,
-  createOAuthUserAuth,
-} from "@octokit/auth-oauth-app";
+import { createOAuthAppAuth } from "@octokit/auth-oauth-app";
 
 import { VERSION } from "./version";
 import { addEventHandler } from "./add-event-handler";
 import { OAuthAppOctokit } from "./oauth-app-octokit";
 
+import {
+  getUserOctokitWithState,
+  GetUserOctokitWithStateInterface,
+} from "./methods/get-user-octokit";
 import {
   getWebFlowAuthorizationUrlWithState,
   GetWebFlowAuthorizationUrlInterface,
@@ -41,12 +42,12 @@ import {
 } from "./types";
 export { createNodeMiddleware } from "./middleware/node/index";
 
-export class OAuthApp {
+export class OAuthApp<TClientType extends ClientType = "oauth-app"> {
   static VERSION = VERSION;
 
-  constructor(options: ConstructorOptions) {
+  constructor(options: ConstructorOptions<TClientType>) {
     const Octokit = options.Octokit || OAuthAppOctokit;
-    this.type = options.clientType || "oauth-app";
+    this.type = (options.clientType || "oauth-app") as TClientType;
     const octokit = new Octokit({
       authStrategy: createOAuthAppAuth,
       auth: {
@@ -60,6 +61,7 @@ export class OAuthApp {
       clientType: this.type,
       clientId: options.clientId,
       clientSecret: options.clientSecret,
+      // @ts-expect-error defaultScopes not permitted for GitHub Apps
       defaultScopes: options.defaultScopes || [],
       allowSignup: options.allowSignup,
       baseUrl: options.baseUrl,
@@ -69,45 +71,40 @@ export class OAuthApp {
       eventHandlers: {},
     };
 
-    this.on = addEventHandler.bind(null, state);
+    this.on = addEventHandler.bind(null, state) as AddEventHandler<TClientType>;
     this.octokit = octokit;
-    this.getUserOctokit = async (options: any) => {
-      return octokit.auth({
-        type: "oauth-user",
-        ...options,
-        factory(options: any) {
-          return new Octokit({
-            authStrategy: createOAuthUserAuth,
-            auth: options,
-          });
-        },
-      }) as Promise<OctokitInstance>;
-    };
+    this.getUserOctokit = getUserOctokitWithState.bind(null, state);
 
     this.getWebFlowAuthorizationUrl = getWebFlowAuthorizationUrlWithState.bind(
       null,
       state
-    ) as GetWebFlowAuthorizationUrlInterface;
+    ) as GetWebFlowAuthorizationUrlInterface<TClientType>;
 
     this.createToken = createTokenWithState.bind(
       null,
       state
-    ) as CreateTokenInterface;
-    this.checkToken = checkTokenWithState.bind(null, state);
-    this.resetToken = resetTokenWithState.bind(null, state);
+    ) as CreateTokenInterface<TClientType>;
+    this.checkToken = checkTokenWithState.bind(
+      null,
+      state
+    ) as CheckTokenInterface<TClientType>;
+    this.resetToken = resetTokenWithState.bind(
+      null,
+      state
+    ) as ResetTokenInterface<TClientType>;
     this.deleteToken = deleteTokenWithState.bind(null, state);
     this.deleteAuthorization = deleteAuthorizationWithState.bind(null, state);
   }
 
   // assigned during constructor
-  type: ClientType;
-  on: AddEventHandler;
+  type: TClientType;
+  on: AddEventHandler<TClientType>;
   octokit: OctokitInstance;
-  getUserOctokit: (options: any) => Promise<OctokitInstance>;
-  getWebFlowAuthorizationUrl: GetWebFlowAuthorizationUrlInterface;
-  createToken: CreateTokenInterface;
-  checkToken: CheckTokenInterface;
-  resetToken: ResetTokenInterface;
+  getUserOctokit: GetUserOctokitWithStateInterface<TClientType>;
+  getWebFlowAuthorizationUrl: GetWebFlowAuthorizationUrlInterface<TClientType>;
+  createToken: CreateTokenInterface<TClientType>;
+  checkToken: CheckTokenInterface<TClientType>;
+  resetToken: ResetTokenInterface<TClientType>;
   deleteToken: DeleteTokenInterface;
   deleteAuthorization: DeleteAuthorizationInterface;
 }

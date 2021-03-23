@@ -1,6 +1,6 @@
 import * as OAuthMethods from "@octokit/oauth-methods";
 
-import { State } from "../types";
+import { ClientType, State } from "../types";
 import { emitEvent } from "../emit-event";
 import { createOAuthUserAuth } from "@octokit/auth-oauth-user";
 
@@ -38,18 +38,16 @@ export async function resetTokenWithState(
         tokenType: "oauth",
         ...response.authentication,
       },
-      get octokit() {
-        return new state.Octokit({
-          authStrategy: createOAuthUserAuth,
-          auth: {
-            clientType: state.clientType,
-            clientId: state.clientId,
-            clientSecret: state.clientSecret,
-            token: response.authentication.token,
-            scopes: response.authentication.scopes,
-          },
-        });
-      },
+      octokit: new state.Octokit({
+        authStrategy: createOAuthUserAuth,
+        auth: {
+          clientType: state.clientType,
+          clientId: state.clientId,
+          clientSecret: state.clientSecret,
+          token: response.authentication.token,
+          scopes: response.authentication.scopes,
+        },
+      }),
     });
 
     return response;
@@ -69,25 +67,22 @@ export async function resetTokenWithState(
       tokenType: "oauth",
       ...response.authentication,
     },
-    get octokit() {
-      return new state.Octokit({
-        authStrategy: createOAuthUserAuth,
-        auth: {
-          clientType: state.clientType,
-          clientId: state.clientId,
-          clientSecret: state.clientSecret,
-          token: response.authentication.token,
-        },
-      });
-    },
+    octokit: new state.Octokit({
+      authStrategy: createOAuthUserAuth,
+      auth: {
+        clientType: state.clientType,
+        clientId: state.clientId,
+        clientSecret: state.clientSecret,
+        token: response.authentication.token,
+      },
+    }),
   });
 
   return response;
 }
 
-export interface ResetTokenInterface {
-  (options: ResetTokenOptions): Promise<
-    | OAuthMethods.ResetTokenOAuthAppResponse
-    | OAuthMethods.ResetTokenGitHubAppResponse
-  >;
+export interface ResetTokenInterface<TClientType extends ClientType> {
+  (options: ResetTokenOptions): TClientType extends "oauth-app"
+    ? Promise<OAuthMethods.ResetTokenOAuthAppResponse>
+    : Promise<OAuthMethods.ResetTokenGitHubAppResponse>;
 }
