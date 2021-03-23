@@ -25,6 +25,7 @@
 - [`app.checkToken(options)`](#appchecktokenoptions)
 - [`app.resetToken(options)`](#appresettokenoptions)
 - [`app.refreshToken(options)`](#apprefreshtokenoptions)
+- [`app.scopeToken(options)`](#appscopetokenoptions)
 - [`app.deleteToken(options)`](#appdeletetokenoptions)
 - [`app.deleteAuthorization(options)`](#appdeleteauthorizationoptions)
 - [Middlewares](#middlewares)
