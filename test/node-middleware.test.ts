@@ -103,7 +103,9 @@ describe("createNodeMiddleware(app)", () => {
 
   it("GET /api/github/oauth/callback?code=012345&state=mystate123", async () => {
     const appMock = {
-      createToken: jest.fn().mockResolvedValue({ token: "token123" }),
+      createToken: jest
+        .fn()
+        .mockResolvedValue({ authentication: { token: "token123" } }),
     };
 
     const server = createServer(
@@ -131,8 +133,10 @@ describe("createNodeMiddleware(app)", () => {
   it("POST /api/github/oauth/token", async () => {
     const appMock = {
       createToken: jest.fn().mockResolvedValue({
-        token: "token123",
-        scopes: ["repo", "gist"],
+        authentication: {
+          token: "token123",
+          scopes: ["repo", "gist"],
+        },
       }),
     };
 

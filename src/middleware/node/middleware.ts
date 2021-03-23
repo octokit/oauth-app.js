@@ -72,7 +72,9 @@ export async function middleware(
         );
       }
 
-      const { token } = await app.createToken({
+      const {
+        authentication: { token },
+      } = await app.createToken({
         state: query.state,
         code: query.code,
       });
@@ -96,7 +98,9 @@ export async function middleware(
         );
       }
 
-      const { token, scopes } = await app.createToken({
+      const {
+        authentication: { token, scopes },
+      } = await app.createToken({
         state: oauthState,
         code,
         redirectUrl,
