@@ -19,15 +19,6 @@ export async function deleteTokenWithState(
     ...options,
   };
 
-  await emitEvent(state, {
-    name: "token",
-    action: "before_deleted",
-    token: options.token,
-    get octokit() {
-      return new state.Octokit({ auth: options.token });
-    },
-  });
-
   const response =
     state.clientType === "oauth-app"
       ? await OAuthMethods.deleteToken({

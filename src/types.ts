@@ -1,3 +1,8 @@
+import {
+  OAuthAppUserAuthentication,
+  GitHubAppUserAuthentication,
+  GitHubAppUserAuthenticationWithExpiration,
+} from "@octokit/auth-oauth-app";
 import { OAuthAppOctokit } from "./oauth-app-octokit";
 
 export type ClientType = "oauth-app" | "github-app";
@@ -7,15 +12,13 @@ export type ClientId = string;
 export type ClientSecret = string;
 export type Token = string;
 export type EventName = "token" | "authorization";
-export type ActionName = "created" | "reset" | "deleted" | "before_deleted";
+export type ActionName = "created" | "reset" | "deleted";
 export type EventAndActionName =
   | "token"
   | "token.created"
   | "token.reset"
   | "token.deleted"
-  | "token.before_deleted"
   | "authorization"
-  | "authorization.before_deleted"
   | "authorization.deleted";
 
 export type ConstructorOptions = {
@@ -51,6 +54,10 @@ export type EventHandlerContext = {
   token: Token;
   scopes?: Scope[];
   octokit: InstanceType<typeof OAuthAppOctokit>;
+  authentication?:
+    | OAuthAppUserAuthentication
+    | GitHubAppUserAuthentication
+    | GitHubAppUserAuthenticationWithExpiration;
 };
 export type EventHandler = (context: EventHandlerContext) => void;
 export type AddEventHandler = (

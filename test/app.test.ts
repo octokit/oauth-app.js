@@ -1,4 +1,4 @@
-import fetchMock from "fetch-mock";
+import fetchMock, { MockMatcherFunction } from "fetch-mock";
 import { Octokit } from "@octokit/core";
 
 import { OAuthApp } from "../src";
@@ -457,7 +457,7 @@ describe("app", () => {
     });
 
     const onTokenCallback = jest.fn();
-    app.on(["token.before_deleted", "token.deleted"], onTokenCallback);
+    app.on("token.deleted", onTokenCallback);
 
     const result = await app.deleteToken({
       token: "token123",
@@ -472,16 +472,8 @@ describe("app", () => {
       }
     `);
 
-    expect(onTokenCallback.mock.calls.length).toEqual(2);
-    const [context_before_deleted] = onTokenCallback.mock.calls[0];
-    const [context_deleted] = onTokenCallback.mock.calls[1];
-
-    expect(context_before_deleted).toMatchObject({
-      name: "token",
-      action: "before_deleted",
-      token: "token123",
-    });
-    expect(context_before_deleted.octokit).toBeInstanceOf(Mocktokit);
+    expect(onTokenCallback.mock.calls.length).toEqual(1);
+    const [context_deleted] = onTokenCallback.mock.calls[0];
 
     expect(context_deleted).toMatchObject({
       name: "token",
@@ -532,29 +524,9 @@ describe("app", () => {
       }
     `);
 
-    expect(onTokenCallback.mock.calls.length).toEqual(4);
-    const [
-      context_authorization_before_deleted,
-    ] = onTokenCallback.mock.calls[0];
-    const [context_token_before_deleted] = onTokenCallback.mock.calls[1];
-    const [context_token_deleted] = onTokenCallback.mock.calls[2];
-    const [context_authorization_deleted] = onTokenCallback.mock.calls[3];
-
-    expect(context_authorization_before_deleted).toMatchObject({
-      name: "authorization",
-      action: "before_deleted",
-      token: "token123",
-    });
-    expect(context_authorization_before_deleted.octokit).toBeInstanceOf(
-      Mocktokit
-    );
-
-    expect(context_token_before_deleted).toMatchObject({
-      name: "token",
-      action: "before_deleted",
-      token: "token123",
-    });
-    expect(context_token_before_deleted.octokit).toBeInstanceOf(Mocktokit);
+    expect(onTokenCallback.mock.calls.length).toEqual(2);
+    const [context_token_deleted] = onTokenCallback.mock.calls[0];
+    const [context_authorization_deleted] = onTokenCallback.mock.calls[1];
 
     expect(context_token_deleted).toMatchObject({
       name: "token",
@@ -569,6 +541,65 @@ describe("app", () => {
       token: "token123",
     });
     expect(context_authorization_deleted.octokit).toBeInstanceOf(Mocktokit);
+  });
+
+  it('app.on("token.created", ({ octokit }) => octokit.auth({ type: "reset" })', async () => {
+    const mock = fetchMock
+      .sandbox()
+      .postOnce(
+        "https://github.com/login/oauth/access_token",
+        {
+          access_token: "token123",
+          scope: "",
+          token_type: "bearer",
+        },
+        {
+          body: {
+            client_id: "0123",
+            client_secret: "0123secret",
+            code: "code123",
+          },
+        }
+      )
+      .deleteOnce((url, options) => {
+        expect(url).toEqual("https://api.github.com/applications/0123/token");
+        // @ts-expect-error options.headers is not guaranteed to exist
+        expect(options.headers.authorization).toEqual(
+          "basic " + Buffer.from("0123:0123secret").toString("base64")
+        );
+        return true;
+      }, {});
+
+    const Mocktokit = OAuthAppOctokit.defaults({
+      request: {
+        fetch: mock,
+      },
+    });
+
+    const app = new OAuthApp({
+      clientId: "0123",
+      clientSecret: "0123secret",
+      Octokit: Mocktokit,
+    });
+
+    app.on("token.created", async ({ octokit, authentication }) => {
+      expect(authentication).toMatchInlineSnapshot(`
+        Object {
+          "clientId": "0123",
+          "clientSecret": "0123secret",
+          "clientType": "oauth-app",
+          "scopes": Array [],
+          "token": "token123",
+          "tokenType": "oauth",
+          "type": "token",
+        }
+      `);
+      await octokit.auth({ type: "delete" });
+    });
+
+    await app.createToken({ code: "code123" });
+
+    expect(mock.done()).toEqual(true);
   });
 
   it("app.on multiple events", async () => {

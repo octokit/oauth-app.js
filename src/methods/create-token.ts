@@ -3,8 +3,6 @@ import * as OAuthAppAuth from "@octokit/auth-oauth-app";
 import { State } from "../types";
 import { emitEvent } from "../emit-event";
 
-type StateOptions = "clientType" | "clientId" | "clientSecret" | "request";
-
 export type CreateTokenWebFlowOptions = Omit<
   OAuthAppAuth.WebFlowAuthOptions,
   "type"
@@ -39,8 +37,21 @@ export async function createTokenWithState(
     action: "created",
     token: result.token,
     scopes: result.scopes,
+    authentication: result,
     get octokit() {
-      return new state.Octokit({ auth: result.token });
+      return new state.Octokit({
+        authStrategy: OAuthAppAuth.createOAuthUserAuth,
+        auth: {
+          clientType: state.clientType,
+          clientId: state.clientId,
+          clientSecret: state.clientSecret,
+          token: result.token,
+          scopes: result.scopes,
+          refreshToken: result.refreshToken,
+          expiresAt: result.expiresAt,
+          refreshTokenExpiresAt: result.refreshTokenExpiresAt,
+        },
+      });
     },
   });
 

@@ -243,9 +243,7 @@ The `eventName` can be one of (or an array of)
 - `token.reset`
 - `token.refreshed` (GitHub Apps only)
 - `token.scoped` (GitHub Apps only)
-- `token.before_deleted`
 - `token.deleted`
-- `authorization.before_deleted`
 - `authorization.deleted`
 
 All event handlers are awaited before continuing.
@@ -286,7 +284,7 @@ All event handlers are awaited before continuing.
         <code>string</code>
       </th>
       <td>
-        Action of the event. One of: <code>created</code>, <code>reset</code>, <code>deleted</code>, <code>before_deleted</code>
+        Action of the event. One of: <code>created</code>, <code>reset</code>, <code>deleted</code>
       </td>
     </tr>
     <tr>
@@ -311,9 +309,9 @@ The OAuth authentication object. See https://github.com/octokit/auth-oauth-user.
       </th>
       <td>
 
-Authenticated instance using the `Octokit` option passed to the constructor.
+Authenticated instance using the `Octokit` option passed to the constructor and [`@octokit/auth-oauth-user`](https://github.com/octokit/auth-oauth-user.js/#readme) as authentication strategy.
 
-For `"token.deleted"` and `"authorization.deleted"` events the `octokit` instance is unauthenticated.
+The `octokit` instance is unauthenticated for `"token.deleted"` and `"authorization.deleted"` events.
 
 </td>
     </tr>

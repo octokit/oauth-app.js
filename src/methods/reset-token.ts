@@ -2,6 +2,7 @@ import * as OAuthMethods from "@octokit/oauth-methods";
 
 import { State } from "../types";
 import { emitEvent } from "../emit-event";
+import { createOAuthUserAuth } from "@octokit/auth-oauth-user";
 
 export type ResetTokenOptions = {
   token: string;
@@ -32,9 +33,21 @@ export async function resetTokenWithState(
       action: "reset",
       token: response.authentication.token,
       scopes: response.authentication.scopes || undefined,
+      authentication: {
+        type: "token",
+        tokenType: "oauth",
+        ...response.authentication,
+      },
       get octokit() {
         return new state.Octokit({
-          auth: response.authentication.token,
+          authStrategy: createOAuthUserAuth,
+          auth: {
+            clientType: state.clientType,
+            clientId: state.clientId,
+            clientSecret: state.clientSecret,
+            token: response.authentication.token,
+            scopes: response.authentication.scopes,
+          },
         });
       },
     });
@@ -51,9 +64,20 @@ export async function resetTokenWithState(
     name: "token",
     action: "reset",
     token: response.authentication.token,
+    authentication: {
+      type: "token",
+      tokenType: "oauth",
+      ...response.authentication,
+    },
     get octokit() {
       return new state.Octokit({
-        auth: response.authentication.token,
+        authStrategy: createOAuthUserAuth,
+        auth: {
+          clientType: state.clientType,
+          clientId: state.clientId,
+          clientSecret: state.clientSecret,
+          token: response.authentication.token,
+        },
       });
     },
   });
