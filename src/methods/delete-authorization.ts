@@ -25,7 +25,8 @@ export async function deleteAuthorizationWithState(
           clientType: "oauth-app",
           ...optionsWithDefaults,
         })
-      : await OAuthMethods.deleteAuthorization({
+      : // istanbul ignore next
+        await OAuthMethods.deleteAuthorization({
           clientType: "github-app",
           ...optionsWithDefaults,
         });

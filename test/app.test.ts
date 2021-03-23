@@ -442,6 +442,78 @@ describe("app", () => {
     expect(context.octokit).toBeInstanceOf(Mocktokit);
   });
 
+  it("app.resetToken(options) for GitHub App", async () => {
+    const mock = fetchMock.sandbox().patchOnce(
+      "https://api.github.com/applications/lv1.1234567890abcdef/token",
+      {
+        id: 2,
+        token: "token456",
+      },
+      {
+        headers: {
+          authorization:
+            "basic " +
+            Buffer.from(
+              "lv1.1234567890abcdef:1234567890abcdef1234567890abcdef12345678"
+            ).toString("base64"),
+        },
+        body: {
+          access_token: "token123",
+        },
+      }
+    );
+
+    const Mocktokit = OAuthAppOctokit.defaults({
+      request: {
+        fetch: mock,
+      },
+    });
+
+    const app = new OAuthApp({
+      clientType: "github-app",
+      clientId: "lv1.1234567890abcdef",
+      clientSecret: "1234567890abcdef1234567890abcdef12345678",
+      Octokit: Mocktokit,
+    });
+
+    const onTokenCallback = jest.fn();
+    app.on("token.reset", onTokenCallback);
+
+    const result = await app.resetToken({
+      token: "token123",
+    });
+
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "authentication": Object {
+          "clientId": "lv1.1234567890abcdef",
+          "clientSecret": "1234567890abcdef1234567890abcdef12345678",
+          "clientType": "github-app",
+          "token": "token456",
+        },
+        "data": Object {
+          "id": 2,
+          "token": "token456",
+        },
+        "headers": Object {
+          "content-length": "27",
+          "content-type": "application/json",
+        },
+        "status": 200,
+        "url": "https://api.github.com/applications/lv1.1234567890abcdef/token",
+      }
+    `);
+    expect(onTokenCallback.mock.calls.length).toEqual(1);
+    const [context] = onTokenCallback.mock.calls[0];
+
+    expect(context).toMatchObject({
+      name: "token",
+      action: "reset",
+      token: "token456",
+    });
+    expect(context.octokit).toBeInstanceOf(Mocktokit);
+  });
+
   it("app.refreshToken(options)", async () => {
     const mock = fetchMock.sandbox().postOnce(
       "https://github.com/login/oauth/access_token",
@@ -525,6 +597,23 @@ describe("app", () => {
       token: "secret456",
     });
     expect(context.octokit).toBeInstanceOf(Mocktokit);
+  });
+
+  it("app.refreshToken() for OAuth App", async () => {
+    const app = new OAuthApp({
+      clientType: "oauth-app",
+      clientId: "1234567890abcdef1234",
+      clientSecret: "1234567890abcdef12347890abcdef12345678",
+    });
+
+    await expect(
+      async () =>
+        await app.refreshToken({
+          refreshToken: "r1.refreshtoken123",
+        })
+    ).rejects.toThrow(
+      "[@octokit/oauth-app] app.refreshToken() is not supported for OAuth Apps"
+    );
   });
 
   it("app.deleteToken(options)", async () => {

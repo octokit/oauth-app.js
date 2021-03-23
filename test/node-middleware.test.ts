@@ -584,6 +584,68 @@ describe("createNodeMiddleware(app)", () => {
     });
   });
 
+  it("PATCH /api/github/oauth/refresh-token without authorization header", async () => {
+    const appMock = {
+      refreshToken: jest.fn().mockResolvedValue({
+        ok: true,
+      }),
+    };
+
+    const server = createServer(
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
+    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/refresh-token`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({
+          refreshToken: "r1.refreshtoken123",
+        }),
+      }
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(400);
+    expect(await response.json()).toStrictEqual({
+      error: '[@octokit/oauth-app] "Authorization" header is required',
+    });
+  });
+
+  it("PATCH /api/github/oauth/refresh-token without refreshToken", async () => {
+    const appMock = {
+      refreshToken: jest.fn().mockResolvedValue({
+        ok: true,
+      }),
+    };
+
+    const server = createServer(
+      createNodeMiddleware((appMock as unknown) as OAuthApp)
+    ).listen();
+    // @ts-ignore complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/refresh-token`,
+      {
+        method: "PATCH",
+        headers: {
+          authorization: "token token123",
+        },
+      }
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(400);
+    expect(await response.json()).toStrictEqual({
+      error: "[@octokit/oauth-app] refreshToken must be sent in request body",
+    });
+  });
+
   it("DELETE /api/github/oauth/token without authorization header", async () => {
     const appMock = {};
 

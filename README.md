@@ -24,6 +24,7 @@
   - [For OAuth Device flow](#for-oauth-device-flow)
 - [`app.checkToken(options)`](#appchecktokenoptions)
 - [`app.resetToken(options)`](#appresettokenoptions)
+- [`app.refreshToken(options)`](#apprefreshtokenoptions)
 - [`app.deleteToken(options)`](#appdeletetokenoptions)
 - [`app.deleteAuthorization(options)`](#appdeleteauthorizationoptions)
 - [Middlewares](#middlewares)
