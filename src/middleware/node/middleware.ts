@@ -6,7 +6,7 @@ import { OAuthApp } from "../../index";
 import { MiddlewareOptions } from "./types";
 
 export async function middleware(
-  app: OAuthApp,
+  app: OAuthApp<"oauth-app"> | OAuthApp<"github-app">,
   options: Required<MiddlewareOptions>,
   request: IncomingMessage,
   response: ServerResponse
@@ -99,6 +99,7 @@ export async function middleware(
       }
 
       const {
+        // @ts-expect-error scopes won't be set for GitHub Apps
         authentication: { token, scopes },
       } = await app.createToken({
         state: oauthState,
