@@ -14,6 +14,7 @@
   - [For OAuth Apps](#for-oauth-apps)
   - [For GitHub Apps](#for-github-apps)
 - [Examples](#examples)
+- [`OAuthApp.defaults(options)`](#oauthappdefaultsoptions)
 - [Constructor options](#constructor-options)
 - [`app.on(eventName, eventHandler)`](#apponeventname-eventhandler)
 - [`app.octokit`](#appoctokit)
@@ -111,6 +112,18 @@ require("http").createServer(createNodeMiddleware(app)).listen(3000);
 - Node server with static files served from `public/` folder, hosted on Glitch: <https://glitch.com/~github-oauth-client>
 - Serverless functions, hosted on [Zeit's now](https://zeit.co/): <https://github.com/gr2m/octokit-oauth-app-now-example>
 - Serverless functions, hosted on AWS (via [begin.com](https://begin.com/)): <https://github.com/gr2m/octokit-oauth-app-begin-example/>
+
+## `OAuthApp.defaults(options)`
+
+Create a new `OAuthApp` with custom defaults for the [constructor options](#constructor-options)
+
+```js
+const MyOAuthApp = OAuthApp.defaults({
+  Octokit: MyOctokit,
+});
+const app = new MyOAuthApp({ clientId, clientSecret });
+// app.octokit is now an instance of MyOctokit
+```
 
 ## Constructor options
 

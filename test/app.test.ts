@@ -4,6 +4,32 @@ import { Octokit } from "@octokit/core";
 import { OAuthApp } from "../src";
 import { OAuthAppOctokit } from "../src/oauth-app-octokit";
 
+describe("OAuthApp.defaultst", () => {
+  test("sets default options", () => {
+    const MyOAuthApp = OAuthApp.defaults({
+      allowSignup: false,
+    });
+
+    const app = new MyOAuthApp({
+      clientId: "1234567890abcdef1234",
+      clientSecret: "1234567890abcdef1234567890abcdef12345678",
+    });
+
+    const result = app.getWebFlowAuthorizationUrl({ state: "test" });
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "allowSignup": false,
+        "clientId": "1234567890abcdef1234",
+        "clientType": "oauth-app",
+        "login": null,
+        "redirectUrl": null,
+        "scopes": Array [],
+        "state": "test",
+        "url": "https://github.com/login/oauth/authorize?allow_signup=false&client_id=1234567890abcdef1234&state=test",
+      }
+    `);
+  });
+});
 describe("app", () => {
   it("app.getUserOctokit(options)", async () => {
     const mock = fetchMock
