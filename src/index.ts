@@ -50,8 +50,23 @@ import {
 } from "./types";
 export { createNodeMiddleware } from "./middleware/node/index";
 
+type Constructor<T> = new (...args: any[]) => T;
+
 export class OAuthApp<TClientType extends ClientType = "oauth-app"> {
   static VERSION = VERSION;
+
+  static defaults<TClientType extends ClientType, S extends Constructor<any>>(
+    this: S,
+    defaults: Partial<ConstructorOptions<TClientType>>
+  ) {
+    const OAuthAppWithDefaults = class extends this {
+      constructor(...args: any[]) {
+        super(Object.assign({}, defaults, args[0] || {}));
+      }
+    };
+
+    return OAuthAppWithDefaults;
+  }
 
   constructor(options: ConstructorOptions<TClientType>) {
     const Octokit = options.Octokit || OAuthAppOctokit;
