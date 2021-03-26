@@ -14,6 +14,7 @@
   - [For OAuth Apps](#for-oauth-apps)
   - [For GitHub Apps](#for-github-apps)
 - [Examples](#examples)
+- [`OAuthApp.defaults(options)`](#oauthappdefaultsoptions)
 - [Constructor options](#constructor-options)
 - [`app.on(eventName, eventHandler)`](#apponeventname-eventhandler)
 - [`app.octokit`](#appoctokit)
