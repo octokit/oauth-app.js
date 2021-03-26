@@ -61,7 +61,10 @@ export class OAuthApp<TClientType extends ClientType = "oauth-app"> {
   ) {
     const OAuthAppWithDefaults = class extends this {
       constructor(...args: any[]) {
-        super(Object.assign({}, defaults, args[0] || {}));
+        super({
+          ...defaults,
+          ...args[0],
+        });
       }
     };
 
