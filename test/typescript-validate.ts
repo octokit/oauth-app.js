@@ -2,7 +2,33 @@
 // THIS CODE IS NOT EXECUTED. IT IS JUST FOR TYPECHECKING
 // ************************************************************
 
+import { Octokit } from "@octokit/core";
 import { OAuthApp } from "../src";
+
+function expect<T>(what: T) {}
+
+export function CustomOctokitTest() {
+  const MyOctokit = Octokit.plugin(() => {
+    return {
+      foo: "bar",
+    };
+  });
+
+  const testOctokit = new MyOctokit();
+  expect<string>(testOctokit.foo);
+
+  const app = new OAuthApp({
+    clientId: "",
+    clientSecret: "",
+    Octokit: MyOctokit,
+  });
+
+  expect<string>(app.octokit.foo);
+
+  app.on("token.created", ({ octokit }) => {
+    expect<string>(octokit.foo);
+  });
+}
 
 export async function OAuthAppTest() {
   const oauthApp = new OAuthApp({
