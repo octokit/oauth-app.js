@@ -1,8 +1,13 @@
-import { State, EventHandlerContext, ClientType } from "./types";
+import {
+  State,
+  EventHandlerContext,
+  ClientType,
+  OAuthAppOctokitClassType,
+} from "./types";
 
 export async function emitEvent(
   state: State,
-  context: EventHandlerContext<ClientType>
+  context: EventHandlerContext<ClientType, OAuthAppOctokitClassType>
 ) {
   const { name, action } = context;
 

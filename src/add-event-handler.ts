@@ -1,9 +1,15 @@
-import { EventHandler, EventAndActionName, State, ClientType } from "./types";
+import {
+  EventHandler,
+  EventAndActionName,
+  State,
+  ClientType,
+  OAuthAppOctokitClassType,
+} from "./types";
 
 export function addEventHandler(
   state: State,
   eventName: EventAndActionName | EventAndActionName[],
-  eventHandler: EventHandler<ClientType>
+  eventHandler: EventHandler<ClientType, OAuthAppOctokitClassType>
 ) {
   if (Array.isArray(eventName)) {
     for (const singleEventName of eventName) {

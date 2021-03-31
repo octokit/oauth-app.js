@@ -43,7 +43,7 @@ import {
 
 import {
   ConstructorOptions,
-  OctokitInstance,
+  OAuthAppOctokitClassType,
   ClientType,
   AddEventHandler,
   State,
@@ -52,7 +52,10 @@ export { createNodeMiddleware } from "./middleware/node/index";
 
 type Constructor<T> = new (...args: any[]) => T;
 
-export class OAuthApp<TClientType extends ClientType = "oauth-app"> {
+export class OAuthApp<
+  TClientType extends ClientType = "oauth-app",
+  TOctokit extends OAuthAppOctokitClassType = OAuthAppOctokitClassType
+> {
   static VERSION = VERSION;
 
   static defaults<TClientType extends ClientType, S extends Constructor<any>>(
@@ -71,7 +74,7 @@ export class OAuthApp<TClientType extends ClientType = "oauth-app"> {
     return OAuthAppWithDefaults;
   }
 
-  constructor(options: ConstructorOptions<TClientType>) {
+  constructor(options: ConstructorOptions<TClientType, TOctokit>) {
     const Octokit = options.Octokit || OAuthAppOctokit;
     this.type = (options.clientType || "oauth-app") as TClientType;
     const octokit = new Octokit({
@@ -97,8 +100,14 @@ export class OAuthApp<TClientType extends ClientType = "oauth-app"> {
       eventHandlers: {},
     };
 
-    this.on = addEventHandler.bind(null, state) as AddEventHandler<TClientType>;
+    this.on = addEventHandler.bind(null, state) as AddEventHandler<
+      TClientType,
+      TOctokit
+    >;
+
+    // @ts-expect-error TODO: figure this out
     this.octokit = octokit;
+
     this.getUserOctokit = getUserOctokitWithState.bind(null, state);
 
     this.getWebFlowAuthorizationUrl = getWebFlowAuthorizationUrlWithState.bind(
@@ -132,8 +141,8 @@ export class OAuthApp<TClientType extends ClientType = "oauth-app"> {
 
   // assigned during constructor
   type: TClientType;
-  on: AddEventHandler<TClientType>;
-  octokit: OctokitInstance;
+  on: AddEventHandler<TClientType, TOctokit>;
+  octokit: InstanceType<TOctokit>;
   getUserOctokit: GetUserOctokitWithStateInterface<TClientType>;
   getWebFlowAuthorizationUrl: GetWebFlowAuthorizationUrlInterface<TClientType>;
   createToken: CreateTokenInterface<TClientType>;
