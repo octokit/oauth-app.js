@@ -42,8 +42,10 @@ import {
 } from "./methods/delete-authorization";
 
 import {
+  Options,
   ConstructorOptions,
-  OAuthAppOctokitClassType,
+  OctokitTypeFromOptions,
+  ClientTypeFromOptions,
   ClientType,
   AddEventHandler,
   State,
@@ -53,15 +55,14 @@ export { createNodeMiddleware } from "./middleware/node/index";
 type Constructor<T> = new (...args: any[]) => T;
 
 export class OAuthApp<
-  TClientType extends ClientType = "oauth-app",
-  TOctokit extends OAuthAppOctokitClassType = OAuthAppOctokitClassType
+  TOptions extends Options<ClientType> = Options<"oauth-app">
 > {
   static VERSION = VERSION;
 
-  static defaults<TClientType extends ClientType, S extends Constructor<any>>(
-    this: S,
-    defaults: Partial<ConstructorOptions<TClientType>>
-  ) {
+  static defaults<
+    TDefaults extends Options<ClientType>,
+    S extends Constructor<OAuthApp<TDefaults>>
+  >(this: S, defaults: TDefaults) {
     const OAuthAppWithDefaults = class extends this {
       constructor(...args: any[]) {
         super({
@@ -71,12 +72,13 @@ export class OAuthApp<
       }
     };
 
-    return OAuthAppWithDefaults;
+    return OAuthAppWithDefaults as typeof OAuthAppWithDefaults & typeof this;
   }
 
-  constructor(options: ConstructorOptions<TClientType, TOctokit>) {
+  constructor(options: ConstructorOptions<TOptions>) {
     const Octokit = options.Octokit || OAuthAppOctokit;
-    this.type = (options.clientType || "oauth-app") as TClientType;
+    this.type = (options.clientType ||
+      "oauth-app") as ClientTypeFromOptions<TOptions>;
     const octokit = new Octokit({
       authStrategy: createOAuthAppAuth,
       auth: {
@@ -100,10 +102,7 @@ export class OAuthApp<
       eventHandlers: {},
     };
 
-    this.on = addEventHandler.bind(null, state) as AddEventHandler<
-      TClientType,
-      TOctokit
-    >;
+    this.on = addEventHandler.bind(null, state) as AddEventHandler<TOptions>;
 
     // @ts-expect-error TODO: figure this out
     this.octokit = octokit;
@@ -113,20 +112,20 @@ export class OAuthApp<
     this.getWebFlowAuthorizationUrl = getWebFlowAuthorizationUrlWithState.bind(
       null,
       state
-    ) as GetWebFlowAuthorizationUrlInterface<TClientType>;
+    ) as GetWebFlowAuthorizationUrlInterface<ClientTypeFromOptions<TOptions>>;
 
     this.createToken = createTokenWithState.bind(
       null,
       state
-    ) as CreateTokenInterface<TClientType>;
+    ) as CreateTokenInterface<ClientTypeFromOptions<TOptions>>;
     this.checkToken = checkTokenWithState.bind(
       null,
       state
-    ) as CheckTokenInterface<TClientType>;
+    ) as CheckTokenInterface<ClientTypeFromOptions<TOptions>>;
     this.resetToken = resetTokenWithState.bind(
       null,
       state
-    ) as ResetTokenInterface<TClientType>;
+    ) as ResetTokenInterface<ClientTypeFromOptions<TOptions>>;
     this.refreshToken = refreshTokenWithState.bind(
       null,
       state
@@ -140,14 +139,18 @@ export class OAuthApp<
   }
 
   // assigned during constructor
-  type: TClientType;
-  on: AddEventHandler<TClientType, TOctokit>;
-  octokit: InstanceType<TOctokit>;
-  getUserOctokit: GetUserOctokitWithStateInterface<TClientType>;
-  getWebFlowAuthorizationUrl: GetWebFlowAuthorizationUrlInterface<TClientType>;
-  createToken: CreateTokenInterface<TClientType>;
-  checkToken: CheckTokenInterface<TClientType>;
-  resetToken: ResetTokenInterface<TClientType>;
+  type: ClientTypeFromOptions<TOptions>;
+  on: AddEventHandler<TOptions>;
+  octokit: OctokitTypeFromOptions<TOptions>;
+  getUserOctokit: GetUserOctokitWithStateInterface<
+    ClientTypeFromOptions<TOptions>
+  >;
+  getWebFlowAuthorizationUrl: GetWebFlowAuthorizationUrlInterface<
+    ClientTypeFromOptions<TOptions>
+  >;
+  createToken: CreateTokenInterface<ClientTypeFromOptions<TOptions>>;
+  checkToken: CheckTokenInterface<ClientTypeFromOptions<TOptions>>;
+  resetToken: ResetTokenInterface<ClientTypeFromOptions<TOptions>>;
   refreshToken: RefreshTokenInterface;
   scopeToken: ScopeTokenInterface;
   deleteToken: DeleteTokenInterface;

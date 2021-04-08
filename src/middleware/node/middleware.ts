@@ -4,9 +4,10 @@ import { parseRequest } from "./parse-request";
 
 import { OAuthApp } from "../../index";
 import { MiddlewareOptions } from "./types";
+import { Options, ClientType } from "../../types";
 
 export async function middleware(
-  app: OAuthApp<"oauth-app"> | OAuthApp<"github-app">,
+  app: OAuthApp<Options<ClientType>>,
   options: Required<MiddlewareOptions>,
   request: IncomingMessage,
   response: ServerResponse
@@ -99,7 +100,6 @@ export async function middleware(
       }
 
       const {
-        // @ts-expect-error scopes won't be set for GitHub Apps
         authentication: { token, scopes },
       } = await app.createToken({
         state: oauthState,
