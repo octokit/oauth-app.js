@@ -60,9 +60,8 @@ export class OAuthApp<
   static VERSION = VERSION;
 
   static defaults<
-    TClientType extends ClientType,
-    TDefaults extends Options<TClientType>,
-    S extends Constructor<any>
+    TDefaults extends Options<ClientType>,
+    S extends Constructor<OAuthApp<TDefaults>>
   >(this: S, defaults: TDefaults) {
     const OAuthAppWithDefaults = class extends this {
       constructor(...args: any[]) {
