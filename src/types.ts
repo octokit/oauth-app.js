@@ -30,26 +30,36 @@ export type EventAndActionName =
   | "authorization"
   | "authorization.deleted";
 
-type CommonConstructorOptions<TOctokit extends OAuthAppOctokitClassType> = {
-  clientId: ClientId;
-  clientSecret: ClientSecret;
+type CommonOptions<TOctokit extends OAuthAppOctokitClassType> = {
+  clientId?: ClientId;
+  clientSecret?: ClientSecret;
   allowSignup?: boolean;
   baseUrl?: string;
   log?: typeof console;
   Octokit?: TOctokit;
 };
 
-export type ConstructorOptions<
+export type Options<
   TClientType extends ClientType,
   TOctokit extends OAuthAppOctokitClassType = OAuthAppOctokitClassType
 > = TClientType extends "oauth-app"
-  ? CommonConstructorOptions<TOctokit> & {
+  ? CommonOptions<TOctokit> & {
       clientType?: TClientType;
       defaultScopes?: Scope[];
     }
-  : CommonConstructorOptions<TOctokit> & {
+  : CommonOptions<TOctokit> & {
       clientType?: TClientType;
     };
+
+// workaround for https://github.com/octokit/oauth-app.js/pull/216
+// we cannot make clientId & clientSecret required on Options because
+// it would break inheritance of the Octokit option set via App.defaults({ Octokit })
+export type ConstructorOptions<
+  TOptions extends Options<ClientType>
+> = TOptions & {
+  clientId: ClientId;
+  clientSecret: ClientSecret;
+};
 
 export type OctokitInstance = InstanceType<OAuthAppOctokitClassType>;
 export type State = {

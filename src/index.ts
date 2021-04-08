@@ -42,6 +42,7 @@ import {
 } from "./methods/delete-authorization";
 
 import {
+  Options,
   ConstructorOptions,
   OAuthAppOctokitClassType,
   ClientType,
@@ -58,10 +59,11 @@ export class OAuthApp<
 > {
   static VERSION = VERSION;
 
-  static defaults<TClientType extends ClientType, S extends Constructor<any>>(
-    this: S,
-    defaults: Partial<ConstructorOptions<TClientType>>
-  ) {
+  static defaults<
+    TClientType extends ClientType,
+    TDefaults extends Options<TClientType>,
+    S extends Constructor<any>
+  >(this: S, defaults: TDefaults) {
     const OAuthAppWithDefaults = class extends this {
       constructor(...args: any[]) {
         super({
@@ -71,10 +73,10 @@ export class OAuthApp<
       }
     };
 
-    return OAuthAppWithDefaults;
+    return OAuthAppWithDefaults as typeof OAuthAppWithDefaults & typeof this;
   }
 
-  constructor(options: ConstructorOptions<TClientType, TOctokit>) {
+  constructor(options: ConstructorOptions<Options<TClientType, TOctokit>>) {
     const Octokit = options.Octokit || OAuthAppOctokit;
     this.type = (options.clientType || "oauth-app") as TClientType;
     const octokit = new Octokit({
