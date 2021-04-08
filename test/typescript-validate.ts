@@ -30,6 +30,25 @@ export function CustomOctokitTest() {
   });
 }
 
+export function CustomOctokitFromDefaultsTest() {
+  const MyOctokit = Octokit.plugin(() => {
+    return {
+      foo: "bar",
+    };
+  });
+
+  const MyApp = OAuthApp.defaults({
+    Octokit: MyOctokit,
+  });
+
+  const app = new MyApp({
+    clientId: "",
+    clientSecret: "",
+  });
+
+  expect<string>(app.octokit.foo);
+}
+
 export async function OAuthAppTest() {
   const oauthApp = new OAuthApp({
     clientType: "oauth-app",
