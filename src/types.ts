@@ -1,3 +1,4 @@
+import { Octokit } from "@octokit/core";
 import {
   OAuthAppUserAuthentication,
   GitHubAppUserAuthentication,
@@ -61,6 +62,22 @@ export type ConstructorOptions<
   clientSecret: ClientSecret;
 };
 
+export type OctokitTypeFromOptions<
+  TOptions extends Options<ClientType>
+> = TOptions["Octokit"] extends typeof Octokit
+  ? InstanceType<TOptions["Octokit"]>
+  : Octokit;
+
+export type OctokitClassTypeFromOptions<
+  TOptions extends Options<ClientType>
+> = TOptions["Octokit"] extends typeof Octokit
+  ? TOptions["Octokit"]
+  : typeof Octokit;
+
+export type ClientTypeFromOptions<
+  TOptions extends Options<ClientType>
+> = TOptions["clientType"] extends "github-app" ? "github-app" : "oauth-app";
+
 export type OctokitInstance = InstanceType<OAuthAppOctokitClassType>;
 export type State = {
   clientType: ClientType;
@@ -73,39 +90,37 @@ export type State = {
   Octokit: OAuthAppOctokitClassType;
   octokit: OctokitInstance;
   eventHandlers: {
-    [key: string]: EventHandler<ClientType, OAuthAppOctokitClassType>[];
+    [key: string]: EventHandler<Options<ClientType>>[];
   };
 };
 
 export type EventHandlerContext<
-  TClientType extends ClientType,
-  TOctokit extends OAuthAppOctokitClassType
-> = TClientType extends "oauth-app"
+  TOptions extends Options<ClientType>
+> = ClientTypeFromOptions<TOptions> extends "oauth-app"
   ? {
       name: EventName;
       action: ActionName;
       token: Token;
       scopes?: Scope[];
-      octokit: InstanceType<TOctokit>;
-      authentication?: OAuthAppUserAuthentication;
+      octokit: OctokitTypeFromOptions<TOptions>;
+      authentication?:
+        | OAuthAppUserAuthentication
+        | GitHubAppUserAuthentication
+        | GitHubAppUserAuthenticationWithExpiration;
     }
   : {
       name: EventName;
       action: ActionName;
       token: Token;
-      octokit: InstanceType<TOctokit>;
+      octokit: OctokitTypeFromOptions<TOptions>;
       authentication?:
         | GitHubAppUserAuthentication
         | GitHubAppUserAuthenticationWithExpiration;
     };
-export type EventHandler<
-  TClientType extends ClientType,
-  TOctokit extends OAuthAppOctokitClassType
-> = (context: EventHandlerContext<TClientType, TOctokit>) => void;
-export type AddEventHandler<
-  TClientType extends ClientType,
-  TOctokit extends OAuthAppOctokitClassType
-> = (
+export type EventHandler<TOptions extends Options<ClientType>> = (
+  context: EventHandlerContext<TOptions>
+) => void;
+export type AddEventHandler<TOptions extends Options<ClientType>> = (
   eventName: EventAndActionName | EventAndActionName[],
-  eventHandler: EventHandler<TClientType, TOctokit>
+  eventHandler: EventHandler<TOptions>
 ) => void;
