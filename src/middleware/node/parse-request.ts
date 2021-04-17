@@ -1,4 +1,7 @@
-import { IncomingMessage } from "http";
+// remove type imports from http for Deno compatibility
+// see https://github.com/octokit/octokit.js/issues/24#issuecomment-817361886
+// import { IncomingMessage } from "http";
+type IncomingMessage = any;
 
 // @ts-ignore remove once Node 10 is out maintenance. Replace with Object.fromEntries
 import fromEntries from "fromentries";
@@ -41,7 +44,7 @@ export async function parseRequest(
     let bodyChunks: Uint8Array[] = [];
     request
       .on("error", reject)
-      .on("data", (chunk) => bodyChunks.push(chunk))
+      .on("data", (chunk: Uint8Array) => bodyChunks.push(chunk))
       .on("end", async () => {
         const bodyString = Buffer.concat(bodyChunks).toString();
         if (!bodyString) return resolve({ headers, query });
