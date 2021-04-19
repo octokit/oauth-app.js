@@ -225,7 +225,7 @@ You can pass in your own Octokit constructor with custom defaults and plugins. T
 For usage with enterprise, set `baseUrl` to the hostname + `/api/v3`. Example:
 
 ```js
-const { Octokit } = require("@octokit/oauth-app");
+const { Octokit } = require("@octokit/core");
 new OAuthApp({
   clientId: "1234567890abcdef1234",
   clientSecret: "1234567890abcdef1234567890abcdef12345678",
@@ -234,8 +234,6 @@ new OAuthApp({
   }),
 });
 ```
-
-Defaults to `@octokit/oauth-app`'s owne `Octokit` constructor which can be imported separately from `OAuthApp`. It's [`@octokit/core`](https://github.com/octokit/core.js) with the [`@octokit/auth-oauth-user`](https://github.com/octokit/auth-oauth-user.js/#readme) authentication strategy.
 
 </td></tr>
   </tbody>
