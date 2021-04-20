@@ -235,6 +235,8 @@ new OAuthApp({
 });
 ```
 
+Defaults to `@octokit/oauth-app`'s owne `Octokit` constructor which can be imported separately from `OAuthApp`. It's [`@octokit/core`](https://github.com/octokit/core.js) with the [`@octokit/auth-oauth-user`](https://github.com/octokit/auth-oauth-user.js/#readme) authentication strategy.
+
 </td></tr>
   </tbody>
 </table>
