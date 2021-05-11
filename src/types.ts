@@ -55,28 +55,24 @@ export type Options<
 // workaround for https://github.com/octokit/oauth-app.js/pull/216
 // we cannot make clientId & clientSecret required on Options because
 // it would break inheritance of the Octokit option set via App.defaults({ Octokit })
-export type ConstructorOptions<
-  TOptions extends Options<ClientType>
-> = TOptions & {
-  clientId: ClientId;
-  clientSecret: ClientSecret;
-};
+export type ConstructorOptions<TOptions extends Options<ClientType>> =
+  TOptions & {
+    clientId: ClientId;
+    clientSecret: ClientSecret;
+  };
 
-export type OctokitTypeFromOptions<
-  TOptions extends Options<ClientType>
-> = TOptions["Octokit"] extends typeof Octokit
-  ? InstanceType<TOptions["Octokit"]>
-  : Octokit;
+export type OctokitTypeFromOptions<TOptions extends Options<ClientType>> =
+  TOptions["Octokit"] extends typeof Octokit
+    ? InstanceType<TOptions["Octokit"]>
+    : Octokit;
 
-export type OctokitClassTypeFromOptions<
-  TOptions extends Options<ClientType>
-> = TOptions["Octokit"] extends typeof Octokit
-  ? TOptions["Octokit"]
-  : typeof Octokit;
+export type OctokitClassTypeFromOptions<TOptions extends Options<ClientType>> =
+  TOptions["Octokit"] extends typeof Octokit
+    ? TOptions["Octokit"]
+    : typeof Octokit;
 
-export type ClientTypeFromOptions<
-  TOptions extends Options<ClientType>
-> = TOptions["clientType"] extends "github-app" ? "github-app" : "oauth-app";
+export type ClientTypeFromOptions<TOptions extends Options<ClientType>> =
+  TOptions["clientType"] extends "github-app" ? "github-app" : "oauth-app";
 
 export type OctokitInstance = InstanceType<OAuthAppOctokitClassType>;
 export type State = {
@@ -94,29 +90,28 @@ export type State = {
   };
 };
 
-export type EventHandlerContext<
-  TOptions extends Options<ClientType>
-> = ClientTypeFromOptions<TOptions> extends "oauth-app"
-  ? {
-      name: EventName;
-      action: ActionName;
-      token: Token;
-      scopes?: Scope[];
-      octokit: OctokitTypeFromOptions<TOptions>;
-      authentication?:
-        | OAuthAppUserAuthentication
-        | GitHubAppUserAuthentication
-        | GitHubAppUserAuthenticationWithExpiration;
-    }
-  : {
-      name: EventName;
-      action: ActionName;
-      token: Token;
-      octokit: OctokitTypeFromOptions<TOptions>;
-      authentication?:
-        | GitHubAppUserAuthentication
-        | GitHubAppUserAuthenticationWithExpiration;
-    };
+export type EventHandlerContext<TOptions extends Options<ClientType>> =
+  ClientTypeFromOptions<TOptions> extends "oauth-app"
+    ? {
+        name: EventName;
+        action: ActionName;
+        token: Token;
+        scopes?: Scope[];
+        octokit: OctokitTypeFromOptions<TOptions>;
+        authentication?:
+          | OAuthAppUserAuthentication
+          | GitHubAppUserAuthentication
+          | GitHubAppUserAuthenticationWithExpiration;
+      }
+    : {
+        name: EventName;
+        action: ActionName;
+        token: Token;
+        octokit: OctokitTypeFromOptions<TOptions>;
+        authentication?:
+          | GitHubAppUserAuthentication
+          | GitHubAppUserAuthenticationWithExpiration;
+      };
 export type EventHandler<TOptions extends Options<ClientType>> = (
   context: EventHandlerContext<TOptions>
 ) => void;
