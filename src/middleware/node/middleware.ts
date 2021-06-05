@@ -14,7 +14,8 @@ export async function middleware(
   app: OAuthApp<Options<ClientType>>,
   options: Required<MiddlewareOptions>,
   request: IncomingMessage,
-  response: ServerResponse
+  response: ServerResponse,
+  next?: Function
 ) {
   // request.url mayb include ?query parameters which we don't want for `route`
   // hence the workaround using new URL()
@@ -32,9 +33,15 @@ export async function middleware(
     deleteGrant: `DELETE ${options.pathPrefix}/grant`,
   };
 
+  // handle unknown routes
   if (!Object.values(routes).includes(route)) {
-    options.onUnhandledRequest(request, response);
-    return;
+    const isExpressMiddleware = typeof next === "function";
+    if (isExpressMiddleware) {
+      // @ts-ignore `next` must be a function as we check two lines above
+      return next();
+    } else {
+      return options.onUnhandledRequest(request, response);
+    }
   }
 
   let parsedRequest;
