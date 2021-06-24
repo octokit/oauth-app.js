@@ -71,6 +71,9 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
+    const onTokenSpy = jest.fn();
+    app.on("token", onTokenSpy);
+
     const octokit = await app.getUserOctokit({
       code: "code123",
     });
@@ -80,6 +83,8 @@ describe("app", () => {
       data: { login },
     } = await octokit.request("GET /user");
     expect(login).toEqual("octocat");
+
+    expect(onTokenSpy).toHaveBeenCalled();
   });
 
   it("app.getWebFlowAuthorizationUrl(options)", () => {
