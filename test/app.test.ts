@@ -4,7 +4,7 @@ import { Octokit } from "@octokit/core";
 import { OAuthApp } from "../src";
 import { OAuthAppOctokit } from "../src/oauth-app-octokit";
 
-describe("OAuthApp.defaultst", () => {
+describe("OAuthApp.defaults", () => {
   test("sets default options", () => {
     const MyOAuthApp = OAuthApp.defaults({
       allowSignup: false,
