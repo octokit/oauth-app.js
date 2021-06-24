@@ -4,7 +4,7 @@ import { Octokit } from "@octokit/core";
 import { OAuthApp } from "../src";
 import { OAuthAppOctokit } from "../src/oauth-app-octokit";
 
-describe("OAuthApp.defaultst", () => {
+describe("OAuthApp.defaults", () => {
   test("sets default options", () => {
     const MyOAuthApp = OAuthApp.defaults({
       allowSignup: false,
@@ -71,6 +71,9 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
+    const onTokenSpy = jest.fn();
+    app.on("token", onTokenSpy);
+
     const octokit = await app.getUserOctokit({
       code: "code123",
     });
@@ -80,6 +83,8 @@ describe("app", () => {
       data: { login },
     } = await octokit.request("GET /user");
     expect(login).toEqual("octocat");
+
+    expect(onTokenSpy).toHaveBeenCalled();
   });
 
   it("app.getWebFlowAuthorizationUrl(options)", () => {

@@ -7,9 +7,11 @@ import {
   GitHubAppStrategyOptionsDeviceFlow,
   GitHubAppStrategyOptionsExistingAuthentication,
   GitHubAppStrategyOptionsExistingAuthenticationWithExpiration,
+  OAuthAppAuthentication,
 } from "@octokit/auth-oauth-user";
 
 import { State, OctokitInstance, ClientType } from "../types";
+import { emitEvent } from "../emit-event";
 
 type StateOptions = "clientType" | "clientId" | "clientSecret" | "request";
 
@@ -33,11 +35,26 @@ export async function getUserOctokitWithState(
   return state.octokit.auth({
     type: "oauth-user",
     ...options,
-    factory(options: any) {
-      return new state.Octokit({
+    async factory(options: any) {
+      const octokit = new state.Octokit({
         authStrategy: createOAuthUserAuth,
         auth: options,
       });
+
+      const authentication = (await octokit.auth({
+        type: "get",
+      })) as OAuthAppAuthentication;
+
+      await emitEvent(state, {
+        name: "token",
+        action: "created",
+        token: authentication.token,
+        scopes: authentication.scopes,
+        authentication,
+        octokit,
+      });
+
+      return octokit;
     },
   }) as Promise<OctokitInstance>;
 }
