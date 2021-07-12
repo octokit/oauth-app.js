@@ -3,57 +3,19 @@
 // import { IncomingMessage } from "http";
 type IncomingMessage = any;
 
-// @ts-ignore remove once Node 10 is out maintenance. Replace with Object.fromEntries
-import fromEntries from "fromentries";
+import { GeneralRequest } from "../types";
 
-type ParsedRequest = {
-  headers: {
-    authorization?: string;
-  };
-  query: {
-    state?: string;
-    scopes?: string;
-    code?: string;
-    redirectUrl?: string;
-    allowSignup?: boolean;
-    error?: string;
-    error_description?: string;
-    error_url?: string;
-  };
-  body?: {
-    code?: string;
-    state?: string;
-    redirectUrl?: string;
-    refreshToken?: string;
-  };
-};
-
-export async function parseRequest(
-  request: IncomingMessage
-): Promise<ParsedRequest> {
-  const { searchParams } = new URL(request.url as string, "http://localhost");
-
-  const query = fromEntries(searchParams);
-  const headers = request.headers;
-
-  if (!["POST", "PATCH"].includes(request.method as string)) {
-    return { headers, query };
+export function parseRequest(request: IncomingMessage): GeneralRequest {
+  const { method, url, headers } = request;
+  async function text() {
+    const text = await new Promise<string>((resolve, reject) => {
+      let bodyChunks: Uint8Array[] = [];
+      request
+        .on("error", reject)
+        .on("data", (chunk: Uint8Array) => bodyChunks.push(chunk))
+        .on("end", () => resolve(Buffer.concat(bodyChunks).toString()));
+    });
+    return text;
   }
-
-  return new Promise((resolve, reject) => {
-    let bodyChunks: Uint8Array[] = [];
-    request
-      .on("error", reject)
-      .on("data", (chunk: Uint8Array) => bodyChunks.push(chunk))
-      .on("end", async () => {
-        const bodyString = Buffer.concat(bodyChunks).toString();
-        if (!bodyString) return resolve({ headers, query });
-
-        try {
-          resolve({ headers, query, body: JSON.parse(bodyString) });
-        } catch (error) {
-          reject(error);
-        }
-      });
-  });
+  return { method, url, headers, text };
 }
