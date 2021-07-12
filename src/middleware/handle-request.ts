@@ -1,75 +1,70 @@
-// remove type imports from http for Deno compatibility
-// see https://github.com/octokit/octokit.js/issues/24#issuecomment-817361886
-// import { IncomingMessage, ServerResponse } from "http";
-type IncomingMessage = any;
-type ServerResponse = any;
+import { OAuthApp } from "../index";
+import { OctokitRequest, OctokitResponse, HandlerOptions } from "./types";
+import { ClientType, Options } from "../types";
+import fromEntries from "fromentries";
 
-import { parseRequest } from "./parse-request";
-
-import { OAuthApp } from "../../index";
-import { MiddlewareOptions } from "./types";
-import { Options, ClientType } from "../../types";
-
-export async function middleware(
+export async function handleRequest(
   app: OAuthApp<Options<ClientType>>,
-  options: Required<MiddlewareOptions>,
-  request: IncomingMessage,
-  response: ServerResponse,
-  next?: Function
-) {
-  // request.url mayb include ?query parameters which we don't want for `route`
+  { pathPrefix = "/api/github/oauth" }: HandlerOptions,
+  request: OctokitRequest
+): Promise<OctokitResponse | null> {
+  // request.url may include ?query parameters which we don't want for `route`
   // hence the workaround using new URL()
   const { pathname } = new URL(request.url as string, "http://localhost");
   const route = [request.method, pathname].join(" ");
   const routes = {
-    getLogin: `GET ${options.pathPrefix}/login`,
-    getCallback: `GET ${options.pathPrefix}/callback`,
-    createToken: `POST ${options.pathPrefix}/token`,
-    getToken: `GET ${options.pathPrefix}/token`,
-    patchToken: `PATCH ${options.pathPrefix}/token`,
-    patchRefreshToken: `PATCH ${options.pathPrefix}/refresh-token`,
-    scopeToken: `POST ${options.pathPrefix}/token/scoped`,
-    deleteToken: `DELETE ${options.pathPrefix}/token`,
-    deleteGrant: `DELETE ${options.pathPrefix}/grant`,
+    getLogin: `GET ${pathPrefix}/login`,
+    getCallback: `GET ${pathPrefix}/callback`,
+    createToken: `POST ${pathPrefix}/token`,
+    getToken: `GET ${pathPrefix}/token`,
+    patchToken: `PATCH ${pathPrefix}/token`,
+    patchRefreshToken: `PATCH ${pathPrefix}/refresh-token`,
+    scopeToken: `POST ${pathPrefix}/token/scoped`,
+    deleteToken: `DELETE ${pathPrefix}/token`,
+    deleteGrant: `DELETE ${pathPrefix}/grant`,
   };
 
   // handle unknown routes
   if (!Object.values(routes).includes(route)) {
-    const isExpressMiddleware = typeof next === "function";
-    if (isExpressMiddleware) {
-      // @ts-ignore `next` must be a function as we check two lines above
-      return next();
-    } else {
-      return options.onUnhandledRequest(request, response);
-    }
+    return null;
   }
 
-  let parsedRequest;
+  let json: any;
   try {
-    parsedRequest = await parseRequest(request);
+    const text = await request.text();
+    json = text ? JSON.parse(text) : {};
   } catch (error) {
-    response.writeHead(400, {
-      "content-type": "application/json",
-    });
-    return response.end(
-      JSON.stringify({
+    return {
+      status: 400,
+      headers: { "content-type": "application/json" },
+      text: JSON.stringify({
         error: "[@octokit/oauth-app] request error",
-      })
-    );
+      }),
+    };
   }
-  const { headers, query, body = {} } = parsedRequest;
+  const { searchParams } = new URL(request.url as string, "http://localhost");
+  const query = fromEntries(searchParams) as {
+    state?: string;
+    scopes?: string;
+    code?: string;
+    redirectUrl?: string;
+    allowSignup?: string;
+    error?: string;
+    error_description?: string;
+    error_url?: string;
+  };
+  const headers = request.headers as { authorization?: string };
 
   try {
     if (route === routes.getLogin) {
       const { url } = app.getWebFlowAuthorizationUrl({
         state: query.state,
-        scopes: query.scopes?.split(","),
-        allowSignup: query.allowSignup,
+        scopes: query.scopes ? query.scopes.split(",") : undefined,
+        allowSignup: query.allowSignup !== "false",
         redirectUrl: query.redirectUrl,
       });
 
-      response.writeHead(302, { location: url });
-      return response.end();
+      return { status: 302, headers: { location: url } };
     }
 
     if (route === routes.getCallback) {
@@ -91,18 +86,19 @@ export async function middleware(
         code: query.code,
       });
 
-      response.writeHead(200, {
-        "content-type": "text/html",
-      });
-      response.write(`<h1>Token created successfull</h1>
+      return {
+        status: 200,
+        headers: {
+          "content-type": "text/html",
+        },
+        text: `<h1>Token created successfull</h1>
     
-<p>Your token is: <strong>${token}</strong>. Copy it now as it cannot be shown again.</p>`);
-
-      return response.end();
+<p>Your token is: <strong>${token}</strong>. Copy it now as it cannot be shown again.</p>`,
+      };
     }
 
     if (route === routes.createToken) {
-      const { state: oauthState, code, redirectUrl } = body;
+      const { state: oauthState, code, redirectUrl } = json;
 
       if (!oauthState || !code) {
         throw new Error(
@@ -118,11 +114,11 @@ export async function middleware(
         redirectUrl,
       });
 
-      response.writeHead(201, {
-        "content-type": "application/json",
-      });
-
-      return response.end(JSON.stringify({ token, scopes }));
+      return {
+        status: 201,
+        headers: { "content-type": "application/json" },
+        text: JSON.stringify({ token, scopes }),
+      };
     }
 
     if (route === routes.getToken) {
@@ -138,10 +134,11 @@ export async function middleware(
         token,
       });
 
-      response.writeHead(200, {
-        "content-type": "application/json",
-      });
-      return response.end(JSON.stringify(result));
+      return {
+        status: 200,
+        headers: { "content-type": "application/json" },
+        text: JSON.stringify(result),
+      };
     }
 
     if (route === routes.patchToken) {
@@ -157,10 +154,11 @@ export async function middleware(
         token,
       });
 
-      response.writeHead(200, {
-        "content-type": "application/json",
-      });
-      return response.end(JSON.stringify(result));
+      return {
+        status: 200,
+        headers: { "content-type": "application/json" },
+        text: JSON.stringify(result),
+      };
     }
 
     if (route === routes.patchRefreshToken) {
@@ -172,7 +170,7 @@ export async function middleware(
         );
       }
 
-      const { refreshToken } = body;
+      const { refreshToken } = json;
 
       if (!refreshToken) {
         throw new Error(
@@ -182,10 +180,11 @@ export async function middleware(
 
       const result = await app.refreshToken({ refreshToken });
 
-      response.writeHead(200, {
-        "content-type": "application/json",
-      });
-      return response.end(JSON.stringify(result));
+      return {
+        status: 200,
+        headers: { "content-type": "application/json" },
+        text: JSON.stringify(result),
+      };
     }
 
     if (route === routes.scopeToken) {
@@ -199,13 +198,14 @@ export async function middleware(
 
       const result = await app.scopeToken({
         token,
-        ...body,
+        ...json,
       });
 
-      response.writeHead(200, {
-        "content-type": "application/json",
-      });
-      return response.end(JSON.stringify(result));
+      return {
+        status: 200,
+        headers: { "content-type": "application/json" },
+        text: JSON.stringify(result),
+      };
     }
 
     if (route === routes.deleteToken) {
@@ -221,8 +221,7 @@ export async function middleware(
         token,
       });
 
-      response.writeHead(204);
-      return response.end();
+      return { status: 204 };
     }
 
     // route === routes.deleteGrant
@@ -238,16 +237,12 @@ export async function middleware(
       token,
     });
 
-    response.writeHead(204);
-    return response.end();
+    return { status: 204 };
   } catch (error) {
-    response.writeHead(400, {
-      "content-type": "application/json",
-    });
-    response.end(
-      JSON.stringify({
-        error: error.message,
-      })
-    );
+    return {
+      status: 400,
+      headers: { "content-type": "application/json" },
+      text: JSON.stringify({ error: error.message }),
+    };
   }
 }
