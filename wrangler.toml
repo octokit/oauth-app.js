@@ -1,0 +1,11 @@
+name = "octokit-oauth-app"
+type = 'javascript'
+account_id = ''
+workers_dev = true
+
+[build]
+command = "npm install && npm run build:cloudflare"
+
+[build.upload]
+format = "modules"
+main = "./worker.mjs"

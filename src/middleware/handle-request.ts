@@ -1,26 +1,27 @@
 import { OAuthApp } from "../index";
-import { GeneralRequest, GeneralResponse, HandlerOptions } from "./types";
-import { Options, ClientType } from "../types";
+import { OctokitRequest, OctokitResponse, HandlerOptions } from "./types";
+import { ClientType, Options } from "../types";
+import fromEntries from "fromentries";
 
 export async function handleRequest(
   app: OAuthApp<Options<ClientType>>,
-  options: Required<HandlerOptions>,
-  request: GeneralRequest
-): Promise<GeneralResponse | null> {
+  { pathPrefix = "/api/github/oauth" }: HandlerOptions,
+  request: OctokitRequest
+): Promise<OctokitResponse | null> {
   // request.url may include ?query parameters which we don't want for `route`
   // hence the workaround using new URL()
   const { pathname } = new URL(request.url as string, "http://localhost");
   const route = [request.method, pathname].join(" ");
   const routes = {
-    getLogin: `GET ${options.pathPrefix}/login`,
-    getCallback: `GET ${options.pathPrefix}/callback`,
-    createToken: `POST ${options.pathPrefix}/token`,
-    getToken: `GET ${options.pathPrefix}/token`,
-    patchToken: `PATCH ${options.pathPrefix}/token`,
-    patchRefreshToken: `PATCH ${options.pathPrefix}/refresh-token`,
-    scopeToken: `POST ${options.pathPrefix}/token/scoped`,
-    deleteToken: `DELETE ${options.pathPrefix}/token`,
-    deleteGrant: `DELETE ${options.pathPrefix}/grant`,
+    getLogin: `GET ${pathPrefix}/login`,
+    getCallback: `GET ${pathPrefix}/callback`,
+    createToken: `POST ${pathPrefix}/token`,
+    getToken: `GET ${pathPrefix}/token`,
+    patchToken: `PATCH ${pathPrefix}/token`,
+    patchRefreshToken: `PATCH ${pathPrefix}/refresh-token`,
+    scopeToken: `POST ${pathPrefix}/token/scoped`,
+    deleteToken: `DELETE ${pathPrefix}/token`,
+    deleteGrant: `DELETE ${pathPrefix}/grant`,
   };
 
   // handle unknown routes
@@ -42,7 +43,7 @@ export async function handleRequest(
     };
   }
   const { searchParams } = new URL(request.url as string, "http://localhost");
-  const query = Object.fromEntries(searchParams) as {
+  const query = fromEntries(searchParams) as {
     state?: string;
     scopes?: string;
     code?: string;
@@ -58,8 +59,8 @@ export async function handleRequest(
     if (route === routes.getLogin) {
       const { url } = app.getWebFlowAuthorizationUrl({
         state: query.state,
-        scopes: query.scopes?.split(","),
-        allowSignup: query.allowSignup != "false",
+        scopes: query.scopes ? query.scopes.split(",") : undefined,
+        allowSignup: query.allowSignup !== "false",
         redirectUrl: query.redirectUrl,
       });
 
@@ -92,7 +93,7 @@ export async function handleRequest(
         },
         text: `<h1>Token created successfull</h1>
     
-      <p>Your token is: <strong>${token}</strong>. Copy it now as it cannot be shown again.</p>`,
+<p>Your token is: <strong>${token}</strong>. Copy it now as it cannot be shown again.</p>`,
       };
     }
 

@@ -1,8 +1,8 @@
-import { GeneralRequest, GeneralResponse } from "./types";
+import { OctokitRequest, OctokitResponse } from "./types";
 
 export function onUnhandledRequestDefault(
-  request: GeneralRequest
-): GeneralResponse {
+  request: OctokitRequest
+): OctokitResponse {
   return {
     status: 404,
     headers: { "content-type": "application/json" },

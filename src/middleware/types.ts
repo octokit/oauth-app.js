@@ -1,11 +1,11 @@
-export type GeneralRequest = {
+export type OctokitRequest = {
   method: string;
   url: string;
   headers: Record<string, string>;
   text: () => Promise<string>;
 };
 
-export type GeneralResponse = {
+export type OctokitResponse = {
   status: number;
   headers?: Record<string, string>;
   text?: string;
