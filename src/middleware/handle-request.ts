@@ -1,6 +1,7 @@
 import { OAuthApp } from "../index";
 import { OctokitRequest, OctokitResponse, HandlerOptions } from "./types";
 import { ClientType, Options } from "../types";
+// @ts-ignore - requires esModuleInterop flag
 import fromEntries from "fromentries";
 
 export async function handleRequest(
