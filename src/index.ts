@@ -51,6 +51,7 @@ import {
   State,
 } from "./types";
 export { createNodeMiddleware } from "./middleware/node/index";
+export { createCloudflareHandler } from "./middleware/cloudflare/index";
 
 type Constructor<T> = new (...args: any[]) => T;
 

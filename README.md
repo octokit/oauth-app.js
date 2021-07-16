@@ -890,7 +890,7 @@ const app = new OAuthApp({
 });
 
 const middleware = createNodeMiddleware(app, {
-  pathPrefix: "/api/github/oauth/",
+  pathPrefix: "/api/github/oauth",
 });
 
 require("http").createServer(middleware).listen(3000);
@@ -949,18 +949,108 @@ Defaults to
 
 ```js
 function onUnhandledRequest(request, response) {
-  response.writeHead(400, {
+  response.writeHead(404, {
     "content-type": "application/json",
   });
   response.end(
     JSON.stringify({
-      error: error.message,
+      error: `Unknown route: ${request.method} ${request.url}`,
     })
   );
 }
 ```
 
 </td></tr>
+  </tbody>
+</table>
+
+### `createCloudflareHandler(app, options)`
+
+Event handler for Cloudflare workers.
+
+```js
+// worker.js
+import { OAuthApp, createCloudflareHandler } from "@octokit/oauth-app";
+const app = new OAuthApp({
+  clientType: "oauth-app",
+  clientId: "1234567890abcdef1234",
+  clientSecret: "1234567890abcdef1234567890abcdef12345678",
+});
+
+const handleRequest = createCloudflareHandler(app, {
+  pathPrefix: "/api/github/oauth",
+});
+
+addEventListener("fetch", (event) => {
+  event.respondWith(handleRequest(event.request));
+});
+// can now receive user authorization callbacks at /api/github/oauth/callback
+```
+
+<table width="100%">
+  <thead align=left>
+    <tr>
+      <th width=150>
+        name
+      </th>
+      <th width=70>
+        type
+      </th>
+      <th>
+        description
+      </th>
+    </tr>
+  </thead>
+  <tbody align=left valign=top>
+    <tr>
+      <th>
+        <code>app</code>
+      </th>
+      <th>
+        <code>OAuthApp instance</code>
+      </th>
+      <td>
+        <strong>Required</strong>.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <code>options.pathPrefix</code>
+      </th>
+      <th>
+        <code>string</code>
+      </th>
+      <td>
+
+All exposed paths will be prefixed with the provided prefix. Defaults to `"/api/github/oauth"`
+
+</td>
+    </tr>
+    <tr>
+      <th>
+        <code>options.onUnhandledRequest</code>
+      </th>
+      <th>
+        <code>function</code>
+      </th>
+      <td>Defaults to
+
+```js
+function onUnhandledRequest(request) {
+  return new Response(
+    JSON.stringify({
+      error: `Unknown route: ${request.method} ${request.url}`,
+    }),
+    {
+      status: 404,
+      headers: { "content-type": "application/json" },
+    }
+  );
+}
+```
+
+</td>
+    </tr>
   </tbody>
 </table>
 
