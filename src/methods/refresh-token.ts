@@ -11,7 +11,14 @@ export type RefreshTokenOptions = {
 export async function refreshTokenWithState(
   state: State,
   options: RefreshTokenOptions
-): Promise<OAuthMethods.RefreshTokenResponse> {
+): Promise<
+  OAuthMethods.RefreshTokenResponse & {
+    authentication: {
+      type: "token";
+      tokenType: "oauth";
+    };
+  }
+> {
   if (state.clientType === "oauth-app") {
     throw new Error(
       "[@octokit/oauth-app] app.refreshToken() is not supported for OAuth Apps"
@@ -26,15 +33,16 @@ export async function refreshTokenWithState(
     refreshToken: options.refreshToken,
   });
 
+  const authentication = Object.assign(response.authentication, {
+    type: "token" as const,
+    tokenType: "oauth" as const,
+  });
+
   await emitEvent(state, {
     name: "token",
     action: "refreshed",
     token: response.authentication.token,
-    authentication: {
-      type: "token",
-      tokenType: "oauth",
-      ...response.authentication,
-    },
+    authentication: authentication,
     octokit: new state.Octokit({
       authStrategy: createOAuthUserAuth,
       auth: {
@@ -46,9 +54,16 @@ export async function refreshTokenWithState(
     }),
   });
 
-  return response;
+  return { ...response, authentication };
 }
 
 export interface RefreshTokenInterface {
-  (options: RefreshTokenOptions): Promise<OAuthMethods.RefreshTokenResponse>;
+  (options: RefreshTokenOptions): Promise<
+    OAuthMethods.RefreshTokenResponse & {
+      authentication: {
+        type: "token";
+        tokenType: "oauth";
+      };
+    }
+  >;
 }

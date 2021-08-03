@@ -14,7 +14,14 @@ export type ScopeTokenOptions = Omit<
 export async function scopeTokenWithState(
   state: State,
   options: ScopeTokenOptions
-): Promise<OAuthMethods.ScopeTokenResponse> {
+): Promise<
+  OAuthMethods.ScopeTokenResponse & {
+    authentication: {
+      type: "token";
+      tokenType: "oauth";
+    };
+  }
+> {
   if (state.clientType === "oauth-app") {
     throw new Error(
       "[@octokit/oauth-app] app.scopeToken() is not supported for OAuth Apps"
@@ -29,15 +36,15 @@ export async function scopeTokenWithState(
     ...options,
   } as OAuthMethods.ScopeTokenOptions);
 
+  const authentication = Object.assign(response.authentication, {
+    type: "token" as const,
+    tokenType: "oauth" as const,
+  });
   await emitEvent(state, {
     name: "token",
     action: "scoped",
     token: response.authentication.token,
-    authentication: {
-      type: "token",
-      tokenType: "oauth",
-      ...response.authentication,
-    },
+    authentication: authentication,
     octokit: new state.Octokit({
       authStrategy: createOAuthUserAuth,
       auth: {
@@ -49,9 +56,16 @@ export async function scopeTokenWithState(
     }),
   });
 
-  return response;
+  return { ...response, authentication };
 }
 
 export interface ScopeTokenInterface {
-  (options: ScopeTokenOptions): Promise<OAuthMethods.ScopeTokenResponse>;
+  (options: ScopeTokenOptions): Promise<
+    OAuthMethods.ScopeTokenResponse & {
+      authentication: {
+        type: "token";
+        tokenType: "oauth";
+      };
+    }
+  >;
 }
