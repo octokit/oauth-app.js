@@ -136,10 +136,7 @@ describe("createNodeMiddleware(app)", () => {
   it("POST /api/github/oauth/token", async () => {
     const appMock = {
       createToken: jest.fn().mockResolvedValue({
-        authentication: {
-          token: "token123",
-          scopes: ["repo", "gist"],
-        },
+        authentication: { clientSecret: "" },
       }),
     };
 
@@ -165,8 +162,7 @@ describe("createNodeMiddleware(app)", () => {
 
     expect(response.status).toEqual(201);
     expect(await response.json()).toStrictEqual({
-      token: "token123",
-      scopes: ["repo", "gist"],
+      authentication: {},
     });
 
     expect(appMock.createToken.mock.calls.length).toEqual(1);
@@ -179,7 +175,10 @@ describe("createNodeMiddleware(app)", () => {
 
   it("GET /api/github/oauth/token", async () => {
     const appMock = {
-      checkToken: jest.fn().mockResolvedValue({ id: 1 }),
+      checkToken: jest.fn().mockResolvedValue({
+        foo: "bar",
+        authentication: { clientSecret: "" },
+      }),
     };
 
     const server = createServer(
@@ -200,7 +199,10 @@ describe("createNodeMiddleware(app)", () => {
     server.close();
 
     expect(response.status).toEqual(200);
-    expect(await response.json()).toStrictEqual({ id: 1 });
+    expect(await response.json()).toStrictEqual({
+      foo: "bar",
+      authentication: {},
+    });
 
     expect(appMock.checkToken.mock.calls.length).toEqual(1);
     expect(appMock.checkToken.mock.calls[0][0]).toStrictEqual({
@@ -211,9 +213,8 @@ describe("createNodeMiddleware(app)", () => {
   it("PATCH /api/github/oauth/token", async () => {
     const appMock = {
       resetToken: jest.fn().mockResolvedValue({
-        id: 2,
-        token: "token456",
-        scopes: ["repo", "gist"],
+        foo: "bar",
+        authentication: { clientSecret: "" },
       }),
     };
 
@@ -237,9 +238,8 @@ describe("createNodeMiddleware(app)", () => {
 
     expect(response.status).toEqual(200);
     expect(await response.json()).toStrictEqual({
-      id: 2,
-      token: "token456",
-      scopes: ["repo", "gist"],
+      foo: "bar",
+      authentication: {},
     });
 
     expect(appMock.resetToken.mock.calls.length).toEqual(1);
@@ -251,12 +251,8 @@ describe("createNodeMiddleware(app)", () => {
   it("POST /api/github/oauth/token/scoped", async () => {
     const appMock = {
       scopeToken: jest.fn().mockResolvedValue({
-        data: {
-          id: 1,
-        },
-        authentication: {
-          token: "scopedtoken456",
-        },
+        foo: "bar",
+        authentication: { clientSecret: "" },
       }),
     };
 
@@ -274,9 +270,7 @@ describe("createNodeMiddleware(app)", () => {
           authorization: "token token123",
         },
         body: JSON.stringify({
-          target: "octokit",
-          repositories: ["oauth-methods.js"],
-          permissions: { issues: "write" },
+          foo: "bar",
         }),
       }
     );
@@ -284,36 +278,23 @@ describe("createNodeMiddleware(app)", () => {
     server.close();
 
     expect(response.status).toEqual(200);
-    expect(await response.json()).toMatchInlineSnapshot(`
-      Object {
-        "authentication": Object {
-          "token": "scopedtoken456",
-        },
-        "data": Object {
-          "id": 1,
-        },
-      }
-    `);
+    expect(await response.json()).toStrictEqual({
+      foo: "bar",
+      authentication: {},
+    });
 
     expect(appMock.scopeToken.mock.calls.length).toEqual(1);
-    expect(appMock.scopeToken.mock.calls[0][0]).toMatchInlineSnapshot(`
-      Object {
-        "permissions": Object {
-          "issues": "write",
-        },
-        "repositories": Array [
-          "oauth-methods.js",
-        ],
-        "target": "octokit",
-        "token": "token123",
-      }
-    `);
+    expect(appMock.scopeToken.mock.calls[0][0]).toStrictEqual({
+      token: "token123",
+      foo: "bar",
+    });
   });
 
   it("PATCH /api/github/oauth/refresh-token", async () => {
     const appMock = {
       refreshToken: jest.fn().mockResolvedValue({
-        ok: true,
+        foo: "bar",
+        authentication: { clientSecret: "" },
       }),
     };
 
@@ -339,7 +320,8 @@ describe("createNodeMiddleware(app)", () => {
     server.close();
 
     expect(await response.json()).toStrictEqual({
-      ok: true,
+      foo: "bar",
+      authentication: {},
     });
     expect(response.status).toEqual(200);
 
@@ -351,9 +333,8 @@ describe("createNodeMiddleware(app)", () => {
   it("PATCH /api/github/oauth/token", async () => {
     const appMock = {
       resetToken: jest.fn().mockResolvedValue({
-        id: 2,
-        token: "token456",
-        scopes: ["repo", "gist"],
+        foo: "bar",
+        authentication: { clientSecret: "" },
       }),
     };
 
@@ -377,9 +358,8 @@ describe("createNodeMiddleware(app)", () => {
 
     expect(response.status).toEqual(200);
     expect(await response.json()).toStrictEqual({
-      id: 2,
-      token: "token456",
-      scopes: ["repo", "gist"],
+      foo: "bar",
+      authentication: {},
     });
 
     expect(appMock.resetToken.mock.calls.length).toEqual(1);

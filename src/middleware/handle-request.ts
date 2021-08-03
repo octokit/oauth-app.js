@@ -107,18 +107,19 @@ export async function handleRequest(
         );
       }
 
-      const {
-        authentication: { token, scopes },
-      } = await app.createToken({
+      const result = await app.createToken({
         state: oauthState,
         code,
         redirectUrl,
       });
 
+      // @ts-ignore
+      delete result.authentication.clientSecret;
+
       return {
         status: 201,
         headers: { "content-type": "application/json" },
-        text: JSON.stringify({ token, scopes }),
+        text: JSON.stringify(result),
       };
     }
 
@@ -134,6 +135,9 @@ export async function handleRequest(
       const result = await app.checkToken({
         token,
       });
+
+      // @ts-ignore
+      delete result.authentication.clientSecret;
 
       return {
         status: 200,
@@ -151,9 +155,10 @@ export async function handleRequest(
         );
       }
 
-      const result = await app.resetToken({
-        token,
-      });
+      const result = await app.resetToken({ token });
+
+      // @ts-ignore
+      delete result.authentication.clientSecret;
 
       return {
         status: 200,
@@ -181,6 +186,9 @@ export async function handleRequest(
 
       const result = await app.refreshToken({ refreshToken });
 
+      // @ts-ignore
+      delete result.authentication.clientSecret;
+
       return {
         status: 200,
         headers: { "content-type": "application/json" },
@@ -201,6 +209,9 @@ export async function handleRequest(
         token,
         ...json,
       });
+
+      // @ts-ignore
+      delete result.authentication.clientSecret;
 
       return {
         status: 200,
@@ -239,7 +250,7 @@ export async function handleRequest(
     });
 
     return { status: 204 };
-  } catch (error) {
+  } catch (error: any) {
     return {
       status: 400,
       headers: { "content-type": "application/json" },
