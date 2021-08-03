@@ -9,6 +9,18 @@ export async function handleRequest(
   { pathPrefix = "/api/github/oauth" }: HandlerOptions,
   request: OctokitRequest
 ): Promise<OctokitResponse | null> {
+  if (request.method === "OPTIONS") {
+    return {
+      status: 200,
+      headers: {
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "*",
+        "access-control-allow-headers":
+          "Content-Type, User-Agent, Authorization",
+      },
+    };
+  }
+
   // request.url may include ?query parameters which we don't want for `route`
   // hence the workaround using new URL()
   const { pathname } = new URL(request.url as string, "http://localhost");
@@ -37,7 +49,10 @@ export async function handleRequest(
   } catch (error) {
     return {
       status: 400,
-      headers: { "content-type": "application/json" },
+      headers: {
+        "content-type": "application/json",
+        "access-control-allow-origin": "*",
+      },
       text: JSON.stringify({
         error: "[@octokit/oauth-app] request error",
       }),
@@ -117,7 +132,10 @@ export async function handleRequest(
 
       return {
         status: 201,
-        headers: { "content-type": "application/json" },
+        headers: {
+          "content-type": "application/json",
+          "access-control-allow-origin": "*",
+        },
         text: JSON.stringify({ token, scopes }),
       };
     }
@@ -137,7 +155,10 @@ export async function handleRequest(
 
       return {
         status: 200,
-        headers: { "content-type": "application/json" },
+        headers: {
+          "content-type": "application/json",
+          "access-control-allow-origin": "*",
+        },
         text: JSON.stringify(result),
       };
     }
@@ -157,7 +178,10 @@ export async function handleRequest(
 
       return {
         status: 200,
-        headers: { "content-type": "application/json" },
+        headers: {
+          "content-type": "application/json",
+          "access-control-allow-origin": "*",
+        },
         text: JSON.stringify(result),
       };
     }
@@ -183,7 +207,10 @@ export async function handleRequest(
 
       return {
         status: 200,
-        headers: { "content-type": "application/json" },
+        headers: {
+          "content-type": "application/json",
+          "access-control-allow-origin": "*",
+        },
         text: JSON.stringify(result),
       };
     }
@@ -204,7 +231,10 @@ export async function handleRequest(
 
       return {
         status: 200,
-        headers: { "content-type": "application/json" },
+        headers: {
+          "content-type": "application/json",
+          "access-control-allow-origin": "*",
+        },
         text: JSON.stringify(result),
       };
     }
@@ -222,7 +252,10 @@ export async function handleRequest(
         token,
       });
 
-      return { status: 204 };
+      return {
+        status: 204,
+        headers: { "access-control-allow-origin": "*" },
+      };
     }
 
     // route === routes.deleteGrant
@@ -238,11 +271,17 @@ export async function handleRequest(
       token,
     });
 
-    return { status: 204 };
+    return {
+      status: 204,
+      headers: { "access-control-allow-origin": "*" },
+    };
   } catch (error) {
     return {
       status: 400,
-      headers: { "content-type": "application/json" },
+      headers: {
+        "content-type": "application/json",
+        "access-control-allow-origin": "*",
+      },
       text: JSON.stringify({ error: error.message }),
     };
   }
