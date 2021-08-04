@@ -122,13 +122,14 @@ export async function handleRequest(
         );
       }
 
-      const {
-        authentication: { token, scopes },
-      } = await app.createToken({
+      const result = await app.createToken({
         state: oauthState,
         code,
         redirectUrl,
       });
+
+      // @ts-ignore
+      delete result.authentication.clientSecret;
 
       return {
         status: 201,
@@ -136,7 +137,7 @@ export async function handleRequest(
           "content-type": "application/json",
           "access-control-allow-origin": "*",
         },
-        text: JSON.stringify({ token, scopes }),
+        text: JSON.stringify(result),
       };
     }
 
@@ -152,6 +153,9 @@ export async function handleRequest(
       const result = await app.checkToken({
         token,
       });
+
+      // @ts-ignore
+      delete result.authentication.clientSecret;
 
       return {
         status: 200,
@@ -172,9 +176,10 @@ export async function handleRequest(
         );
       }
 
-      const result = await app.resetToken({
-        token,
-      });
+      const result = await app.resetToken({ token });
+
+      // @ts-ignore
+      delete result.authentication.clientSecret;
 
       return {
         status: 200,
@@ -205,6 +210,9 @@ export async function handleRequest(
 
       const result = await app.refreshToken({ refreshToken });
 
+      // @ts-ignore
+      delete result.authentication.clientSecret;
+
       return {
         status: 200,
         headers: {
@@ -228,6 +236,9 @@ export async function handleRequest(
         token,
         ...json,
       });
+
+      // @ts-ignore
+      delete result.authentication.clientSecret;
 
       return {
         status: 200,
@@ -275,7 +286,7 @@ export async function handleRequest(
       status: 204,
       headers: { "access-control-allow-origin": "*" },
     };
-  } catch (error) {
+  } catch (error: any) {
     return {
       status: 400,
       headers: {

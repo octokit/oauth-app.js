@@ -10,7 +10,7 @@ export async function checkTokenWithState(
   state: State,
   options: CheckTokenOptions
 ): Promise<any> {
-  return await OAuthMethods.checkToken({
+  const result = await OAuthMethods.checkToken({
     // @ts-expect-error not worth the extra code to appease TS
     clientType: state.clientType,
     clientId: state.clientId,
@@ -18,10 +18,17 @@ export async function checkTokenWithState(
     request: state.octokit.request,
     ...options,
   });
+  Object.assign(result.authentication, { type: "token", tokenType: "oauth" });
+  return result;
 }
 
 export interface CheckTokenInterface<TClientType extends ClientType> {
-  (options: CheckTokenOptions): TClientType extends "oauth-app"
+  (options: CheckTokenOptions): (TClientType extends "oauth-app"
     ? Promise<OAuthMethods.CheckTokenOAuthAppResponse>
-    : Promise<OAuthMethods.CheckTokenGitHubAppResponse>;
+    : Promise<OAuthMethods.CheckTokenGitHubAppResponse>) & {
+    authentication: {
+      type: "token";
+      tokenType: "oauth";
+    };
+  };
 }

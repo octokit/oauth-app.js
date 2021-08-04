@@ -314,6 +314,8 @@ describe("app", () => {
           "clientType": "oauth-app",
           "scopes": undefined,
           "token": "token123",
+          "tokenType": "oauth",
+          "type": "token",
         },
         "data": Object {
           "id": 1,
@@ -377,6 +379,8 @@ describe("app", () => {
             "gist",
           ],
           "token": "token456",
+          "tokenType": "oauth",
+          "type": "token",
         },
         "data": Object {
           "id": 2,
@@ -452,6 +456,8 @@ describe("app", () => {
           "clientType": "oauth-app",
           "scopes": null,
           "token": "token456",
+          "tokenType": "oauth",
+          "type": "token",
         },
         "data": Object {
           "id": 2,
@@ -525,6 +531,8 @@ describe("app", () => {
           "clientSecret": "1234567890abcdef1234567890abcdef12345678",
           "clientType": "github-app",
           "token": "token456",
+          "tokenType": "oauth",
+          "type": "token",
         },
         "data": Object {
           "id": 2,
@@ -605,6 +613,8 @@ describe("app", () => {
           "refreshToken": "r1.token456",
           "refreshTokenExpiresAt": "1970-07-04T00:00:00.000Z",
           "token": "secret456",
+          "tokenType": "oauth",
+          "type": "token",
         },
         "data": Object {
           "access_token": "secret456",
@@ -702,6 +712,8 @@ describe("app", () => {
           "clientSecret": "1234567890abcdef12347890abcdef12345678",
           "clientType": "github-app",
           "token": "token456",
+          "tokenType": "oauth",
+          "type": "token",
         },
         "data": Object {
           "account": Object {
