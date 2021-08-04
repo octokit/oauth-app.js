@@ -15,6 +15,19 @@ describe("createCloudflareHandler(app)", () => {
     delete (global as any).Response;
   });
 
+  it("allow pre-flight requests", async () => {
+    const app = new OAuthApp({
+      clientId: "0123",
+      clientSecret: "0123secret",
+    });
+    const handleRequest = createCloudflareHandler(app);
+    const request = new Request("/api/github/oauth/token", {
+      method: "OPTIONS",
+    });
+    const response = await handleRequest(request);
+    expect(response.status).toStrictEqual(200);
+  });
+
   it("GET /api/github/oauth/login", async () => {
     const app = new OAuthApp({
       clientId: "0123",

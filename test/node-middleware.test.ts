@@ -8,6 +8,26 @@ import { OAuthApp, createNodeMiddleware } from "../src/";
 const express = require("express");
 
 describe("createNodeMiddleware(app)", () => {
+  it("allow pre-flight requests", async () => {
+    const app = new OAuthApp({
+      clientId: "0123",
+      clientSecret: "0123secret",
+    });
+
+    const server = createServer(createNodeMiddleware(app)).listen();
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(
+      `http://localhost:${port}/api/github/oauth/token`,
+      { method: "OPTIONS" }
+    );
+
+    server.close();
+
+    expect(response.status).toEqual(200);
+  });
+
   it("GET /api/github/oauth/login", async () => {
     const app = new OAuthApp({
       clientId: "0123",
