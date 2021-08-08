@@ -340,7 +340,7 @@ Octokit instance with [OAuth App authentication](https://github.com/octokit/auth
 ## `app.getUserOctokit(options)`
 
 ```js
-const { octokit } = await app.getUserOctokit({ code: "code123" });
+const octokit = await app.getUserOctokit({ code: "code123" });
 ```
 
 `options` are the same as in [`app.createToken(options)`](#appcreatetokenoptions)
