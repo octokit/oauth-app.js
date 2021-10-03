@@ -52,6 +52,7 @@ import {
 } from "./types";
 export { createNodeMiddleware } from "./middleware/node/index";
 export { createCloudflareHandler } from "./middleware/cloudflare/index";
+export { createAWSLambdaAPIGatewayV2Handler } from "./middleware/aws-lambda/api-gateway-v2";
 
 type Constructor<T> = new (...args: any[]) => T;
 

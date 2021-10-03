@@ -1054,6 +1054,96 @@ function onUnhandledRequest(request) {
   </tbody>
 </table>
 
+### `createAWSLambdaAPIGatewayV2Handler(app, options)`
+
+Event handler for AWS Lambda using API Gateway V2 HTTP integration.
+
+```js
+// worker.js
+import {
+  OAuthApp,
+  createAWSLambdaAPIGatewayV2Handler,
+} from "@octokit/oauth-app";
+const app = new OAuthApp({
+  clientType: "oauth-app",
+  clientId: "1234567890abcdef1234",
+  clientSecret: "1234567890abcdef1234567890abcdef12345678",
+});
+
+export const handler = createAWSLambdaAPIGatewayV2Handler(app, {
+  pathPrefix: "/api/github/oauth",
+});
+
+// can now receive user authorization callbacks at /api/github/oauth/callback
+```
+
+<table width="100%">
+  <thead align=left>
+    <tr>
+      <th width=150>
+        name
+      </th>
+      <th width=70>
+        type
+      </th>
+      <th>
+        description
+      </th>
+    </tr>
+  </thead>
+  <tbody align=left valign=top>
+    <tr>
+      <th>
+        <code>app</code>
+      </th>
+      <th>
+        <code>OAuthApp instance</code>
+      </th>
+      <td>
+        <strong>Required</strong>.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <code>options.pathPrefix</code>
+      </th>
+      <th>
+        <code>string</code>
+      </th>
+      <td>
+
+All exposed paths will be prefixed with the provided prefix. Defaults to `"/api/github/oauth"`
+
+</td>
+    </tr>
+    <tr>
+      <th>
+        <code>options.onUnhandledRequest</code>
+      </th>
+      <th>
+        <code>function</code>
+      </th>
+      <td>Defaults to returns:
+
+```js
+function onUnhandledRequest(request) {
+  return
+    {
+      status: 404,
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        error: `Unknown route: [METHOD] [URL]`,
+      })
+    }
+  );
+}
+```
+
+</td>
+    </tr>
+  </tbody>
+</table>
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md)
