@@ -1,5 +1,5 @@
 import { OctokitRequest } from "../types";
-import { APIGatewayProxyEventV2 } from "aws-lambda";
+import type { APIGatewayProxyEventV2 } from "aws-lambda";
 
 export function parseRequest(request: APIGatewayProxyEventV2): OctokitRequest {
   const { method } = request.requestContext.http;
