@@ -5,7 +5,7 @@ import { onUnhandledRequestDefault } from "../on-unhandled-request-default";
 import { OAuthApp } from "../../index";
 import { HandlerOptions } from "../types";
 
-async function onUnhandledRequestDefaultCloudflare(
+async function onUnhandledRequestDefaultWebWorker(
   request: Request
 ): Promise<Response> {
   const octokitRequest = parseRequest(request);
@@ -13,11 +13,11 @@ async function onUnhandledRequestDefaultCloudflare(
   return sendResponse(octokitResponse);
 }
 
-export function createCloudflareHandler<T>(
+export function createWebWorkerHandler<T>(
   app: OAuthApp<T>,
   {
     pathPrefix,
-    onUnhandledRequest = onUnhandledRequestDefaultCloudflare,
+    onUnhandledRequest = onUnhandledRequestDefaultWebWorker,
   }: HandlerOptions & {
     onUnhandledRequest?: (request: Request) => Response | Promise<Response>;
   } = {}
@@ -33,4 +33,14 @@ export function createCloudflareHandler<T>(
       ? sendResponse(octokitResponse)
       : await onUnhandledRequest(request);
   };
+}
+
+/** @deprecated */
+export function createCloudflareHandler<T>(
+  ...args: Parameters<typeof createWebWorkerHandler>
+) {
+  args[0].octokit.log.warn(
+    "[@octokit/oauth-app] `createCloudflareHandler` is deprecated, use `createWebWorkerHandler` instead"
+  );
+  return createWebWorkerHandler(...args);
 }

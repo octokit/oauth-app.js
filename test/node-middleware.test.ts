@@ -551,7 +551,7 @@ describe("createNodeMiddleware(app)", () => {
     expect(response.status).toEqual(404);
   });
 
-  it("GET /api/github/oauth/callback without code or state", async () => {
+  it("GET /api/github/oauth/callback without code", async () => {
     const appMock = {};
 
     const server = createServer(

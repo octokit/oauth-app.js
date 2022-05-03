@@ -963,20 +963,20 @@ function onUnhandledRequest(request, response) {
   </tbody>
 </table>
 
-### `createCloudflareHandler(app, options)`
+### `createWebWorkerHandler(app, options)`
 
-Event handler for Cloudflare workers.
+Event handler for web worker environments (Cloudflare workers or Deno).
 
 ```js
 // worker.js
-import { OAuthApp, createCloudflareHandler } from "@octokit/oauth-app";
+import { OAuthApp, createWebWorkerHandler } from "@octokit/oauth-app";
 const app = new OAuthApp({
   clientType: "oauth-app",
   clientId: "1234567890abcdef1234",
   clientSecret: "1234567890abcdef1234567890abcdef12345678",
 });
 
-const handleRequest = createCloudflareHandler(app, {
+const handleRequest = createWebWorkerHandler(app, {
   pathPrefix: "/api/github/oauth",
 });
 

@@ -1,9 +1,14 @@
 import { URL } from "url";
 import * as nodeFetch from "node-fetch";
 import fromEntries from "fromentries";
-import { createCloudflareHandler, OAuthApp } from "../src/";
+import {
+  createCloudflareHandler,
+  createWebWorkerHandler,
+  OAuthApp,
+} from "../src";
+import { Octokit } from "@octokit/core";
 
-describe("createCloudflareHandler(app)", () => {
+describe("createWebWorkerHandler(app)", () => {
   beforeAll(() => {
     Object.fromEntries ||= fromEntries;
     (global as any).Request = nodeFetch.Request;
@@ -21,14 +26,14 @@ describe("createCloudflareHandler(app)", () => {
       clientId: "0123",
       clientSecret: "0123secret",
     });
-    createCloudflareHandler(oauthApp);
+    createWebWorkerHandler(oauthApp);
 
     const githubApp = new OAuthApp({
       clientType: "github-app",
       clientId: "0123",
       clientSecret: "0123secret",
     });
-    createCloudflareHandler(githubApp);
+    createWebWorkerHandler(githubApp);
   });
 
   it("allow pre-flight requests", async () => {
@@ -36,7 +41,7 @@ describe("createCloudflareHandler(app)", () => {
       clientId: "0123",
       clientSecret: "0123secret",
     });
-    const handleRequest = createCloudflareHandler(app);
+    const handleRequest = createWebWorkerHandler(app);
     const request = new Request("/api/github/oauth/token", {
       method: "OPTIONS",
     });
@@ -49,7 +54,7 @@ describe("createCloudflareHandler(app)", () => {
       clientId: "0123",
       clientSecret: "0123secret",
     });
-    const handleRequest = createCloudflareHandler(app);
+    const handleRequest = createWebWorkerHandler(app);
 
     const request = new Request("/api/github/oauth/login");
     const { status, headers } = await handleRequest(request);
@@ -71,7 +76,7 @@ describe("createCloudflareHandler(app)", () => {
       clientSecret: "0123secret",
       defaultScopes: ["repo"],
     });
-    const handleRequest = createCloudflareHandler(app);
+    const handleRequest = createWebWorkerHandler(app);
 
     const request = new Request("/api/github/oauth/login");
     const { status, headers } = await handleRequest(request);
@@ -92,7 +97,7 @@ describe("createCloudflareHandler(app)", () => {
       clientId: "0123",
       clientSecret: "0123secret",
     });
-    const handleRequest = createCloudflareHandler(app);
+    const handleRequest = createWebWorkerHandler(app);
 
     const request = new Request(
       "/api/github/oauth/login?state=mystate123&scopes=one,two,three"
@@ -120,7 +125,7 @@ describe("createCloudflareHandler(app)", () => {
         },
       }),
     };
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -148,7 +153,7 @@ describe("createCloudflareHandler(app)", () => {
         },
       }),
     };
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -184,7 +189,7 @@ describe("createCloudflareHandler(app)", () => {
         },
       }),
     };
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -218,7 +223,7 @@ describe("createCloudflareHandler(app)", () => {
         },
       }),
     };
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -251,7 +256,7 @@ describe("createCloudflareHandler(app)", () => {
         },
       }),
     };
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -306,7 +311,7 @@ describe("createCloudflareHandler(app)", () => {
         },
       }),
     };
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -340,7 +345,7 @@ describe("createCloudflareHandler(app)", () => {
         },
       }),
     };
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -366,7 +371,7 @@ describe("createCloudflareHandler(app)", () => {
     const appMock = {
       deleteToken: jest.fn().mockResolvedValue(undefined),
     };
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -388,7 +393,7 @@ describe("createCloudflareHandler(app)", () => {
     const appMock = {
       deleteAuthorization: jest.fn().mockResolvedValue(undefined),
     };
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -413,7 +418,7 @@ describe("createCloudflareHandler(app)", () => {
       clientId: "0123",
       clientSecret: "0123secret",
     });
-    const handleRequest = createCloudflareHandler(app, {
+    const handleRequest = createWebWorkerHandler(app, {
       onUnhandledRequest: async (request: Request) => {
         expect(request.method).toEqual("POST");
         expect(request.url).toEqual("/unrelated");
@@ -439,7 +444,7 @@ describe("createCloudflareHandler(app)", () => {
 
   it("GET /unknown", async () => {
     const appMock = {};
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -448,9 +453,9 @@ describe("createCloudflareHandler(app)", () => {
     expect(response.status).toEqual(404);
   });
 
-  it("GET /api/github/oauth/callback without code or state", async () => {
+  it("GET /api/github/oauth/callback without code", async () => {
     const appMock = {};
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -465,7 +470,7 @@ describe("createCloudflareHandler(app)", () => {
 
   it("GET /api/github/oauth/callback with error", async () => {
     const appMock = {};
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -483,7 +488,7 @@ describe("createCloudflareHandler(app)", () => {
 
   it("POST /api/github/oauth/token without state or code", async () => {
     const appMock = {};
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -501,7 +506,7 @@ describe("createCloudflareHandler(app)", () => {
 
   it("POST /api/github/oauth/token with non-JSON request body", async () => {
     const appMock = {};
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -519,7 +524,7 @@ describe("createCloudflareHandler(app)", () => {
 
   it("GET /api/github/oauth/token without Authorization header", async () => {
     const appMock = {};
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -536,7 +541,7 @@ describe("createCloudflareHandler(app)", () => {
 
   it("PATCH /api/github/oauth/token without authorization header", async () => {
     const appMock = {};
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -554,7 +559,7 @@ describe("createCloudflareHandler(app)", () => {
 
   it("POST /api/github/oauth/token/scoped without authorization header", async () => {
     const appMock = {};
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -576,7 +581,7 @@ describe("createCloudflareHandler(app)", () => {
         ok: true,
       }),
     };
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -600,7 +605,7 @@ describe("createCloudflareHandler(app)", () => {
         ok: true,
       }),
     };
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -620,7 +625,7 @@ describe("createCloudflareHandler(app)", () => {
 
   it("DELETE /api/github/oauth/token without authorization header", async () => {
     const appMock = {};
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -638,7 +643,7 @@ describe("createCloudflareHandler(app)", () => {
 
   it("DELETE /api/github/oauth/grant without authorization header", async () => {
     const appMock = {};
-    const handleRequest = createCloudflareHandler(
+    const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp
     );
 
@@ -654,8 +659,8 @@ describe("createCloudflareHandler(app)", () => {
     });
   });
 
-  it("cloudflare worker with options.pathPrefix", async () => {
-    const handleRequest = createCloudflareHandler(
+  it("web worker handler with options.pathPrefix", async () => {
+    const handleRequest = createWebWorkerHandler(
       new OAuthApp({
         clientId: "0123",
         clientSecret: "0123secret",
