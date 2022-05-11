@@ -5,7 +5,7 @@ import { onUnhandledRequestDefault } from "../on-unhandled-request-default";
 import { HandlerOptions } from "../types";
 import { OAuthApp } from "../../index";
 import { Options, ClientType } from "../../types";
-import {
+import type {
   APIGatewayProxyEventV2,
   APIGatewayProxyStructuredResultV2,
 } from "aws-lambda";
