@@ -1,5 +1,5 @@
 import { OAuthApp } from "../index";
-import { OctokitRequest, OctokitResponse, HandlerOptions } from "./types";
+import { HandlerOptions, OctokitRequest, OctokitResponse } from "./types";
 import { ClientType, Options } from "../types";
 // @ts-ignore - requires esModuleInterop flag
 import fromEntries from "fromentries";
@@ -89,16 +89,13 @@ export async function handleRequest(
           `[@octokit/oauth-app] ${query.error} ${query.error_description}`
         );
       }
-      if (!query.state || !query.code) {
-        throw new Error(
-          '[@octokit/oauth-app] Both "code" & "state" parameters are required'
-        );
+      if (!query.code) {
+        throw new Error('[@octokit/oauth-app] "code" parameter is required');
       }
 
       const {
         authentication: { token },
       } = await app.createToken({
-        state: query.state,
         code: query.code,
       });
 
@@ -114,16 +111,13 @@ export async function handleRequest(
     }
 
     if (route === routes.createToken) {
-      const { state: oauthState, code, redirectUrl } = json;
+      const { code, redirectUrl } = json;
 
-      if (!oauthState || !code) {
-        throw new Error(
-          '[@octokit/oauth-app] Both "code" & "state" parameters are required'
-        );
+      if (!code) {
+        throw new Error('[@octokit/oauth-app] "code" parameter is required');
       }
 
       const result = await app.createToken({
-        state: oauthState,
         code,
         redirectUrl,
       });

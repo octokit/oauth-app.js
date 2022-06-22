@@ -13,8 +13,8 @@ async function onUnhandledRequestDefaultCloudflare(
   return sendResponse(octokitResponse);
 }
 
-export function createCloudflareHandler(
-  app: OAuthApp,
+export function createCloudflareHandler<T>(
+  app: OAuthApp<T>,
   {
     pathPrefix,
     onUnhandledRequest = onUnhandledRequestDefaultCloudflare,
