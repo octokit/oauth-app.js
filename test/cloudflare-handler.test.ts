@@ -1,7 +1,7 @@
 import { URL } from "url";
 import * as nodeFetch from "node-fetch";
 import fromEntries from "fromentries";
-import { OAuthApp, createCloudflareHandler } from "../src/";
+import { createCloudflareHandler, OAuthApp } from "../src/";
 
 describe("createCloudflareHandler(app)", () => {
   beforeAll(() => {
@@ -13,6 +13,22 @@ describe("createCloudflareHandler(app)", () => {
   afterAll(() => {
     delete (global as any).Request;
     delete (global as any).Response;
+  });
+
+  it("support both oauth-app and github-app", () => {
+    const oauthApp = new OAuthApp({
+      clientType: "oauth-app",
+      clientId: "0123",
+      clientSecret: "0123secret",
+    });
+    createCloudflareHandler(oauthApp);
+
+    const githubApp = new OAuthApp({
+      clientType: "github-app",
+      clientId: "0123",
+      clientSecret: "0123secret",
+    });
+    createCloudflareHandler(githubApp);
   });
 
   it("allow pre-flight requests", async () => {
@@ -118,7 +134,6 @@ describe("createCloudflareHandler(app)", () => {
 
     expect(appMock.createToken.mock.calls.length).toEqual(1);
     expect(appMock.createToken.mock.calls[0][0]).toStrictEqual({
-      state: "state123",
       code: "012345",
     });
   });
@@ -141,7 +156,6 @@ describe("createCloudflareHandler(app)", () => {
       method: "POST",
       body: JSON.stringify({
         code: "012345",
-        state: "state123",
         redirectUrl: "http://example.com",
       }),
     });
@@ -154,7 +168,6 @@ describe("createCloudflareHandler(app)", () => {
 
     expect(appMock.createToken.mock.calls.length).toEqual(1);
     expect(appMock.createToken.mock.calls[0][0]).toStrictEqual({
-      state: "state123",
       code: "012345",
       redirectUrl: "http://example.com",
     });
@@ -446,8 +459,7 @@ describe("createCloudflareHandler(app)", () => {
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
-      error:
-        '[@octokit/oauth-app] Both "code" & "state" parameters are required',
+      error: '[@octokit/oauth-app] "code" parameter is required',
     });
   });
 
@@ -483,8 +495,7 @@ describe("createCloudflareHandler(app)", () => {
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
-      error:
-        '[@octokit/oauth-app] Both "code" & "state" parameters are required',
+      error: '[@octokit/oauth-app] "code" parameter is required',
     });
   });
 
