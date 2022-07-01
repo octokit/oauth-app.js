@@ -10,7 +10,7 @@ middleware
 ├── on-unhandled-request-default.ts
 ├── types.ts
 ├── node/
-├── cloudflare/ (to be implemented)
+├── web-worker/ (Cloudflare Workers & Deno)
 └── deno/ (to be implemented)
 ```
 
@@ -18,7 +18,7 @@ middleware
 
 [`handleRequest`](handle-request.ts) function is an abstract HTTP handler which accepts an `OctokitRequest` and returns an `OctokitResponse` if the request matches any predefined route.
 
-> Different environments (e.g., Node.js, Cloudflare, etc.) exposes different APIs when processing HTTP requests (e.g., [`IncomingMessage`](https://nodejs.org/api/http.html#http_class_http_incomingmessage) for Node.js, [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) for Cloudflare workers, etc.). Two HTTP-related types ([`OctokitRequest` and `OctokitResponse`](./types.ts)) are generalized to make an abstract HTTP handler possible.
+> Different environments (e.g., Node.js, Cloudflare Workers, Deno, etc.) exposes different APIs when processing HTTP requests (e.g., [`IncomingMessage`](https://nodejs.org/api/http.html#http_class_http_incomingmessage) for Node.js, [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) for Cloudflare workers, etc.). Two HTTP-related types ([`OctokitRequest` and `OctokitResponse`](./types.ts)) are generalized to make an abstract HTTP handler possible.
 
 To share the behavior and capability with the existing Node.js middleware (and be compatible with [OAuth user authentication strategy in the browser](https://github.com/octokit/auth-oauth-user-client.js)), it is better to implement your HTTP handler/middleware based on `handleRequest` function.
 

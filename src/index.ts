@@ -9,49 +9,52 @@ import {
   GetUserOctokitWithStateInterface,
 } from "./methods/get-user-octokit";
 import {
-  getWebFlowAuthorizationUrlWithState,
   GetWebFlowAuthorizationUrlInterface,
+  getWebFlowAuthorizationUrlWithState,
 } from "./methods/get-web-flow-authorization-url";
 import {
-  createTokenWithState,
   CreateTokenInterface,
+  createTokenWithState,
 } from "./methods/create-token";
 import {
-  checkTokenWithState,
   CheckTokenInterface,
+  checkTokenWithState,
 } from "./methods/check-token";
 import {
-  resetTokenWithState,
   ResetTokenInterface,
+  resetTokenWithState,
 } from "./methods/reset-token";
 import {
-  refreshTokenWithState,
   RefreshTokenInterface,
+  refreshTokenWithState,
 } from "./methods/refresh-token";
 import {
-  scopeTokenWithState,
   ScopeTokenInterface,
+  scopeTokenWithState,
 } from "./methods/scope-token";
 import {
-  deleteTokenWithState,
   DeleteTokenInterface,
+  deleteTokenWithState,
 } from "./methods/delete-token";
 import {
-  deleteAuthorizationWithState,
   DeleteAuthorizationInterface,
+  deleteAuthorizationWithState,
 } from "./methods/delete-authorization";
 
-import {
-  Options,
+import type {
+  AddEventHandler,
+  ClientType,
+  ClientTypeFromOptions,
   ConstructorOptions,
   OctokitTypeFromOptions,
-  ClientTypeFromOptions,
-  ClientType,
-  AddEventHandler,
+  Options,
   State,
 } from "./types";
 export { createNodeMiddleware } from "./middleware/node/index";
-export { createCloudflareHandler } from "./middleware/cloudflare/index";
+export {
+  createCloudflareHandler,
+  createWebWorkerHandler,
+} from "./middleware/web-worker/index";
 export { createAWSLambdaAPIGatewayV2Handler } from "./middleware/aws-lambda/api-gateway-v2";
 
 type Constructor<T> = new (...args: any[]) => T;
