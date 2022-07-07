@@ -31,6 +31,8 @@
 - [`app.deleteAuthorization(options)`](#appdeleteauthorizationoptions)
 - [Middlewares](#middlewares)
   - [`createNodeMiddleware(app, options)`](#createnodemiddlewareapp-options)
+  - [`createWebWorkerHandler(app, options)`](#createwebworkerhandlerapp-options)
+  - [`createAWSLambdaAPIGatewayV2Handler(app, options)`](#createawslambdaapigatewayv2handlerapp-options)
 - [Contributing](#contributing)
 - [License](#license)
 
