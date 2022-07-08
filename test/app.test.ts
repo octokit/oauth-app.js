@@ -92,7 +92,9 @@ describe("app", () => {
       clientId: "0123",
       clientSecret: "0123secret",
     });
-    const { url } = app.getWebFlowAuthorizationUrl({ state: "state123" });
+    const { url } = app.getWebFlowAuthorizationUrl({
+      state: "state123",
+    });
     expect(url).toStrictEqual(
       "https://github.com/login/oauth/authorize?allow_signup=true&client_id=0123&state=state123"
     );
@@ -103,7 +105,9 @@ describe("app", () => {
       clientId: "lv1.0123",
       clientSecret: "0123secret",
     });
-    const { url } = app.getWebFlowAuthorizationUrl({ state: "state123" });
+    const { url } = app.getWebFlowAuthorizationUrl({
+      state: "state123",
+    });
     expect(url).toStrictEqual(
       "https://github.com/login/oauth/authorize?allow_signup=true&client_id=lv1.0123&state=state123"
     );
@@ -124,6 +128,7 @@ describe("app", () => {
             client_id: "0123",
             client_secret: "0123secret",
             code: "code123",
+            state: "state123",
           },
         }
       )
@@ -153,6 +158,7 @@ describe("app", () => {
     app.on("token.created", onTokenCallback);
 
     const result = await app.createToken({
+      state: "state123",
       code: "code123",
     });
 
@@ -189,6 +195,7 @@ describe("app", () => {
   it("app.createToken(options) for device flow", async () => {
     const mock = fetchMock
       .sandbox()
+
       .postOnce(
         "https://github.com/login/device/code",
         {
@@ -937,6 +944,7 @@ describe("app", () => {
             client_id: "0123",
             client_secret: "0123secret",
             code: "code123",
+            state: "state123",
           },
         }
       )
@@ -977,6 +985,7 @@ describe("app", () => {
     app.on("token.created", onTokenCallback2);
 
     await app.createToken({
+      state: "state123",
       code: "code123",
     });
 
