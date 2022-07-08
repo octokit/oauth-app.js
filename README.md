@@ -442,6 +442,7 @@ For the web flow, you have to pass the `code` from URL redirect described in [st
 
 ```js
 const { token } = await app.createToken({
+  state: "state123",
   code: "code123",
 });
 ```

@@ -2,7 +2,7 @@ import { createServer } from "http";
 import { URL } from "url";
 
 import fetch from "node-fetch";
-import { createNodeMiddleware, OAuthApp } from "../src/";
+import { OAuthApp, createNodeMiddleware } from "../src/";
 
 // import without types
 const express = require("express");
@@ -152,6 +152,7 @@ describe("createNodeMiddleware(app)", () => {
 
     expect(appMock.createToken.mock.calls.length).toEqual(1);
     expect(appMock.createToken.mock.calls[0][0]).toStrictEqual({
+      state: "state123",
       code: "012345",
     });
   });
@@ -179,6 +180,7 @@ describe("createNodeMiddleware(app)", () => {
         method: "POST",
         body: JSON.stringify({
           code: "012345",
+          state: "state123",
           redirectUrl: "http://example.com",
         }),
       }
@@ -193,6 +195,7 @@ describe("createNodeMiddleware(app)", () => {
 
     expect(appMock.createToken.mock.calls.length).toEqual(1);
     expect(appMock.createToken.mock.calls[0][0]).toStrictEqual({
+      state: "state123",
       code: "012345",
       redirectUrl: "http://example.com",
     });
@@ -568,7 +571,8 @@ describe("createNodeMiddleware(app)", () => {
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
-      error: '[@octokit/oauth-app] "code" parameter is required',
+      error:
+        '[@octokit/oauth-app] Both "code" & "state" parameters are required',
     });
   });
 
@@ -615,7 +619,8 @@ describe("createNodeMiddleware(app)", () => {
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
-      error: '[@octokit/oauth-app] "code" parameter is required',
+      error:
+        '[@octokit/oauth-app] Both "code" & "state" parameters are required',
     });
   });
 

@@ -13,8 +13,8 @@ async function onUnhandledRequestDefaultWebWorker(
   return sendResponse(octokitResponse);
 }
 
-export function createWebWorkerHandler<T>(
-  app: OAuthApp<T>,
+export function createWebWorkerHandler(
+  app: OAuthApp,
   {
     pathPrefix,
     onUnhandledRequest = onUnhandledRequestDefaultWebWorker,

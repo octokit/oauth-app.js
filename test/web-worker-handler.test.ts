@@ -139,6 +139,7 @@ describe("createWebWorkerHandler(app)", () => {
 
     expect(appMock.createToken.mock.calls.length).toEqual(1);
     expect(appMock.createToken.mock.calls[0][0]).toStrictEqual({
+      state: "state123",
       code: "012345",
     });
   });
@@ -161,6 +162,7 @@ describe("createWebWorkerHandler(app)", () => {
       method: "POST",
       body: JSON.stringify({
         code: "012345",
+        state: "state123",
         redirectUrl: "http://example.com",
       }),
     });
@@ -173,6 +175,7 @@ describe("createWebWorkerHandler(app)", () => {
 
     expect(appMock.createToken.mock.calls.length).toEqual(1);
     expect(appMock.createToken.mock.calls[0][0]).toStrictEqual({
+      state: "state123",
       code: "012345",
       redirectUrl: "http://example.com",
     });
@@ -464,7 +467,8 @@ describe("createWebWorkerHandler(app)", () => {
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
-      error: '[@octokit/oauth-app] "code" parameter is required',
+      error:
+        '[@octokit/oauth-app] Both "code" & "state" parameters are required',
     });
   });
 
@@ -500,7 +504,8 @@ describe("createWebWorkerHandler(app)", () => {
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
-      error: '[@octokit/oauth-app] "code" parameter is required',
+      error:
+        '[@octokit/oauth-app] Both "code" & "state" parameters are required',
     });
   });
 
