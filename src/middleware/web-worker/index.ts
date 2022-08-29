@@ -4,6 +4,7 @@ import { handleRequest } from "../handle-request";
 import { onUnhandledRequestDefault } from "../on-unhandled-request-default";
 import { OAuthApp } from "../../index";
 import { HandlerOptions } from "../types";
+import { ClientType, Options } from "../../types";
 
 async function onUnhandledRequestDefaultWebWorker(
   request: Request
@@ -13,7 +14,7 @@ async function onUnhandledRequestDefaultWebWorker(
   return sendResponse(octokitResponse);
 }
 
-export function createWebWorkerHandler<T>(
+export function createWebWorkerHandler<T extends Options<ClientType>>(
   app: OAuthApp<T>,
   {
     pathPrefix,
