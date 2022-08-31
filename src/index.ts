@@ -51,7 +51,7 @@ import type {
   State,
 } from "./types";
 
-// types required by external handlers (aws-lambda, etc)
+// types required by external middlewares (aws-lambda, etc)
 export type {
   HandlerOptions,
   OctokitRequest,
@@ -65,7 +65,6 @@ export { unknownRouteResponse } from "./middleware/unknown-route-response";
 export { createNodeMiddleware } from "./middleware/node/index";
 export { sendResponse as sendNodeResponse } from "./middleware/node/send-response";
 export { createWebWorkerHandler } from "./middleware/web-worker/index";
-export { createAWSLambdaAPIGatewayV2Handler } from "./middleware/aws-lambda/api-gateway-v2";
 
 type Constructor<T> = new (...args: any[]) => T;
 
