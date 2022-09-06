@@ -104,7 +104,7 @@ export async function handleRequest(
         headers: {
           "content-type": "text/html",
         },
-        text: `<h1>Token created successfull</h1>
+        text: `<h1>Token created successfully</h1>
     
 <p>Your token is: <strong>${token}</strong>. Copy it now as it cannot be shown again.</p>`,
       };
