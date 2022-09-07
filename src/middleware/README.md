@@ -7,11 +7,9 @@ The `middleware` directory contains the generic HTTP handler. Each sub-directory
 ```
 middleware
 ├── handle-request.ts
-├── on-unhandled-request-default.ts
 ├── types.ts
 ├── node/
 ├── web-worker/ (Cloudflare Workers & Deno)
-└── deno/ (to be implemented)
 ```
 
 ## Generic HTTP Handler
@@ -85,5 +83,5 @@ Implementing an HTTP handler/middleware for a certain environment involves three
 2. Write a function to render an `OctokitResponse` object (e.g., as `ServerResponse` in Node.js). See [`node/send-response.ts`](node/send-response.ts) for reference.
 3. Expose an HTTP handler/middleware in the dialect of the environment which performs three steps:
    1. Parse the HTTP request using (1).
-   2. Process the `OctokitRequest` object using `handleRequest`. If the request is not handled by `handleRequest` (the request does not match any predefined route), [`onUnhandledRequestDefault`](on-unhandled-request-default.ts) can be used to generate a `404` response consistently.
+   2. Process the `OctokitRequest` object using `handleRequest`.
    3. Render the `OctokitResponse` object using (2).

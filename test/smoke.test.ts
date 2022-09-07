@@ -1,4 +1,9 @@
-import { handleRequest, OAuthApp } from "../src";
+import {
+  handleRequest,
+  OAuthApp,
+  sendNodeResponse,
+  unknownRouteResponse,
+} from "../src";
 
 describe("Smoke test", () => {
   it("OAuthApp is a function", () => {
@@ -15,5 +20,13 @@ describe("Smoke test", () => {
 
   it("handleRequest is a function", () => {
     expect(typeof handleRequest).toEqual("function");
+  });
+
+  it("unknownRouteResponse is a function", () => {
+    expect(typeof unknownRouteResponse).toEqual("function");
+  });
+
+  it("sendNodeResponse is a function", () => {
+    expect(typeof sendNodeResponse).toEqual("function");
   });
 });

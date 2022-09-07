@@ -1,8 +1,6 @@
-import { OctokitRequest, OctokitResponse } from "./types";
+import type { OctokitRequest } from "./types";
 
-export function onUnhandledRequestDefault(
-  request: OctokitRequest
-): OctokitResponse {
+export function unknownRouteResponse(request: OctokitRequest) {
   return {
     status: 404,
     headers: { "content-type": "application/json" },

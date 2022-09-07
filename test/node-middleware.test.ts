@@ -1,4 +1,4 @@
-import { createServer } from "http";
+import { createServer, IncomingMessage } from "http";
 import { URL } from "url";
 
 import fetch from "node-fetch";
@@ -492,55 +492,18 @@ describe("createNodeMiddleware(app)", () => {
     });
   });
 
-  it("POST /unrelated", async () => {
-    expect.assertions(4);
-
-    const app = new OAuthApp({
-      clientId: "0123",
-      clientSecret: "0123secret",
-    });
-
-    const server = createServer(
-      createNodeMiddleware(app, {
-        onUnhandledRequest: (request, response) => {
-          expect(request.method).toEqual("POST");
-          expect(request.url).toEqual("/unrelated");
-
-          // test that the request has not yet been consumed with .on("data")
-          expect(request.complete).toEqual(false);
-
-          response.writeHead(200);
-          response.end();
-        },
-      })
-    ).listen();
-    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
-    const { port } = server.address();
-
-    const { status, headers } = await fetch(
-      `http://localhost:${port}/unrelated`,
-      {
-        method: "POST",
-        body: JSON.stringify({ ok: true }),
-        headers: {
-          "content-type": "application/json",
-        },
-      }
-    );
-
-    server.close();
-
-    expect(status).toEqual(200);
-  });
-
-  // errors
-
   it("GET /unknown", async () => {
     const appMock = {};
 
-    const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
-    ).listen();
+    const middleware = createNodeMiddleware(appMock as unknown as OAuthApp);
+    const requestListener = async (req: IncomingMessage, res: any) => {
+      if (!(await middleware(req, res))) {
+        res.writeHead(404, { "Content-Type": "text/plain" });
+        res.write("Not found.");
+        res.end();
+      }
+    };
+    const server = createServer(requestListener).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
@@ -856,6 +819,42 @@ describe("createNodeMiddleware(app)", () => {
 
     await expect(response.text()).resolves.toBe("Nope");
     expect(response.status).toEqual(404);
+
+    server.close();
+  });
+
+  it("???", async () => {
+    const app = express();
+
+    // app.all("/foo", (_request: any, response: any) => response.end("ok\n"));
+    app.use(
+      createNodeMiddleware(
+        new OAuthApp({
+          clientId: "0123",
+          clientSecret: "0123secret",
+        })
+      )
+    );
+
+    const server = app.listen();
+
+    const { port } = server.address();
+
+    const response = await fetch(`http://localhost:${port}/test`, {
+      method: "POST",
+      body: "{}",
+    });
+
+    await expect(response.text()).resolves.toContain("Cannot POST /test");
+    expect(response.status).toEqual(404);
+
+    // const responseForFoo = await fetch(`http://localhost:${port}/foo`, {
+    //   method: "POST",
+    //   body: "{}",
+    // });
+
+    // await expect(responseForFoo.text()).resolves.toContain("ok\n");
+    // expect(responseForFoo.status).toEqual(200);
 
     server.close();
   });
