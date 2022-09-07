@@ -4,7 +4,7 @@ import { handleRequest } from "../handle-request";
 import { onUnhandledRequestDefault } from "../on-unhandled-request-default";
 import { HandlerOptions } from "../types";
 import { OAuthApp } from "../../index";
-import { Options, ClientType } from "../../types";
+import { ClientType, Options } from "../../types";
 import type {
   APIGatewayProxyEventV2,
   APIGatewayProxyStructuredResultV2,
@@ -22,16 +22,22 @@ export function createAWSLambdaAPIGatewayV2Handler(
   app: OAuthApp<Options<ClientType>>,
   {
     pathPrefix,
-    onUnhandledRequest = onUnhandledRequestDefaultAWSAPIGatewayV2,
+    onUnhandledRequest,
   }: HandlerOptions & {
     onUnhandledRequest?: (
       event: APIGatewayProxyEventV2
     ) => Promise<APIGatewayProxyStructuredResultV2>;
   } = {}
 ) {
+  if (onUnhandledRequest) {
+    app.octokit.log.warn(
+      "[@octokit/oauth-app] `onUnhandledRequest` is deprecated and will be removed from the next major version."
+    );
+  }
+  onUnhandledRequest ??= onUnhandledRequestDefaultAWSAPIGatewayV2;
   return async function (event: APIGatewayProxyEventV2) {
     const request = parseRequest(event);
     const response = await handleRequest(app, { pathPrefix }, request);
-    return response ? sendResponse(response) : onUnhandledRequest(event);
+    return response ? sendResponse(response) : onUnhandledRequest!(event);
   };
 }

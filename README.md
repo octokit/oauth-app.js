@@ -939,7 +939,7 @@ All exposed paths will be prefixed with the provided prefix. Defaults to `"/api/
     </tr>
     <tr>
       <th>
-        <code>options.onUnhandledRequest</code>
+        <code>options.onUnhandledRequest</code> __deprecated__
       </th>
       <th>
         <code>function</code>
@@ -1029,7 +1029,7 @@ All exposed paths will be prefixed with the provided prefix. Defaults to `"/api/
     </tr>
     <tr>
       <th>
-        <code>options.onUnhandledRequest</code>
+        <code>options.onUnhandledRequest</code> __deprecated__
       </th>
       <th>
         <code>function</code>
@@ -1119,7 +1119,7 @@ All exposed paths will be prefixed with the provided prefix. Defaults to `"/api/
     </tr>
     <tr>
       <th>
-        <code>options.onUnhandledRequest</code>
+        <code>options.onUnhandledRequest</code> __deprecated__
       </th>
       <th>
         <code>function</code>
