@@ -1,11 +1,7 @@
 import { URL } from "url";
 import * as nodeFetch from "node-fetch";
 import fromEntries from "fromentries";
-import {
-  createCloudflareHandler,
-  createWebWorkerHandler,
-  OAuthApp,
-} from "../src";
+import { createWebWorkerHandler, OAuthApp } from "../src";
 import { Octokit } from "@octokit/core";
 
 describe("createWebWorkerHandler(app)", () => {
@@ -46,7 +42,7 @@ describe("createWebWorkerHandler(app)", () => {
       method: "OPTIONS",
     });
     const response = await handleRequest(request);
-    expect(response.status).toStrictEqual(200);
+    expect(response!.status).toStrictEqual(200);
   });
 
   it("GET /api/github/oauth/login", async () => {
@@ -57,7 +53,7 @@ describe("createWebWorkerHandler(app)", () => {
     const handleRequest = createWebWorkerHandler(app);
 
     const request = new Request("/api/github/oauth/login");
-    const { status, headers } = await handleRequest(request);
+    const { status, headers } = (await handleRequest(request))!;
 
     expect(status).toEqual(302);
     const url = new URL(headers.get("location") as string);
@@ -79,7 +75,7 @@ describe("createWebWorkerHandler(app)", () => {
     const handleRequest = createWebWorkerHandler(app);
 
     const request = new Request("/api/github/oauth/login");
-    const { status, headers } = await handleRequest(request);
+    const { status, headers } = (await handleRequest(request))!;
 
     expect(status).toEqual(302);
     const url = new URL(headers.get("location") as string);
@@ -102,7 +98,7 @@ describe("createWebWorkerHandler(app)", () => {
     const request = new Request(
       "/api/github/oauth/login?state=mystate123&scopes=one,two,three"
     );
-    const { status, headers } = await handleRequest(request);
+    const { status, headers } = (await handleRequest(request))!;
 
     expect(status).toEqual(302);
     const url = new URL(headers.get("location") as string);
@@ -132,7 +128,7 @@ describe("createWebWorkerHandler(app)", () => {
     const request = new Request(
       "/api/github/oauth/callback?code=012345&state=state123"
     );
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(200);
     expect(await response.text()).toMatch(/token123/);
@@ -164,7 +160,7 @@ describe("createWebWorkerHandler(app)", () => {
         redirectUrl: "http://example.com",
       }),
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(201);
     expect(await response.json()).toStrictEqual({
@@ -198,7 +194,7 @@ describe("createWebWorkerHandler(app)", () => {
         authorization: "token token123",
       },
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(200);
     expect(await response.json()).toStrictEqual({
@@ -231,7 +227,7 @@ describe("createWebWorkerHandler(app)", () => {
       method: "PATCH",
       headers: { authorization: "token token123" },
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(200);
     expect(await response.json()).toStrictEqual({
@@ -269,7 +265,7 @@ describe("createWebWorkerHandler(app)", () => {
         permissions: { issues: "write" },
       }),
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(200);
     expect(response.status).toEqual(200);
@@ -320,7 +316,7 @@ describe("createWebWorkerHandler(app)", () => {
       headers: { authorization: "token token123" },
       body: JSON.stringify({ refreshToken: "r1.refreshtoken123" }),
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(await response.json()).toStrictEqual({
       data: { id: 1 },
@@ -353,7 +349,7 @@ describe("createWebWorkerHandler(app)", () => {
       method: "PATCH",
       headers: { authorization: "token token123" },
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(200);
     expect(await response.json()).toStrictEqual({
@@ -379,7 +375,7 @@ describe("createWebWorkerHandler(app)", () => {
       method: "DELETE",
       headers: { authorization: "token token123" },
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(204);
 
@@ -401,7 +397,7 @@ describe("createWebWorkerHandler(app)", () => {
       method: "DELETE",
       headers: { authorization: "token token123" },
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(204);
 
@@ -412,21 +408,11 @@ describe("createWebWorkerHandler(app)", () => {
   });
 
   it("POST /unrelated", async () => {
-    expect.assertions(4);
-
     const app = new OAuthApp({
       clientId: "0123",
       clientSecret: "0123secret",
     });
-    const handleRequest = createWebWorkerHandler(app, {
-      onUnhandledRequest: async (request: Request) => {
-        expect(request.method).toEqual("POST");
-        expect(request.url).toEqual("/unrelated");
-        const text = await request.text();
-        expect(text).toEqual('{"ok":true}');
-        return new Response(null, { status: 200 });
-      },
-    });
+    const handleRequest = createWebWorkerHandler(app);
 
     const request = new Request("/unrelated", {
       method: "POST",
@@ -435,9 +421,9 @@ describe("createWebWorkerHandler(app)", () => {
         "content-type": "application/json",
       },
     });
-    const { status } = await handleRequest(request);
+    const response = await handleRequest(request);
 
-    expect(status).toEqual(200);
+    expect(response).toBeUndefined();
   });
 
   // // errors
@@ -449,8 +435,8 @@ describe("createWebWorkerHandler(app)", () => {
     );
 
     const request = new Request("/unknown");
-    const response = await handleRequest(request);
-    expect(response.status).toEqual(404);
+    const response = (await handleRequest(request))!;
+    expect(response).toBeUndefined();
   });
 
   it("GET /api/github/oauth/callback without code", async () => {
@@ -460,7 +446,7 @@ describe("createWebWorkerHandler(app)", () => {
     );
 
     const request = new Request("/api/github/oauth/callback");
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
@@ -477,7 +463,7 @@ describe("createWebWorkerHandler(app)", () => {
     const request = new Request(
       "/api/github/oauth/callback?error=redirect_uri_mismatch&error_description=The+redirect_uri+MUST+match+the+registered+callback+URL+for+this+application.&error_uri=https://docs.github.com/en/developers/apps/troubleshooting-authorization-request-errors/%23redirect-uri-mismatch&state=xyz"
     );
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
@@ -496,7 +482,7 @@ describe("createWebWorkerHandler(app)", () => {
       method: "POST",
       body: JSON.stringify({}),
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
@@ -514,7 +500,7 @@ describe("createWebWorkerHandler(app)", () => {
       method: "POST",
       body: "foo",
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
@@ -531,7 +517,7 @@ describe("createWebWorkerHandler(app)", () => {
     const request = new Request("/api/github/oauth/token", {
       headers: {},
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
@@ -549,7 +535,7 @@ describe("createWebWorkerHandler(app)", () => {
       method: "PATCH",
       headers: {},
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
@@ -567,7 +553,7 @@ describe("createWebWorkerHandler(app)", () => {
       method: "POST",
       headers: {},
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
@@ -591,7 +577,7 @@ describe("createWebWorkerHandler(app)", () => {
         refreshToken: "r1.refreshtoken123",
       }),
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
@@ -615,7 +601,7 @@ describe("createWebWorkerHandler(app)", () => {
         authorization: "token token123",
       },
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
@@ -633,7 +619,7 @@ describe("createWebWorkerHandler(app)", () => {
       method: "DELETE",
       headers: {},
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
@@ -651,7 +637,7 @@ describe("createWebWorkerHandler(app)", () => {
       method: "DELETE",
       headers: {},
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
     expect(await response.json()).toStrictEqual({
@@ -669,7 +655,7 @@ describe("createWebWorkerHandler(app)", () => {
     );
 
     const request = new Request("/test/login", { redirect: "manual" });
-    const { status } = await handleRequest(request);
+    const { status } = (await handleRequest(request))!;
 
     expect(status).toEqual(302);
   });

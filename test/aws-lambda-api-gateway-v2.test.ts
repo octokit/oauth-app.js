@@ -1,4 +1,4 @@
-import { OAuthApp, createAWSLambdaAPIGatewayV2Handler } from "../src/";
+import { createAWSLambdaAPIGatewayV2Handler, OAuthApp } from "../src/";
 import { URL } from "url";
 import { APIGatewayProxyEventV2 } from "aws-lambda";
 
@@ -21,7 +21,7 @@ describe("createAWSLambdaAPIGatewayV2Handler(app)", () => {
     createAWSLambdaAPIGatewayV2Handler(app);
   });
 
-  it("fail-over to default unhandled request handler", async () => {
+  it("do not handle request with different prefix", async () => {
     const appMock = {};
     const handleRequest = createAWSLambdaAPIGatewayV2Handler(
       appMock as unknown as OAuthApp
@@ -32,6 +32,20 @@ describe("createAWSLambdaAPIGatewayV2Handler(app)", () => {
       rawPath: "/prod/unknown",
     } as APIGatewayProxyEventV2);
 
+    expect(response).toBeUndefined();
+  });
+
+  it("fail-over to default unhandled request handler", async () => {
+    const appMock = {};
+    const handleRequest = createAWSLambdaAPIGatewayV2Handler(
+      appMock as unknown as OAuthApp
+    );
+
+    const response = (await handleRequest({
+      requestContext: { http: { method: "GET" }, stage: "prod" },
+      rawPath: "/prod/api/github/oauth/unknown",
+    } as APIGatewayProxyEventV2))!;
+
     expect(response.statusCode).toBe(404);
   });
 
@@ -39,10 +53,10 @@ describe("createAWSLambdaAPIGatewayV2Handler(app)", () => {
     const app = new OAuthApp({ clientId: "0123", clientSecret: "0123secret" });
     const handleRequest = createAWSLambdaAPIGatewayV2Handler(app);
 
-    const response = await handleRequest({
+    const response = (await handleRequest({
       requestContext: { http: { method: "OPTIONS" }, stage: "prod" },
       rawPath: "/prod/api/github/oauth/token",
-    } as APIGatewayProxyEventV2);
+    } as APIGatewayProxyEventV2))!;
 
     expect(response.statusCode).toStrictEqual(200);
     expect(response.headers!["access-control-allow-origin"]).toBe("*");
@@ -56,10 +70,10 @@ describe("createAWSLambdaAPIGatewayV2Handler(app)", () => {
     const app = new OAuthApp({ clientId: "0123", clientSecret: "0123secret" });
     const handleRequest = createAWSLambdaAPIGatewayV2Handler(app);
 
-    const response = await handleRequest({
+    const response = (await handleRequest({
       requestContext: { http: { method: "GET" }, stage: "$default" },
       rawPath: "/api/github/oauth/login",
-    } as APIGatewayProxyEventV2);
+    } as APIGatewayProxyEventV2))!;
 
     expect(response.statusCode).toBe(302);
     const url = new URL(response.headers!.location as string);
@@ -74,10 +88,10 @@ describe("createAWSLambdaAPIGatewayV2Handler(app)", () => {
     const app = new OAuthApp({ clientId: "0123", clientSecret: "0123secret" });
     const handleRequest = createAWSLambdaAPIGatewayV2Handler(app);
 
-    const response = await handleRequest({
+    const response = (await handleRequest({
       requestContext: { http: { method: "GET" }, stage: "prod" },
       rawPath: "/prod/api/github/oauth/login",
-    } as APIGatewayProxyEventV2);
+    } as APIGatewayProxyEventV2))!;
 
     expect(response.statusCode).toBe(302);
     const url = new URL(response.headers!.location as string);
@@ -92,11 +106,11 @@ describe("createAWSLambdaAPIGatewayV2Handler(app)", () => {
     const app = new OAuthApp({ clientId: "0123", clientSecret: "0123secret" });
     const handleRequest = createAWSLambdaAPIGatewayV2Handler(app);
 
-    const response = await handleRequest({
+    const response = (await handleRequest({
       requestContext: { http: { method: "GET" }, stage: "prod" },
       rawPath: "/prod/api/github/oauth/login",
       rawQueryString: "state=mystate123&scopes=one,two,three",
-    } as APIGatewayProxyEventV2);
+    } as APIGatewayProxyEventV2))!;
 
     expect(response.statusCode).toBe(302);
     const url = new URL(response.headers!.location as string);

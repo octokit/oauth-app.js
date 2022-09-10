@@ -937,31 +937,6 @@ All exposed paths will be prefixed with the provided prefix. Defaults to `"/api/
 
 </td>
     </tr>
-    <tr>
-      <th>
-        <code>options.onUnhandledRequest</code>
-      </th>
-      <th>
-        <code>function</code>
-      </th>
-      <td>
-
-Defaults to
-
-```js
-function onUnhandledRequest(request, response) {
-  response.writeHead(404, {
-    "content-type": "application/json",
-  });
-  response.end(
-    JSON.stringify({
-      error: `Unknown route: ${request.method} ${request.url}`,
-    })
-  );
-}
-```
-
-</td></tr>
   </tbody>
 </table>
 
@@ -1027,31 +1002,6 @@ All exposed paths will be prefixed with the provided prefix. Defaults to `"/api/
 
 </td>
     </tr>
-    <tr>
-      <th>
-        <code>options.onUnhandledRequest</code>
-      </th>
-      <th>
-        <code>function</code>
-      </th>
-      <td>Defaults to
-
-```js
-function onUnhandledRequest(request) {
-  return new Response(
-    JSON.stringify({
-      error: `Unknown route: ${request.method} ${request.url}`,
-    }),
-    {
-      status: 404,
-      headers: { "content-type": "application/json" },
-    }
-  );
-}
-```
-
-</td>
-    </tr>
   </tbody>
 </table>
 
@@ -1114,31 +1064,6 @@ export const handler = createAWSLambdaAPIGatewayV2Handler(app, {
       <td>
 
 All exposed paths will be prefixed with the provided prefix. Defaults to `"/api/github/oauth"`
-
-</td>
-    </tr>
-    <tr>
-      <th>
-        <code>options.onUnhandledRequest</code>
-      </th>
-      <th>
-        <code>function</code>
-      </th>
-      <td>Defaults to returns:
-
-```js
-function onUnhandledRequest(request) {
-  return
-    {
-      status: 404,
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        error: `Unknown route: [METHOD] [URL]`,
-      })
-    }
-  );
-}
-```
 
 </td>
     </tr>

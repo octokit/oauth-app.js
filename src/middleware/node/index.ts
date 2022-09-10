@@ -6,51 +6,28 @@ type ServerResponse = any;
 
 import { parseRequest } from "./parse-request";
 import { sendResponse } from "./send-response";
-import { onUnhandledRequestDefault } from "../on-unhandled-request-default";
 import { handleRequest } from "../handle-request";
-import { OAuthApp } from "../../index";
-import { HandlerOptions } from "../types";
-import { ClientType, Options } from "../../types";
-
-function onUnhandledRequestDefaultNode(
-  request: IncomingMessage,
-  response: ServerResponse
-) {
-  const octokitRequest = parseRequest(request);
-  const octokitResponse = onUnhandledRequestDefault(octokitRequest);
-  sendResponse(octokitResponse, response);
-}
+import type { OAuthApp } from "../../index";
+import type { HandlerOptions } from "../types";
+import type { ClientType, Options } from "../../types";
 
 export function createNodeMiddleware(
   app: OAuthApp<Options<ClientType>>,
-  {
-    pathPrefix,
-    onUnhandledRequest = onUnhandledRequestDefaultNode,
-  }: HandlerOptions & {
-    onUnhandledRequest?: (
-      request: IncomingMessage,
-      response: ServerResponse
-    ) => void;
-  } = {}
+  options: HandlerOptions = {}
 ) {
   return async function (
     request: IncomingMessage,
     response: ServerResponse,
     next?: Function
   ) {
-    const octokitRequest = parseRequest(request);
-    const octokitResponse = await handleRequest(
-      app,
-      { pathPrefix },
-      octokitRequest
-    );
-
+    const octokitRequest = await parseRequest(request);
+    const octokitResponse = await handleRequest(app, options, octokitRequest);
     if (octokitResponse) {
       sendResponse(octokitResponse, response);
-    } else if (typeof next === "function") {
-      next();
+      return true;
     } else {
-      onUnhandledRequest(request, response);
+      next?.();
+      return false;
     }
   };
 }

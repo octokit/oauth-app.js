@@ -50,11 +50,21 @@ import type {
   Options,
   State,
 } from "./types";
+
+// types required by external handlers (aws-lambda, etc)
+export type {
+  HandlerOptions,
+  OctokitRequest,
+  OctokitResponse,
+} from "./middleware/types";
+
+// generic handlers
+export { handleRequest } from "./middleware/handle-request";
+export { unknownRouteResponse } from "./middleware/unknown-route-response";
+
 export { createNodeMiddleware } from "./middleware/node/index";
-export {
-  createCloudflareHandler,
-  createWebWorkerHandler,
-} from "./middleware/web-worker/index";
+export { sendResponse as sendNodeResponse } from "./middleware/node/send-response";
+export { createWebWorkerHandler } from "./middleware/web-worker/index";
 export { createAWSLambdaAPIGatewayV2Handler } from "./middleware/aws-lambda/api-gateway-v2";
 
 type Constructor<T> = new (...args: any[]) => T;
