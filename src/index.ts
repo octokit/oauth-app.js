@@ -50,6 +50,17 @@ import type {
   Options,
   State,
 } from "./types";
+
+// types required by external handlers (aws-lambda, etc)
+export type {
+  HandlerOptions,
+  OctokitRequest,
+  OctokitResponse,
+} from "./middleware/types";
+
+// generic handlers
+export { handleRequest } from "./middleware/handle-request";
+
 export { createNodeMiddleware } from "./middleware/node/index";
 export {
   createCloudflareHandler,

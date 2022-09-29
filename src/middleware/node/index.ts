@@ -25,7 +25,7 @@ export function createNodeMiddleware(
   app: OAuthApp<Options<ClientType>>,
   {
     pathPrefix,
-    onUnhandledRequest = onUnhandledRequestDefaultNode,
+    onUnhandledRequest,
   }: HandlerOptions & {
     onUnhandledRequest?: (
       request: IncomingMessage,
@@ -33,6 +33,12 @@ export function createNodeMiddleware(
     ) => void;
   } = {}
 ) {
+  if (onUnhandledRequest) {
+    app.octokit.log.warn(
+      "[@octokit/oauth-app] `onUnhandledRequest` is deprecated and will be removed from the next major version."
+    );
+  }
+  onUnhandledRequest ??= onUnhandledRequestDefaultNode;
   return async function (
     request: IncomingMessage,
     response: ServerResponse,
@@ -50,7 +56,7 @@ export function createNodeMiddleware(
     } else if (typeof next === "function") {
       next();
     } else {
-      onUnhandledRequest(request, response);
+      onUnhandledRequest!(request, response);
     }
   };
 }
