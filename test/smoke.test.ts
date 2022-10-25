@@ -1,4 +1,4 @@
-import { OAuthApp } from "../src";
+import { handleRequest, OAuthApp } from "../src";
 
 describe("Smoke test", () => {
   it("OAuthApp is a function", () => {
@@ -11,5 +11,9 @@ describe("Smoke test", () => {
 
   it("OAuthApp.VERSION is set", () => {
     expect(OAuthApp.VERSION).toEqual("0.0.0-development");
+  });
+
+  it("handleRequest is a function", () => {
+    expect(typeof handleRequest).toEqual("function");
   });
 });

@@ -17,13 +17,13 @@ describe("OAuthApp.defaults", () => {
 
     const result = app.getWebFlowAuthorizationUrl({ state: "test" });
     expect(result).toMatchInlineSnapshot(`
-      Object {
+      {
         "allowSignup": false,
         "clientId": "1234567890abcdef1234",
         "clientType": "oauth-app",
         "login": null,
         "redirectUrl": null,
-        "scopes": Array [],
+        "scopes": [],
         "state": "test",
         "url": "https://github.com/login/oauth/authorize?allow_signup=false&client_id=1234567890abcdef1234&state=test",
       }
@@ -157,12 +157,12 @@ describe("app", () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      Object {
-        "authentication": Object {
+      {
+        "authentication": {
           "clientId": "0123",
           "clientSecret": "0123secret",
           "clientType": "oauth-app",
-          "scopes": Array [
+          "scopes": [
             "repo",
             "gist",
           ],
@@ -242,12 +242,12 @@ describe("app", () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      Object {
-        "authentication": Object {
+      {
+        "authentication": {
           "clientId": "1234567890abcdef1234",
           "clientSecret": "1234567890abcdef1234567890abcdef12345678",
           "clientType": "oauth-app",
-          "scopes": Array [
+          "scopes": [
             "repo",
             "gist",
           ],
@@ -300,8 +300,8 @@ describe("app", () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      Object {
-        "authentication": Object {
+      {
+        "authentication": {
           "clientId": "0123",
           "clientSecret": "0123secret",
           "clientType": "oauth-app",
@@ -310,10 +310,10 @@ describe("app", () => {
           "tokenType": "oauth",
           "type": "token",
         },
-        "data": Object {
+        "data": {
           "id": 1,
         },
-        "headers": Object {
+        "headers": {
           "content-length": "8",
           "content-type": "application/json",
         },
@@ -362,12 +362,12 @@ describe("app", () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      Object {
-        "authentication": Object {
+      {
+        "authentication": {
           "clientId": "0123",
           "clientSecret": "0123secret",
           "clientType": "oauth-app",
-          "scopes": Array [
+          "scopes": [
             "repo",
             "gist",
           ],
@@ -375,15 +375,15 @@ describe("app", () => {
           "tokenType": "oauth",
           "type": "token",
         },
-        "data": Object {
+        "data": {
           "id": 2,
-          "scopes": Array [
+          "scopes": [
             "repo",
             "gist",
           ],
           "token": "token456",
         },
-        "headers": Object {
+        "headers": {
           "content-length": "52",
           "content-type": "application/json",
         },
@@ -442,8 +442,8 @@ describe("app", () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      Object {
-        "authentication": Object {
+      {
+        "authentication": {
           "clientId": "0123",
           "clientSecret": "0123secret",
           "clientType": "oauth-app",
@@ -452,12 +452,12 @@ describe("app", () => {
           "tokenType": "oauth",
           "type": "token",
         },
-        "data": Object {
+        "data": {
           "id": 2,
           "scopes": null,
           "token": "token456",
         },
-        "headers": Object {
+        "headers": {
           "content-length": "41",
           "content-type": "application/json",
         },
@@ -518,8 +518,8 @@ describe("app", () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      Object {
-        "authentication": Object {
+      {
+        "authentication": {
           "clientId": "lv1.1234567890abcdef",
           "clientSecret": "1234567890abcdef1234567890abcdef12345678",
           "clientType": "github-app",
@@ -527,11 +527,11 @@ describe("app", () => {
           "tokenType": "oauth",
           "type": "token",
         },
-        "data": Object {
+        "data": {
           "id": 2,
           "token": "token456",
         },
-        "headers": Object {
+        "headers": {
           "content-length": "27",
           "content-type": "application/json",
         },
@@ -597,8 +597,8 @@ describe("app", () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      Object {
-        "authentication": Object {
+      {
+        "authentication": {
           "clientId": "lv1.1234567890abcdef",
           "clientSecret": "1234567890abcdef12347890abcdef12345678",
           "clientType": "github-app",
@@ -609,7 +609,7 @@ describe("app", () => {
           "tokenType": "oauth",
           "type": "token",
         },
-        "data": Object {
+        "data": {
           "access_token": "secret456",
           "expires_in": 28800,
           "refresh_token": "r1.token456",
@@ -617,7 +617,7 @@ describe("app", () => {
           "scope": "",
           "token_type": "bearer",
         },
-        "headers": Object {
+        "headers": {
           "content-length": "146",
           "content-type": "application/json",
           "date": "Thu, 1 Jan 1970 00:00:00 GMT",
@@ -699,8 +699,8 @@ describe("app", () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      Object {
-        "authentication": Object {
+      {
+        "authentication": {
           "clientId": "lv1.1234567890abcdef",
           "clientSecret": "1234567890abcdef12347890abcdef12345678",
           "clientType": "github-app",
@@ -708,14 +708,14 @@ describe("app", () => {
           "tokenType": "oauth",
           "type": "token",
         },
-        "data": Object {
-          "account": Object {
+        "data": {
+          "account": {
             "id": 1,
             "login": "octokit",
           },
           "token": "token456",
         },
-        "headers": Object {
+        "headers": {
           "content-length": "57",
           "content-type": "application/json",
         },
@@ -784,9 +784,9 @@ describe("app", () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      Object {
+      {
         "data": undefined,
-        "headers": Object {},
+        "headers": {},
         "status": 204,
         "url": "https://api.github.com/applications/0123/token",
       }
@@ -836,9 +836,9 @@ describe("app", () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      Object {
+      {
         "data": undefined,
-        "headers": Object {},
+        "headers": {},
         "status": 204,
         "url": "https://api.github.com/applications/0123/grant",
       }
@@ -904,11 +904,11 @@ describe("app", () => {
 
     app.on("token.created", async ({ octokit, authentication }) => {
       expect(authentication).toMatchInlineSnapshot(`
-        Object {
+        {
           "clientId": "0123",
           "clientSecret": "0123secret",
           "clientType": "oauth-app",
-          "scopes": Array [],
+          "scopes": [],
           "token": "token123",
           "tokenType": "oauth",
           "type": "token",

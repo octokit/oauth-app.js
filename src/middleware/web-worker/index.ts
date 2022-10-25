@@ -18,11 +18,17 @@ export function createWebWorkerHandler<T extends Options<ClientType>>(
   app: OAuthApp<T>,
   {
     pathPrefix,
-    onUnhandledRequest = onUnhandledRequestDefaultWebWorker,
+    onUnhandledRequest,
   }: HandlerOptions & {
     onUnhandledRequest?: (request: Request) => Response | Promise<Response>;
   } = {}
 ) {
+  if (onUnhandledRequest) {
+    app.octokit.log.warn(
+      "[@octokit/oauth-app] `onUnhandledRequest` is deprecated and will be removed from the next major version."
+    );
+  }
+  onUnhandledRequest ??= onUnhandledRequestDefaultWebWorker;
   return async function (request: Request): Promise<Response> {
     const octokitRequest = parseRequest(request);
     const octokitResponse = await handleRequest(
@@ -32,7 +38,7 @@ export function createWebWorkerHandler<T extends Options<ClientType>>(
     );
     return octokitResponse
       ? sendResponse(octokitResponse)
-      : await onUnhandledRequest(request);
+      : await onUnhandledRequest!(request);
   };
 }
 
