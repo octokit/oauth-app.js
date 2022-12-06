@@ -38,6 +38,7 @@ export function getWebFlowAuthorizationUrlWithState(
     request: state.octokit.request,
     ...options,
     allowSignup,
+    redirectUrl: options.redirectUrl || state.redirectUrl,
     scopes: options.scopes || state.defaultScopes,
   };
 

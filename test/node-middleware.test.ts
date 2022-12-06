@@ -1080,4 +1080,71 @@ describe("createNodeMiddleware(app)", () => {
     expect(url.searchParams.get("state")).toMatch(/^\w+$/);
     expect(url.searchParams.get("allow_signup")).toEqual("true");
   });
+
+  it("GET /api/github/oauth/login?redirectUrl=http://localhost:12345 with redirectUrl option not set", async () => {
+    const app = new OAuthApp({
+      clientId: "0123",
+      clientSecret: "0123secret",
+    });
+
+    const server = createServer(createNodeMiddleware(app)).listen();
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const { status, headers } = await fetch(
+      `http://localhost:${port}/api/github/oauth/login?redirectUrl=http://localhost:12345`,
+      {
+        redirect: "manual",
+      }
+    );
+
+    server.close();
+
+    expect(status).toEqual(302);
+
+    const url = new URL(headers.get("location") as string);
+    expect(url).toMatchObject({
+      origin: "https://github.com",
+      pathname: "/login/oauth/authorize",
+    });
+    expect(url.searchParams.get("client_id")).toEqual("0123");
+    expect(url.searchParams.get("state")).toMatch(/^\w+$/);
+    expect(url.searchParams.get("redirect_uri")).toEqual(
+      "http://localhost:12345"
+    );
+  });
+
+  it("GET /api/github/oauth/login with redirectUrl option set to http://localhost:1234", async () => {
+    const app = new OAuthApp({
+      clientId: "0123",
+      clientSecret: "0123secret",
+      redirectUrl: "http://localhost:12345",
+    });
+
+    const server = createServer(createNodeMiddleware(app)).listen();
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const { status, headers } = await fetch(
+      `http://localhost:${port}/api/github/oauth/login`,
+      {
+        redirect: "manual",
+      }
+    );
+
+    server.close();
+
+    expect(status).toEqual(302);
+
+    const url = new URL(headers.get("location") as string);
+    expect(url).toMatchObject({
+      origin: "https://github.com",
+      pathname: "/login/oauth/authorize",
+    });
+    expect(url.searchParams.get("client_id")).toEqual("0123");
+    expect(url.searchParams.get("state")).toMatch(/^\w+$/);
+    expect(url.searchParams.get("redirect_uri")).toEqual(
+      "http://localhost:12345"
+    );
+  });
 });
