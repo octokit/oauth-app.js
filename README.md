@@ -10,31 +10,33 @@
 
 <!-- toc -->
 
-- [Usage](#usage)
-  - [For OAuth Apps](#for-oauth-apps)
-  - [For GitHub Apps](#for-github-apps)
-- [Examples](#examples)
-- [`OAuthApp.defaults(options)`](#oauthappdefaultsoptions)
-- [Constructor options](#constructor-options)
-- [`app.on(eventName, eventHandler)`](#apponeventname-eventhandler)
-- [`app.octokit`](#appoctokit)
-- [`app.getUserOctokit(options)`](#appgetuseroctokitoptions)
-- [`app.getWebFlowAuthorizationUrl(options)`](#appgetwebflowauthorizationurloptions)
-- [`app.createToken(options)`](#appcreatetokenoptions)
-  - [For OAuth Web flow](#for-oauth-web-flow)
-  - [For OAuth Device flow](#for-oauth-device-flow)
-- [`app.checkToken(options)`](#appchecktokenoptions)
-- [`app.resetToken(options)`](#appresettokenoptions)
-- [`app.refreshToken(options)`](#apprefreshtokenoptions)
-- [`app.scopeToken(options)`](#appscopetokenoptions)
-- [`app.deleteToken(options)`](#appdeletetokenoptions)
-- [`app.deleteAuthorization(options)`](#appdeleteauthorizationoptions)
-- [Middlewares](#middlewares)
-  - [`createNodeMiddleware(app, options)`](#createnodemiddlewareapp-options)
-  - [`createWebWorkerHandler(app, options)`](#createwebworkerhandlerapp-options)
-  - [`createAWSLambdaAPIGatewayV2Handler(app, options)`](#createawslambdaapigatewayv2handlerapp-options)
-- [Contributing](#contributing)
-- [License](#license)
+- [oauth-app.js](#oauth-appjs)
+  - [Usage](#usage)
+    - [For OAuth Apps](#for-oauth-apps)
+    - [For GitHub Apps](#for-github-apps)
+  - [Examples](#examples)
+  - [`OAuthApp.defaults(options)`](#oauthappdefaultsoptions)
+  - [Constructor options](#constructor-options)
+  - [`app.on(eventName, eventHandler)`](#apponeventname-eventhandler)
+  - [`app.octokit`](#appoctokit)
+  - [`app.getUserOctokit(options)`](#appgetuseroctokitoptions)
+  - [`app.getWebFlowAuthorizationUrl(options)`](#appgetwebflowauthorizationurloptions)
+  - [`app.createToken(options)`](#appcreatetokenoptions)
+    - [For OAuth Web flow](#for-oauth-web-flow)
+    - [For OAuth Device flow](#for-oauth-device-flow)
+  - [`app.checkToken(options)`](#appchecktokenoptions)
+  - [`app.resetToken(options)`](#appresettokenoptions)
+  - [`app.refreshToken(options)`](#apprefreshtokenoptions)
+  - [`app.scopeToken(options)`](#appscopetokenoptions)
+  - [`app.deleteToken(options)`](#appdeletetokenoptions)
+  - [`app.deleteAuthorization(options)`](#appdeleteauthorizationoptions)
+  - [Middlewares](#middlewares)
+    - [`createNodeMiddleware(app, options)`](#createnodemiddlewareapp-options)
+    - [`createWebWorkerHandler(app, options)`](#createwebworkerhandlerapp-options)
+    - [`createAWSLambdaAPIGatewayV2Handler(app, options)`](#createawslambdaapigatewayv2handlerapp-options)
+    - [Build Custom Middlewares](#build-custom-middlewares)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 <!-- tocstop -->
 
@@ -186,6 +188,17 @@ const app = new MyOAuthApp({ clientId, clientSecret });
       </th>
       <td>
         Sets the default value for <code>app.getWebFlowAuthorizationUrl(options)</code>.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <code>redirectUrl</code>
+      </th>
+      <th>
+        <code>string</code>
+      </th>
+      <td>
+        The URL in your application where users will be sent after authorization. See <a href="https://docs.github.com/en/developers/apps/authorizing-oauth-apps#redirect-urls">Redirect URLs</a> in GitHub’s Developer Guide.
       </td>
     </tr>
     <tr>
