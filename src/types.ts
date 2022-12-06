@@ -36,6 +36,7 @@ type CommonOptions<TOctokit extends OAuthAppOctokitClassType> = {
   clientSecret?: ClientSecret;
   allowSignup?: boolean;
   baseUrl?: string;
+  redirectUrl?: string;
   log?: typeof console;
   Octokit?: TOctokit;
 };
@@ -82,6 +83,7 @@ export type State = {
   defaultScopes: Scope[];
   allowSignup?: boolean;
   baseUrl?: string;
+  redirectUrl?: string;
   log?: typeof console;
   Octokit: OAuthAppOctokitClassType;
   octokit: OctokitInstance;
