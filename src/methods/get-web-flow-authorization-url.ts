@@ -17,11 +17,27 @@ export function getWebFlowAuthorizationUrlWithState(
   state: State,
   options: any
 ): any {
+  let allowSignup: boolean;
+  if (options.allowSignup === undefined && state.allowSignup === undefined) {
+    allowSignup = true;
+  } else if (
+    options.allowSignup === undefined &&
+    state.allowSignup !== undefined
+  ) {
+    allowSignup = state.allowSignup;
+  } else if (
+    state.allowSignup === undefined &&
+    options.allowSignup !== undefined
+  ) {
+    allowSignup = options.allowSignup;
+  } else {
+    allowSignup = options.allowSignup || state.allowSignup;
+  }
   const optionsWithDefaults = {
     clientId: state.clientId,
     request: state.octokit.request,
     ...options,
-    allowSignup: options.allowSignup || state.allowSignup,
+    allowSignup,
     scopes: options.scopes || state.defaultScopes,
   };
 

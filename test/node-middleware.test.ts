@@ -954,4 +954,130 @@ describe("createNodeMiddleware(app)", () => {
 
     expect(status).toEqual(302);
   });
+
+  it("GET /api/github/oauth/login with allowSignup set to false", async () => {
+    const app = new OAuthApp({
+      clientId: "0123",
+      clientSecret: "0123secret",
+      allowSignup: false,
+    });
+
+    const server = createServer(createNodeMiddleware(app)).listen();
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const { status, headers } = await fetch(
+      `http://localhost:${port}/api/github/oauth/login`,
+      {
+        redirect: "manual",
+      }
+    );
+
+    server.close();
+
+    expect(status).toEqual(302);
+
+    const url = new URL(headers.get("location") as string);
+    expect(url).toMatchObject({
+      origin: "https://github.com",
+      pathname: "/login/oauth/authorize",
+    });
+    expect(url.searchParams.get("client_id")).toEqual("0123");
+    expect(url.searchParams.get("state")).toMatch(/^\w+$/);
+    expect(url.searchParams.get("allow_signup")).toEqual("false");
+  });
+
+  it("GET /api/github/oauth/login?allowSignup=false with allowSignup not set", async () => {
+    const app = new OAuthApp({
+      clientId: "0123",
+      clientSecret: "0123secret",
+    });
+
+    const server = createServer(createNodeMiddleware(app)).listen();
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const { status, headers } = await fetch(
+      `http://localhost:${port}/api/github/oauth/login?allowSignup=false`,
+      {
+        redirect: "manual",
+      }
+    );
+
+    server.close();
+
+    expect(status).toEqual(302);
+
+    const url = new URL(headers.get("location") as string);
+    expect(url).toMatchObject({
+      origin: "https://github.com",
+      pathname: "/login/oauth/authorize",
+    });
+    expect(url.searchParams.get("client_id")).toEqual("0123");
+    expect(url.searchParams.get("state")).toMatch(/^\w+$/);
+    expect(url.searchParams.get("allow_signup")).toEqual("false");
+  });
+
+  it("GET /api/github/oauth/login?allowSignup=false with allowSignup set to true", async () => {
+    const app = new OAuthApp({
+      clientId: "0123",
+      clientSecret: "0123secret",
+      allowSignup: true,
+    });
+
+    const server = createServer(createNodeMiddleware(app)).listen();
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const { status, headers } = await fetch(
+      `http://localhost:${port}/api/github/oauth/login?allowSignup=false`,
+      {
+        redirect: "manual",
+      }
+    );
+
+    server.close();
+
+    expect(status).toEqual(302);
+
+    const url = new URL(headers.get("location") as string);
+    expect(url).toMatchObject({
+      origin: "https://github.com",
+      pathname: "/login/oauth/authorize",
+    });
+    expect(url.searchParams.get("client_id")).toEqual("0123");
+    expect(url.searchParams.get("state")).toMatch(/^\w+$/);
+    expect(url.searchParams.get("allow_signup")).toEqual("true");
+  });
+
+  it("GET /api/github/oauth/login with allowSignup not set", async () => {
+    const app = new OAuthApp({
+      clientId: "0123",
+      clientSecret: "0123secret",
+    });
+
+    const server = createServer(createNodeMiddleware(app)).listen();
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const { status, headers } = await fetch(
+      `http://localhost:${port}/api/github/oauth/login`,
+      {
+        redirect: "manual",
+      }
+    );
+
+    server.close();
+
+    expect(status).toEqual(302);
+
+    const url = new URL(headers.get("location") as string);
+    expect(url).toMatchObject({
+      origin: "https://github.com",
+      pathname: "/login/oauth/authorize",
+    });
+    expect(url.searchParams.get("client_id")).toEqual("0123");
+    expect(url.searchParams.get("state")).toMatch(/^\w+$/);
+    expect(url.searchParams.get("allow_signup")).toEqual("true");
+  });
 });
