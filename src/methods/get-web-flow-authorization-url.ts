@@ -22,8 +22,8 @@ export function getWebFlowAuthorizationUrlWithState(
     request: state.octokit.request,
     ...options,
     allowSignup: state.allowSignup ?? options.allowSignup,
-    redirectUrl: options.redirectUrl || state.redirectUrl,
-    scopes: options.scopes || state.defaultScopes,
+    redirectUrl: options.redirectUrl ?? state.redirectUrl,
+    scopes: options.scopes ?? state.defaultScopes,
   };
 
   return OAuthMethods.getWebFlowAuthorizationUrl({
