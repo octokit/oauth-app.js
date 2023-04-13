@@ -82,7 +82,9 @@ export async function handleRequest(
       const { url } = app.getWebFlowAuthorizationUrl({
         state: query.state,
         scopes: query.scopes ? query.scopes.split(",") : undefined,
-        allowSignup: query.allowSignup !== "false",
+        allowSignup: query.allowSignup
+          ? query.allowSignup === "true"
+          : undefined,
         redirectUrl: query.redirectUrl,
       });
 

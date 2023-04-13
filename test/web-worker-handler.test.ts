@@ -270,12 +270,12 @@ describe("createWebWorkerHandler(app)", () => {
     expect(response.status).toEqual(200);
     expect(response.status).toEqual(200);
     expect(await response.json()).toMatchInlineSnapshot(`
-      Object {
-        "authentication": Object {
+      {
+        "authentication": {
           "tokenType": "oauth",
           "type": "token",
         },
-        "data": Object {
+        "data": {
           "id": 1,
         },
       }
@@ -283,11 +283,11 @@ describe("createWebWorkerHandler(app)", () => {
 
     expect(appMock.scopeToken.mock.calls.length).toEqual(1);
     expect(appMock.scopeToken.mock.calls[0][0]).toMatchInlineSnapshot(`
-      Object {
-        "permissions": Object {
+      {
+        "permissions": {
           "issues": "write",
         },
-        "repositories": Array [
+        "repositories": [
           "oauth-methods.js",
         ],
         "target": "octokit",

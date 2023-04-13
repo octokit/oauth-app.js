@@ -10,31 +10,33 @@
 
 <!-- toc -->
 
-- [Usage](#usage)
-  - [For OAuth Apps](#for-oauth-apps)
-  - [For GitHub Apps](#for-github-apps)
-- [Examples](#examples)
-- [`OAuthApp.defaults(options)`](#oauthappdefaultsoptions)
-- [Constructor options](#constructor-options)
-- [`app.on(eventName, eventHandler)`](#apponeventname-eventhandler)
-- [`app.octokit`](#appoctokit)
-- [`app.getUserOctokit(options)`](#appgetuseroctokitoptions)
-- [`app.getWebFlowAuthorizationUrl(options)`](#appgetwebflowauthorizationurloptions)
-- [`app.createToken(options)`](#appcreatetokenoptions)
-  - [For OAuth Web flow](#for-oauth-web-flow)
-  - [For OAuth Device flow](#for-oauth-device-flow)
-- [`app.checkToken(options)`](#appchecktokenoptions)
-- [`app.resetToken(options)`](#appresettokenoptions)
-- [`app.refreshToken(options)`](#apprefreshtokenoptions)
-- [`app.scopeToken(options)`](#appscopetokenoptions)
-- [`app.deleteToken(options)`](#appdeletetokenoptions)
-- [`app.deleteAuthorization(options)`](#appdeleteauthorizationoptions)
-- [Middlewares](#middlewares)
-  - [`createNodeMiddleware(app, options)`](#createnodemiddlewareapp-options)
-  - [`createWebWorkerHandler(app, options)`](#createwebworkerhandlerapp-options)
-  - [`createAWSLambdaAPIGatewayV2Handler(app, options)`](#createawslambdaapigatewayv2handlerapp-options)
-- [Contributing](#contributing)
-- [License](#license)
+- [oauth-app.js](#oauth-appjs)
+  - [Usage](#usage)
+    - [For OAuth Apps](#for-oauth-apps)
+    - [For GitHub Apps](#for-github-apps)
+  - [Examples](#examples)
+  - [`OAuthApp.defaults(options)`](#oauthappdefaultsoptions)
+  - [Constructor options](#constructor-options)
+  - [`app.on(eventName, eventHandler)`](#apponeventname-eventhandler)
+  - [`app.octokit`](#appoctokit)
+  - [`app.getUserOctokit(options)`](#appgetuseroctokitoptions)
+  - [`app.getWebFlowAuthorizationUrl(options)`](#appgetwebflowauthorizationurloptions)
+  - [`app.createToken(options)`](#appcreatetokenoptions)
+    - [For OAuth Web flow](#for-oauth-web-flow)
+    - [For OAuth Device flow](#for-oauth-device-flow)
+  - [`app.checkToken(options)`](#appchecktokenoptions)
+  - [`app.resetToken(options)`](#appresettokenoptions)
+  - [`app.refreshToken(options)`](#apprefreshtokenoptions)
+  - [`app.scopeToken(options)`](#appscopetokenoptions)
+  - [`app.deleteToken(options)`](#appdeletetokenoptions)
+  - [`app.deleteAuthorization(options)`](#appdeleteauthorizationoptions)
+  - [Middlewares](#middlewares)
+    - [`createNodeMiddleware(app, options)`](#createnodemiddlewareapp-options)
+    - [`createWebWorkerHandler(app, options)`](#createwebworkerhandlerapp-options)
+    - [`createAWSLambdaAPIGatewayV2Handler(app, options)`](#createawslambdaapigatewayv2handlerapp-options)
+    - [Build Custom Middlewares](#build-custom-middlewares)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 <!-- tocstop -->
 
@@ -186,6 +188,17 @@ const app = new MyOAuthApp({ clientId, clientSecret });
       </th>
       <td>
         Sets the default value for <code>app.getWebFlowAuthorizationUrl(options)</code>.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <code>redirectUrl</code>
+      </th>
+      <th>
+        <code>string</code>
+      </th>
+      <td>
+        The URL in your application where users will be sent after authorization. See <a href="https://docs.github.com/en/developers/apps/authorizing-oauth-apps#redirect-urls">Redirect URLs</a> in GitHub’s Developer Guide.
       </td>
     </tr>
     <tr>
@@ -1069,6 +1082,81 @@ All exposed paths will be prefixed with the provided prefix. Defaults to `"/api/
     </tr>
   </tbody>
 </table>
+
+### Build Custom Middlewares
+
+When above middlewares do not meet your needs, you can build your own
+using the exported `handleRequest` function.
+
+[`handleRequest`](./src/middleware/handle-request.ts) function is an abstract HTTP handler which accepts an `OctokitRequest` and returns an `OctokitResponse` if the request matches any predefined route.
+
+> Different environments (e.g., Node.js, Cloudflare Workers, Deno, etc.) exposes different APIs when processing HTTP requests (e.g., [`IncomingMessage`](https://nodejs.org/api/http.html#http_class_http_incomingmessage) for Node.js, [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) for Cloudflare workers, etc.). Two HTTP-related types ([`OctokitRequest` and `OctokitResponse`](.src/middleware/types.ts)) are generalized to make an abstract HTTP handler possible.
+
+To share the behavior and capability with the existing Node.js middleware (and be compatible with [OAuth user authentication strategy in the browser](https://github.com/octokit/auth-oauth-user-client.js)), it is better to implement your HTTP handler/middleware based on `handleRequest` function.
+
+`handleRequest` function takes three parameters:
+
+<table width="100%">
+  <thead align=left>
+    <tr>
+      <th width=150>
+        name
+      </th>
+      <th width=70>
+        type
+      </th>
+      <th>
+        description
+      </th>
+    </tr>
+  </thead>
+  <tbody align=left valign=top>
+    <tr>
+      <th>
+        <code>app</code>
+      </th>
+      <th>
+        <code>OAuthApp instance</code>
+      </th>
+      <td>
+        <strong>Required</strong>.
+      </td>
+    </tr>
+    <tr>
+      <th>
+        <code>options.pathPrefix</code>
+      </th>
+      <th>
+        <code>string</code>
+      </th>
+      <td>
+
+All exposed paths will be prefixed with the provided prefix. Defaults to `"/api/github/oauth"`
+
+</td>
+    </tr>
+    <tr>
+      <th>
+        <code>request</code>
+      </th>
+      <th>
+        <code>OctokitRequest</code>
+      </th>
+      <td>
+        Generalized HTTP request in `OctokitRequest` type.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+Implementing an HTTP handler/middleware for a certain environment involves three steps:
+
+1. Write a function to parse the HTTP request (e.g., `IncomingMessage` in Node.js) into an `OctokitRequest` object. See [`node/parse-request.ts`](.src/middleware/node/parse-request.ts) for reference.
+2. Write a function to render an `OctokitResponse` object (e.g., as `ServerResponse` in Node.js). See [`node/send-response.ts`](.src/middleware/node/send-response.ts) for reference.
+3. Expose an HTTP handler/middleware in the dialect of the environment which performs three steps:
+   1. Parse the HTTP request using (1).
+   2. Process the `OctokitRequest` object using `handleRequest`.
+   3. Render the `OctokitResponse` object using (2).
 
 ## Contributing
 
