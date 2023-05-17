@@ -3,7 +3,7 @@
   "version": "0.0.0-development",
   "description": "GitHub OAuth toolset for Node.js",
   "scripts": {
-    "build": "pika-pack build",
+    "build": "node scripts/build.mjs && tsc -p tsconfig.json",
     "lint": "prettier --check '{src,test}/**/*' README.md package.json",
     "lint:fix": "prettier --write '{src,test}/**/*' README.md package.json",
     "pretest": "npm run -s lint",
