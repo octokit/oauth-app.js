@@ -39,18 +39,16 @@ async function main() {
 
   const entryPoints = ["./pkg/dist-src/index.js"];
 
-  await Promise.all([
-    // Build the a CJS Node.js bundle
-    esbuild.build({
-      entryPoints,
-      outdir: "pkg/dist-node",
-      bundle: true,
-      platform: "node",
-      target: "node14",
-      format: "cjs",
-      ...sharedOptions,
-    }),
-  ]);
+  // Build the a CJS Node.js bundle
+  await esbuild.build({
+    entryPoints,
+    outdir: "pkg/dist-node",
+    bundle: true,
+    platform: "node",
+    target: "node14",
+    format: "cjs",
+    ...sharedOptions,
+  });
 
   // Copy the README, LICENSE to the pkg folder
   await copyFile("LICENSE", "pkg/LICENSE");
