@@ -1,4 +1,4 @@
-import fetchMock, { MockMatcherFunction } from "fetch-mock";
+import fetchMock from "fetch-mock";
 import { Octokit } from "@octokit/core";
 
 import { OAuthApp } from "../src";
@@ -964,12 +964,12 @@ describe("app", () => {
 
     const calls: number[] = [];
 
-    const onTokenCallback1 = jest.fn().mockImplementationOnce((context) => {
+    const onTokenCallback1 = jest.fn().mockImplementationOnce(() => {
       calls.push(1);
       return new Promise((resolve) => setTimeout(resolve, 20));
     });
 
-    const onTokenCallback2 = jest.fn().mockImplementationOnce((context) => {
+    const onTokenCallback2 = jest.fn().mockImplementationOnce(() => {
       calls.push(2);
       return new Promise((resolve) => setTimeout(resolve, 10));
     });
