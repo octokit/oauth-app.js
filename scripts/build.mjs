@@ -50,15 +50,6 @@ async function main() {
       format: "cjs",
       ...sharedOptions,
     }),
-    // Build an ESM browser bundle
-    esbuild.build({
-      entryPoints,
-      outdir: "pkg/dist-web",
-      bundle: true,
-      platform: "browser",
-      format: "esm",
-      ...sharedOptions,
-    }),
   ]);
 
   // Copy the README, LICENSE to the pkg folder
@@ -79,7 +70,6 @@ async function main() {
         ...pkg,
         files: ["dist-*/**", "bin/**"],
         main: "dist-node/index.js",
-        module: "dist-web/index.js",
         types: "dist-types/index.d.ts",
         source: "dist-src/index.js",
         sideEffects: false,
