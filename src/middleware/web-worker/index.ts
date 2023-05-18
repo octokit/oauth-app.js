@@ -43,11 +43,11 @@ export function createWebWorkerHandler<T extends Options<ClientType>>(
 }
 
 /** @deprecated */
-export function createCloudflareHandler<T>(
+export function createCloudflareHandler<T extends Options<ClientType>>(
   ...args: Parameters<typeof createWebWorkerHandler>
 ) {
   args[0].octokit.log.warn(
     "[@octokit/oauth-app] `createCloudflareHandler` is deprecated, use `createWebWorkerHandler` instead"
   );
-  return createWebWorkerHandler(...args);
+  return createWebWorkerHandler<T>(...args);
 }

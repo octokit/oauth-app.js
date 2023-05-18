@@ -1,12 +1,7 @@
 import { URL } from "url";
 import * as nodeFetch from "node-fetch";
 import fromEntries from "fromentries";
-import {
-  createCloudflareHandler,
-  createWebWorkerHandler,
-  OAuthApp,
-} from "../src";
-import { Octokit } from "@octokit/core";
+import { createWebWorkerHandler, OAuthApp } from "../src";
 
 describe("createWebWorkerHandler(app)", () => {
   beforeAll(() => {

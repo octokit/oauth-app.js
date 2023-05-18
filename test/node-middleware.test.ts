@@ -517,16 +517,13 @@ describe("createNodeMiddleware(app)", () => {
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
-    const { status, headers } = await fetch(
-      `http://localhost:${port}/unrelated`,
-      {
-        method: "POST",
-        body: JSON.stringify({ ok: true }),
-        headers: {
-          "content-type": "application/json",
-        },
-      }
-    );
+    const { status } = await fetch(`http://localhost:${port}/unrelated`, {
+      method: "POST",
+      body: JSON.stringify({ ok: true }),
+      headers: {
+        "content-type": "application/json",
+      },
+    });
 
     server.close();
 
