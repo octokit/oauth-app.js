@@ -21,7 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "@octokit/auth-oauth-app": "^5.0.0",
-    "@octokit/auth-oauth-user": "^2.0.0",
+    "@octokit/auth-oauth-user": "^3.0.0",
     "@octokit/auth-unauthenticated": "^3.0.0",
     "@octokit/core": "^4.0.0",
     "@octokit/oauth-authorization-url": "^5.0.0",
