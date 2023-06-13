@@ -4,8 +4,6 @@ import fromEntries from "fromentries";
 import {
   createAWSLambdaAPIGatewayV2Handler,
   createCloudflareHandler,
-  createNodeMiddleware,
-  createWebWorkerHandler,
   OAuthApp,
 } from "../src";
 import { Octokit } from "@octokit/core";
@@ -61,7 +59,7 @@ describe("deprecations", () => {
 
   it("`onUnhandledRequest` is deprecated and will be removed from the next major version", async () => {
     const warn = jest.fn().mockResolvedValue(undefined);
-    const handleRequest = createAWSLambdaAPIGatewayV2Handler(
+    createAWSLambdaAPIGatewayV2Handler(
       new OAuthApp({
         clientType: "github-app",
         clientId: "client_id_123",
@@ -76,7 +74,7 @@ describe("deprecations", () => {
         }),
       }),
       {
-        onUnhandledRequest: async (request) => {
+        onUnhandledRequest: async () => {
           return {
             statusCode: 404,
             headers: {},
