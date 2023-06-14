@@ -1,5 +1,6 @@
-import {
-  createOAuthUserAuth,
+import { createOAuthUserAuth } from "@octokit/auth-oauth-user";
+
+import type {
   OAuthAppStrategyOptionsWebFlow,
   OAuthAppStrategyOptionsDeviceFlow,
   OAuthAppStrategyOptionsExistingAuthentication,
@@ -10,7 +11,7 @@ import {
   OAuthAppAuthentication,
 } from "@octokit/auth-oauth-user";
 
-import { State, OctokitInstance, ClientType } from "../types";
+import type { State, OctokitInstance, ClientType } from "../types";
 import { emitEvent } from "../emit-event";
 
 type StateOptions = "clientType" | "clientId" | "clientSecret" | "request";

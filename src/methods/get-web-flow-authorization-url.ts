@@ -1,6 +1,6 @@
 import * as OAuthMethods from "@octokit/oauth-methods";
 
-import { ClientType, State } from "../types";
+import type { ClientType, State } from "../types";
 
 type StateOptions = "clientType" | "clientId" | "clientSecret" | "request";
 

@@ -1,4 +1,4 @@
-import {
+import type {
   EventHandler,
   EventAndActionName,
   State,

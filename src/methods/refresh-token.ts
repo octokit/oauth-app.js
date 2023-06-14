@@ -1,6 +1,6 @@
 import * as OAuthMethods from "@octokit/oauth-methods";
 
-import { State } from "../types";
+import type { State } from "../types";
 import { emitEvent } from "../emit-event";
 import { createOAuthUserAuth } from "@octokit/auth-oauth-user";
 
