@@ -9,8 +9,8 @@ import { sendResponse } from "./send-response";
 import { onUnhandledRequestDefault } from "../on-unhandled-request-default";
 import { handleRequest } from "../handle-request";
 import { OAuthApp } from "../../index";
-import { HandlerOptions } from "../types";
-import { ClientType, Options } from "../../types";
+import type { HandlerOptions } from "../types";
+import type { ClientType, Options } from "../../types";
 
 function onUnhandledRequestDefaultNode(
   request: IncomingMessage,

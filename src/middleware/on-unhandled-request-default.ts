@@ -1,4 +1,4 @@
-import { OctokitRequest, OctokitResponse } from "./types";
+import type { OctokitRequest, OctokitResponse } from "./types";
 
 export function onUnhandledRequestDefault(
   request: OctokitRequest

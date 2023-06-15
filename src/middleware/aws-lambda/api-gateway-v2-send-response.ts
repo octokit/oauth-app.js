@@ -1,4 +1,4 @@
-import { OctokitResponse } from "../types";
+import type { OctokitResponse } from "../types";
 import type { APIGatewayProxyStructuredResultV2 } from "aws-lambda";
 
 export function sendResponse(

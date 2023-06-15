@@ -6,38 +6,38 @@ import { OAuthAppOctokit } from "./oauth-app-octokit";
 
 import {
   getUserOctokitWithState,
-  GetUserOctokitWithStateInterface,
+  type GetUserOctokitWithStateInterface,
 } from "./methods/get-user-octokit";
 import {
-  GetWebFlowAuthorizationUrlInterface,
+  type GetWebFlowAuthorizationUrlInterface,
   getWebFlowAuthorizationUrlWithState,
 } from "./methods/get-web-flow-authorization-url";
 import {
-  CreateTokenInterface,
+  type CreateTokenInterface,
   createTokenWithState,
 } from "./methods/create-token";
 import {
-  CheckTokenInterface,
+  type CheckTokenInterface,
   checkTokenWithState,
 } from "./methods/check-token";
 import {
-  ResetTokenInterface,
+  type ResetTokenInterface,
   resetTokenWithState,
 } from "./methods/reset-token";
 import {
-  RefreshTokenInterface,
+  type RefreshTokenInterface,
   refreshTokenWithState,
 } from "./methods/refresh-token";
 import {
-  ScopeTokenInterface,
+  type ScopeTokenInterface,
   scopeTokenWithState,
 } from "./methods/scope-token";
 import {
-  DeleteTokenInterface,
+  type DeleteTokenInterface,
   deleteTokenWithState,
 } from "./methods/delete-token";
 import {
-  DeleteAuthorizationInterface,
+  type DeleteAuthorizationInterface,
   deleteAuthorizationWithState,
 } from "./methods/delete-authorization";
 

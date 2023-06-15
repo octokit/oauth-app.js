@@ -2,9 +2,9 @@ import { parseRequest } from "./api-gateway-v2-parse-request";
 import { sendResponse } from "./api-gateway-v2-send-response";
 import { handleRequest } from "../handle-request";
 import { onUnhandledRequestDefault } from "../on-unhandled-request-default";
-import { HandlerOptions } from "../types";
+import type { HandlerOptions } from "../types";
 import { OAuthApp } from "../../index";
-import { ClientType, Options } from "../../types";
+import type { ClientType, Options } from "../../types";
 import type {
   APIGatewayProxyEventV2,
   APIGatewayProxyStructuredResultV2,

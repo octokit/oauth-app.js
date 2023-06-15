@@ -1,5 +1,5 @@
 import { Octokit } from "@octokit/core";
-import {
+import type {
   OAuthAppUserAuthentication,
   GitHubAppUserAuthentication,
   GitHubAppUserAuthenticationWithExpiration,
