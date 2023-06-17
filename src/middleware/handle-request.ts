@@ -2,8 +2,6 @@ import { OAuthApp } from "../index";
 import { unknownRouteResponse } from "./unknown-route-response";
 import type { HandlerOptions, OctokitRequest, OctokitResponse } from "./types";
 import type { ClientType, Options } from "../types";
-// @ts-ignore - requires esModuleInterop flag
-import fromEntries from "fromentries";
 
 export async function handleRequest(
   app: OAuthApp<Options<ClientType>>,
@@ -65,7 +63,7 @@ export async function handleRequest(
     };
   }
   const { searchParams } = new URL(request.url as string, "http://localhost");
-  const query = fromEntries(searchParams) as {
+  const query = Object.fromEntries(searchParams) as {
     state?: string;
     scopes?: string;
     code?: string;

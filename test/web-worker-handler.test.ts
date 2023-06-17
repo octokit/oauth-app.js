@@ -1,20 +1,7 @@
 import { URL } from "url";
-import * as nodeFetch from "node-fetch";
-import fromEntries from "fromentries";
 import { createWebWorkerHandler, OAuthApp } from "../src";
 
 describe("createWebWorkerHandler(app)", () => {
-  beforeAll(() => {
-    Object.fromEntries ||= fromEntries;
-    (global as any).Request = nodeFetch.Request;
-    (global as any).Response = nodeFetch.Response;
-  });
-
-  afterAll(() => {
-    delete (global as any).Request;
-    delete (global as any).Response;
-  });
-
   it("support both oauth-app and github-app", () => {
     const oauthApp = new OAuthApp({
       clientType: "oauth-app",
