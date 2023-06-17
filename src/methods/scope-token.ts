@@ -1,7 +1,7 @@
 import * as OAuthMethods from "@octokit/oauth-methods";
 import { createOAuthUserAuth } from "@octokit/auth-oauth-user";
 
-import { State } from "../types";
+import type { State } from "../types";
 import { emitEvent } from "../emit-event";
 
 type StateOptions = "clientType" | "clientId" | "clientSecret" | "request";

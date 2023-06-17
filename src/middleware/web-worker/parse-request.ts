@@ -1,4 +1,4 @@
-import { OctokitRequest } from "../types";
+import type { OctokitRequest } from "../types";
 
 export function parseRequest(request: Request): OctokitRequest {
   // @ts-ignore Worker environment supports fromEntries/entries.

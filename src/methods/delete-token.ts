@@ -1,7 +1,7 @@
 import * as OAuthMethods from "@octokit/oauth-methods";
 import { createUnauthenticatedAuth } from "@octokit/auth-unauthenticated";
 
-import { State } from "../types";
+import type { State } from "../types";
 import { emitEvent } from "../emit-event";
 
 export type DeleteTokenOptions = {

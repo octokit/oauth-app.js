@@ -1,7 +1,7 @@
 import { OAuthApp } from "../index";
 import { unknownRouteResponse } from "./unknown-route-response";
-import { HandlerOptions, OctokitRequest, OctokitResponse } from "./types";
-import { ClientType, Options } from "../types";
+import type { HandlerOptions, OctokitRequest, OctokitResponse } from "./types";
+import type { ClientType, Options } from "../types";
 // @ts-ignore - requires esModuleInterop flag
 import fromEntries from "fromentries";
 
@@ -113,7 +113,7 @@ export async function handleRequest(
           "content-type": "text/html",
         },
         text: `<h1>Token created successfully</h1>
-    
+
 <p>Your token is: <strong>${token}</strong>. Copy it now as it cannot be shown again.</p>`,
       };
     }
