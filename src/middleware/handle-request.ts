@@ -1,14 +1,13 @@
 import { OAuthApp } from "../index";
+import { unknownRouteResponse } from "./unknown-route-response";
 import type { HandlerOptions, OctokitRequest, OctokitResponse } from "./types";
 import type { ClientType, Options } from "../types";
-// @ts-ignore - requires esModuleInterop flag
-import fromEntries from "fromentries";
 
 export async function handleRequest(
   app: OAuthApp<Options<ClientType>>,
   { pathPrefix = "/api/github/oauth" }: HandlerOptions,
   request: OctokitRequest
-): Promise<OctokitResponse | null> {
+): Promise<OctokitResponse | undefined> {
   if (request.method === "OPTIONS") {
     return {
       status: 200,
@@ -23,23 +22,28 @@ export async function handleRequest(
 
   // request.url may include ?query parameters which we don't want for `route`
   // hence the workaround using new URL()
-  const { pathname } = new URL(request.url as string, "http://localhost");
+  let { pathname } = new URL(request.url as string, "http://localhost");
+  if (!pathname.startsWith(`${pathPrefix}/`)) {
+    return undefined;
+  }
+  pathname = pathname.slice(pathPrefix.length + 1);
+
   const route = [request.method, pathname].join(" ");
   const routes = {
-    getLogin: `GET ${pathPrefix}/login`,
-    getCallback: `GET ${pathPrefix}/callback`,
-    createToken: `POST ${pathPrefix}/token`,
-    getToken: `GET ${pathPrefix}/token`,
-    patchToken: `PATCH ${pathPrefix}/token`,
-    patchRefreshToken: `PATCH ${pathPrefix}/refresh-token`,
-    scopeToken: `POST ${pathPrefix}/token/scoped`,
-    deleteToken: `DELETE ${pathPrefix}/token`,
-    deleteGrant: `DELETE ${pathPrefix}/grant`,
+    getLogin: `GET login`,
+    getCallback: `GET callback`,
+    createToken: `POST token`,
+    getToken: `GET token`,
+    patchToken: `PATCH token`,
+    patchRefreshToken: `PATCH refresh-token`,
+    scopeToken: `POST token/scoped`,
+    deleteToken: `DELETE token`,
+    deleteGrant: `DELETE grant`,
   };
 
   // handle unknown routes
   if (!Object.values(routes).includes(route)) {
-    return null;
+    return unknownRouteResponse(request);
   }
 
   let json: any;
@@ -59,7 +63,7 @@ export async function handleRequest(
     };
   }
   const { searchParams } = new URL(request.url as string, "http://localhost");
-  const query = fromEntries(searchParams) as {
+  const query = Object.fromEntries(searchParams) as {
     state?: string;
     scopes?: string;
     code?: string;

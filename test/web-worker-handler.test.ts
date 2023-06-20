@@ -1,20 +1,7 @@
 import { URL } from "url";
-import * as nodeFetch from "node-fetch";
-import fromEntries from "fromentries";
 import { createWebWorkerHandler, OAuthApp } from "../src";
 
 describe("createWebWorkerHandler(app)", () => {
-  beforeAll(() => {
-    Object.fromEntries ||= fromEntries;
-    (global as any).Request = nodeFetch.Request;
-    (global as any).Response = nodeFetch.Response;
-  });
-
-  afterAll(() => {
-    delete (global as any).Request;
-    delete (global as any).Response;
-  });
-
   it("support both oauth-app and github-app", () => {
     const oauthApp = new OAuthApp({
       clientType: "oauth-app",
@@ -37,11 +24,11 @@ describe("createWebWorkerHandler(app)", () => {
       clientSecret: "0123secret",
     });
     const handleRequest = createWebWorkerHandler(app);
-    const request = new Request("/api/github/oauth/token", {
+    const request = new Request("https://example.com/api/github/oauth/token", {
       method: "OPTIONS",
     });
     const response = await handleRequest(request);
-    expect(response.status).toStrictEqual(200);
+    expect(response!.status).toStrictEqual(200);
   });
 
   it("GET /api/github/oauth/login", async () => {
@@ -51,8 +38,8 @@ describe("createWebWorkerHandler(app)", () => {
     });
     const handleRequest = createWebWorkerHandler(app);
 
-    const request = new Request("/api/github/oauth/login");
-    const { status, headers } = await handleRequest(request);
+    const request = new Request("https://example.com/api/github/oauth/login");
+    const { status, headers } = (await handleRequest(request))!;
 
     expect(status).toEqual(302);
     const url = new URL(headers.get("location") as string);
@@ -73,8 +60,8 @@ describe("createWebWorkerHandler(app)", () => {
     });
     const handleRequest = createWebWorkerHandler(app);
 
-    const request = new Request("/api/github/oauth/login");
-    const { status, headers } = await handleRequest(request);
+    const request = new Request("https://example.com/api/github/oauth/login");
+    const { status, headers } = (await handleRequest(request))!;
 
     expect(status).toEqual(302);
     const url = new URL(headers.get("location") as string);
@@ -95,9 +82,9 @@ describe("createWebWorkerHandler(app)", () => {
     const handleRequest = createWebWorkerHandler(app);
 
     const request = new Request(
-      "/api/github/oauth/login?state=mystate123&scopes=one,two,three"
+      "https://example.com/api/github/oauth/login?state=mystate123&scopes=one,two,three"
     );
-    const { status, headers } = await handleRequest(request);
+    const { status, headers } = (await handleRequest(request))!;
 
     expect(status).toEqual(302);
     const url = new URL(headers.get("location") as string);
@@ -125,15 +112,15 @@ describe("createWebWorkerHandler(app)", () => {
     );
 
     const request = new Request(
-      "/api/github/oauth/callback?code=012345&state=state123"
+      "https://example.com/api/github/oauth/callback?code=012345&state=state123"
     );
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(200);
     expect(await response.text()).toMatch(/token123/);
 
     expect(appMock.createToken.mock.calls.length).toEqual(1);
-    expect(appMock.createToken.mock.calls[0][0]).toStrictEqual({
+    expect(appMock.createToken.mock.calls[0][0]).toMatchObject({
       code: "012345",
     });
   });
@@ -152,22 +139,22 @@ describe("createWebWorkerHandler(app)", () => {
       appMock as unknown as OAuthApp
     );
 
-    const request = new Request("/api/github/oauth/token", {
+    const request = new Request("https://example.com/api/github/oauth/token", {
       method: "POST",
       body: JSON.stringify({
         code: "012345",
         redirectUrl: "http://example.com",
       }),
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(201);
-    expect(await response.json()).toStrictEqual({
+    expect(await response.json()).toMatchObject({
       authentication: { type: "token", tokenType: "oauth" },
     });
 
     expect(appMock.createToken.mock.calls.length).toEqual(1);
-    expect(appMock.createToken.mock.calls[0][0]).toStrictEqual({
+    expect(appMock.createToken.mock.calls[0][0]).toMatchObject({
       code: "012345",
       redirectUrl: "http://example.com",
     });
@@ -188,21 +175,21 @@ describe("createWebWorkerHandler(app)", () => {
       appMock as unknown as OAuthApp
     );
 
-    const request = new Request("/api/github/oauth/token", {
+    const request = new Request("https://example.com/api/github/oauth/token", {
       headers: {
         authorization: "token token123",
       },
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(200);
-    expect(await response.json()).toStrictEqual({
+    expect(await response.json()).toMatchObject({
       data: { id: 1 },
       authentication: { type: "token", tokenType: "oauth" },
     });
 
     expect(appMock.checkToken.mock.calls.length).toEqual(1);
-    expect(appMock.checkToken.mock.calls[0][0]).toStrictEqual({
+    expect(appMock.checkToken.mock.calls[0][0]).toMatchObject({
       token: "token123",
     });
   });
@@ -222,20 +209,20 @@ describe("createWebWorkerHandler(app)", () => {
       appMock as unknown as OAuthApp
     );
 
-    const request = new Request("/api/github/oauth/token", {
+    const request = new Request("https://example.com/api/github/oauth/token", {
       method: "PATCH",
       headers: { authorization: "token token123" },
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(200);
-    expect(await response.json()).toStrictEqual({
+    expect(await response.json()).toMatchObject({
       data: { id: 1 },
       authentication: { type: "token", tokenType: "oauth" },
     });
 
     expect(appMock.resetToken.mock.calls.length).toEqual(1);
-    expect(appMock.resetToken.mock.calls[0][0]).toStrictEqual({
+    expect(appMock.resetToken.mock.calls[0][0]).toMatchObject({
       token: "token123",
     });
   });
@@ -255,16 +242,19 @@ describe("createWebWorkerHandler(app)", () => {
       appMock as unknown as OAuthApp
     );
 
-    const request = new Request("/api/github/oauth/token/scoped", {
-      method: "POST",
-      headers: { authorization: "token token123" },
-      body: JSON.stringify({
-        target: "octokit",
-        repositories: ["oauth-methods.js"],
-        permissions: { issues: "write" },
-      }),
-    });
-    const response = await handleRequest(request);
+    const request = new Request(
+      "https://example.com/api/github/oauth/token/scoped",
+      {
+        method: "POST",
+        headers: { authorization: "token token123" },
+        body: JSON.stringify({
+          target: "octokit",
+          repositories: ["oauth-methods.js"],
+          permissions: { issues: "write" },
+        }),
+      }
+    );
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(200);
     expect(response.status).toEqual(200);
@@ -310,21 +300,24 @@ describe("createWebWorkerHandler(app)", () => {
       appMock as unknown as OAuthApp
     );
 
-    const request = new Request("/api/github/oauth/refresh-token", {
-      method: "PATCH",
-      headers: { authorization: "token token123" },
-      body: JSON.stringify({ refreshToken: "r1.refreshtoken123" }),
-    });
-    const response = await handleRequest(request);
+    const request = new Request(
+      "https://example.com/api/github/oauth/refresh-token",
+      {
+        method: "PATCH",
+        headers: { authorization: "token token123" },
+        body: JSON.stringify({ refreshToken: "r1.refreshtoken123" }),
+      }
+    );
+    const response = (await handleRequest(request))!;
 
-    expect(await response.json()).toStrictEqual({
+    expect(await response.json()).toMatchObject({
       data: { id: 1 },
       authentication: { type: "token", tokenType: "oauth" },
     });
     expect(response.status).toEqual(200);
 
     expect(appMock.refreshToken.mock.calls.length).toEqual(1);
-    expect(appMock.refreshToken.mock.calls[0][0]).toStrictEqual({
+    expect(appMock.refreshToken.mock.calls[0][0]).toMatchObject({
       refreshToken: "r1.refreshtoken123",
     });
   });
@@ -344,20 +337,20 @@ describe("createWebWorkerHandler(app)", () => {
       appMock as unknown as OAuthApp
     );
 
-    const request = new Request("/api/github/oauth/token", {
+    const request = new Request("https://example.com/api/github/oauth/token", {
       method: "PATCH",
       headers: { authorization: "token token123" },
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(200);
-    expect(await response.json()).toStrictEqual({
+    expect(await response.json()).toMatchObject({
       data: { id: 1 },
       authentication: { type: "token", tokenType: "oauth" },
     });
 
     expect(appMock.resetToken.mock.calls.length).toEqual(1);
-    expect(appMock.resetToken.mock.calls[0][0]).toStrictEqual({
+    expect(appMock.resetToken.mock.calls[0][0]).toMatchObject({
       token: "token123",
     });
   });
@@ -370,16 +363,16 @@ describe("createWebWorkerHandler(app)", () => {
       appMock as unknown as OAuthApp
     );
 
-    const request = new Request("/api/github/oauth/token", {
+    const request = new Request("https://example.com/api/github/oauth/token", {
       method: "DELETE",
       headers: { authorization: "token token123" },
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(204);
 
     expect(appMock.deleteToken.mock.calls.length).toEqual(1);
-    expect(appMock.deleteToken.mock.calls[0][0]).toStrictEqual({
+    expect(appMock.deleteToken.mock.calls[0][0]).toMatchObject({
       token: "token123",
     });
   });
@@ -392,47 +385,37 @@ describe("createWebWorkerHandler(app)", () => {
       appMock as unknown as OAuthApp
     );
 
-    const request = new Request("/api/github/oauth/grant", {
+    const request = new Request("https://example.com/api/github/oauth/grant", {
       method: "DELETE",
       headers: { authorization: "token token123" },
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(204);
 
     expect(appMock.deleteAuthorization.mock.calls.length).toEqual(1);
-    expect(appMock.deleteAuthorization.mock.calls[0][0]).toStrictEqual({
+    expect(appMock.deleteAuthorization.mock.calls[0][0]).toMatchObject({
       token: "token123",
     });
   });
 
   it("POST /unrelated", async () => {
-    expect.assertions(4);
-
     const app = new OAuthApp({
       clientId: "0123",
       clientSecret: "0123secret",
     });
-    const handleRequest = createWebWorkerHandler(app, {
-      onUnhandledRequest: async (request: Request) => {
-        expect(request.method).toEqual("POST");
-        expect(request.url).toEqual("/unrelated");
-        const text = await request.text();
-        expect(text).toEqual('{"ok":true}');
-        return new Response(null, { status: 200 });
-      },
-    });
+    const handleRequest = createWebWorkerHandler(app);
 
-    const request = new Request("/unrelated", {
+    const request = new Request("https://example.com/unrelated", {
       method: "POST",
       body: JSON.stringify({ ok: true }),
       headers: {
         "content-type": "application/json",
       },
     });
-    const { status } = await handleRequest(request);
+    const response = await handleRequest(request);
 
-    expect(status).toEqual(200);
+    expect(response).toBeUndefined();
   });
 
   // // errors
@@ -443,9 +426,9 @@ describe("createWebWorkerHandler(app)", () => {
       appMock as unknown as OAuthApp
     );
 
-    const request = new Request("/unknown");
-    const response = await handleRequest(request);
-    expect(response.status).toEqual(404);
+    const request = new Request("https://some.tld/unknown");
+    const response = (await handleRequest(request))!;
+    expect(response).toBeUndefined();
   });
 
   it("GET /api/github/oauth/callback without code", async () => {
@@ -454,11 +437,13 @@ describe("createWebWorkerHandler(app)", () => {
       appMock as unknown as OAuthApp
     );
 
-    const request = new Request("/api/github/oauth/callback");
-    const response = await handleRequest(request);
+    const request = new Request(
+      "https://example.com/api/github/oauth/callback"
+    );
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toStrictEqual({
+    expect(await response.json()).toMatchObject({
       error: '[@octokit/oauth-app] "code" parameter is required',
     });
   });
@@ -470,12 +455,12 @@ describe("createWebWorkerHandler(app)", () => {
     );
 
     const request = new Request(
-      "/api/github/oauth/callback?error=redirect_uri_mismatch&error_description=The+redirect_uri+MUST+match+the+registered+callback+URL+for+this+application.&error_uri=https://docs.github.com/en/developers/apps/troubleshooting-authorization-request-errors/%23redirect-uri-mismatch&state=xyz"
+      "https://example.com/api/github/oauth/callback?error=redirect_uri_mismatch&error_description=The+redirect_uri+MUST+match+the+registered+callback+URL+for+this+application.&error_uri=https://docs.github.com/en/developers/apps/troubleshooting-authorization-request-errors/%23redirect-uri-mismatch&state=xyz"
     );
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toStrictEqual({
+    expect(await response.json()).toMatchObject({
       error:
         "[@octokit/oauth-app] redirect_uri_mismatch The redirect_uri MUST match the registered callback URL for this application.",
     });
@@ -487,14 +472,14 @@ describe("createWebWorkerHandler(app)", () => {
       appMock as unknown as OAuthApp
     );
 
-    const request = new Request("/api/github/oauth/token", {
+    const request = new Request("https://example.com/api/github/oauth/token", {
       method: "POST",
       body: JSON.stringify({}),
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toStrictEqual({
+    expect(await response.json()).toMatchObject({
       error: '[@octokit/oauth-app] "code" parameter is required',
     });
   });
@@ -505,14 +490,14 @@ describe("createWebWorkerHandler(app)", () => {
       appMock as unknown as OAuthApp
     );
 
-    const request = new Request("/api/github/oauth/token", {
+    const request = new Request("https://example.com/api/github/oauth/token", {
       method: "POST",
       body: "foo",
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toStrictEqual({
+    expect(await response.json()).toMatchObject({
       error: "[@octokit/oauth-app] request error",
     });
   });
@@ -523,13 +508,13 @@ describe("createWebWorkerHandler(app)", () => {
       appMock as unknown as OAuthApp
     );
 
-    const request = new Request("/api/github/oauth/token", {
+    const request = new Request("https://example.com/api/github/oauth/token", {
       headers: {},
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toStrictEqual({
+    expect(await response.json()).toMatchObject({
       error: '[@octokit/oauth-app] "Authorization" header is required',
     });
   });
@@ -540,14 +525,14 @@ describe("createWebWorkerHandler(app)", () => {
       appMock as unknown as OAuthApp
     );
 
-    const request = new Request("/api/github/oauth/token", {
+    const request = new Request("https://example.com/api/github/oauth/token", {
       method: "PATCH",
       headers: {},
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toStrictEqual({
+    expect(await response.json()).toMatchObject({
       error: '[@octokit/oauth-app] "Authorization" header is required',
     });
   });
@@ -558,14 +543,17 @@ describe("createWebWorkerHandler(app)", () => {
       appMock as unknown as OAuthApp
     );
 
-    const request = new Request("/api/github/oauth/token/scoped", {
-      method: "POST",
-      headers: {},
-    });
-    const response = await handleRequest(request);
+    const request = new Request(
+      "https://example.com/api/github/oauth/token/scoped",
+      {
+        method: "POST",
+        headers: {},
+      }
+    );
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toStrictEqual({
+    expect(await response.json()).toMatchObject({
       error: '[@octokit/oauth-app] "Authorization" header is required',
     });
   });
@@ -580,16 +568,19 @@ describe("createWebWorkerHandler(app)", () => {
       appMock as unknown as OAuthApp
     );
 
-    const request = new Request("/api/github/oauth/refresh-token", {
-      method: "PATCH",
-      body: JSON.stringify({
-        refreshToken: "r1.refreshtoken123",
-      }),
-    });
-    const response = await handleRequest(request);
+    const request = new Request(
+      "https://example.com/api/github/oauth/refresh-token",
+      {
+        method: "PATCH",
+        body: JSON.stringify({
+          refreshToken: "r1.refreshtoken123",
+        }),
+      }
+    );
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toStrictEqual({
+    expect(await response.json()).toMatchObject({
       error: '[@octokit/oauth-app] "Authorization" header is required',
     });
   });
@@ -604,16 +595,19 @@ describe("createWebWorkerHandler(app)", () => {
       appMock as unknown as OAuthApp
     );
 
-    const request = new Request("/api/github/oauth/refresh-token", {
-      method: "PATCH",
-      headers: {
-        authorization: "token token123",
-      },
-    });
-    const response = await handleRequest(request);
+    const request = new Request(
+      "https://example.com/api/github/oauth/refresh-token",
+      {
+        method: "PATCH",
+        headers: {
+          authorization: "token token123",
+        },
+      }
+    );
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toStrictEqual({
+    expect(await response.json()).toMatchObject({
       error: "[@octokit/oauth-app] refreshToken must be sent in request body",
     });
   });
@@ -624,14 +618,14 @@ describe("createWebWorkerHandler(app)", () => {
       appMock as unknown as OAuthApp
     );
 
-    const request = new Request("/api/github/oauth/token", {
+    const request = new Request("https://example.com/api/github/oauth/token", {
       method: "DELETE",
       headers: {},
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toStrictEqual({
+    expect(await response.json()).toMatchObject({
       error: '[@octokit/oauth-app] "Authorization" header is required',
     });
   });
@@ -642,14 +636,14 @@ describe("createWebWorkerHandler(app)", () => {
       appMock as unknown as OAuthApp
     );
 
-    const request = new Request("/api/github/oauth/grant", {
+    const request = new Request("https://example.com/api/github/oauth/grant", {
       method: "DELETE",
       headers: {},
     });
-    const response = await handleRequest(request);
+    const response = (await handleRequest(request))!;
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toStrictEqual({
+    expect(await response.json()).toMatchObject({
       error: '[@octokit/oauth-app] "Authorization" header is required',
     });
   });
@@ -663,8 +657,10 @@ describe("createWebWorkerHandler(app)", () => {
       { pathPrefix: "/test" }
     );
 
-    const request = new Request("/test/login", { redirect: "manual" });
-    const { status } = await handleRequest(request);
+    const request = new Request("https://example.com/test/login", {
+      redirect: "manual",
+    });
+    const { status } = (await handleRequest(request))!;
 
     expect(status).toEqual(302);
   });
