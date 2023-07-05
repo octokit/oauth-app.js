@@ -11,10 +11,10 @@ import type {
 
 export function createAWSLambdaAPIGatewayV2Handler(
   app: OAuthApp<Options<ClientType>>,
-  options: HandlerOptions = {}
+  options: HandlerOptions = {},
 ) {
   return async function (
-    event: APIGatewayProxyEventV2
+    event: APIGatewayProxyEventV2,
   ): Promise<APIGatewayProxyStructuredResultV2 | undefined> {
     const request = parseRequest(event);
     const response = await handleRequest(app, options, request);

@@ -31,7 +31,7 @@ export type GetUserOctokitGitHubAppOptions =
 
 export async function getUserOctokitWithState(
   state: State,
-  options: GetUserOctokitOAuthAppOptions | GetUserOctokitGitHubAppOptions
+  options: GetUserOctokitOAuthAppOptions | GetUserOctokitGitHubAppOptions,
 ) {
   return state.octokit.auth({
     type: "oauth-user",
@@ -61,11 +61,11 @@ export async function getUserOctokitWithState(
 }
 
 export interface GetUserOctokitWithStateInterface<
-  TClientType extends ClientType
+  TClientType extends ClientType,
 > {
   (
     options: TClientType extends "oauth-app"
       ? GetUserOctokitOAuthAppOptions
-      : GetUserOctokitGitHubAppOptions
+      : GetUserOctokitGitHubAppOptions,
   ): Promise<OctokitInstance>;
 }

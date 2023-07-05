@@ -15,7 +15,7 @@ export type GetWebFlowAuthorizationUrlGitHubAppOptions = Omit<
 
 export function getWebFlowAuthorizationUrlWithState(
   state: State,
-  options: any
+  options: any,
 ): any {
   const optionsWithDefaults = {
     clientId: state.clientId,
@@ -33,12 +33,12 @@ export function getWebFlowAuthorizationUrlWithState(
 }
 
 export interface GetWebFlowAuthorizationUrlInterface<
-  TClientType extends ClientType
+  TClientType extends ClientType,
 > {
   (
     options: TClientType extends "oauth-app"
       ? GetWebFlowAuthorizationUrlOAuthAppOptions
-      : GetWebFlowAuthorizationUrlGitHubAppOptions
+      : GetWebFlowAuthorizationUrlGitHubAppOptions,
   ): TClientType extends "oauth-app"
     ? OAuthMethods.GetWebFlowAuthorizationUrlOAuthAppResult
     : OAuthMethods.GetWebFlowAuthorizationUrlGitHubAppResult;

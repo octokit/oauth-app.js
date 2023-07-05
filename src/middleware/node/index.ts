@@ -13,12 +13,12 @@ import type { ClientType, Options } from "../../types";
 
 export function createNodeMiddleware(
   app: OAuthApp<Options<ClientType>>,
-  options: HandlerOptions = {}
+  options: HandlerOptions = {},
 ) {
   return async function (
     request: IncomingMessage,
     response: ServerResponse,
-    next?: Function
+    next?: Function,
   ) {
     const octokitRequest = await parseRequest(request);
     const octokitResponse = await handleRequest(app, options, octokitRequest);

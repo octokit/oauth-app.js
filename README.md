@@ -579,7 +579,7 @@ try {
     `token valid, created on %s by %s for %s`,
     created_at,
     user.login,
-    app.name
+    app.name,
   );
 } catch (error) {
   // token invalid or request error

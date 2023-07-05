@@ -82,7 +82,7 @@ describe("createWebWorkerHandler(app)", () => {
     const handleRequest = createWebWorkerHandler(app);
 
     const request = new Request(
-      "https://example.com/api/github/oauth/login?state=mystate123&scopes=one,two,three"
+      "https://example.com/api/github/oauth/login?state=mystate123&scopes=one,two,three",
     );
     const { status, headers } = (await handleRequest(request))!;
 
@@ -108,11 +108,11 @@ describe("createWebWorkerHandler(app)", () => {
       }),
     };
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request(
-      "https://example.com/api/github/oauth/callback?code=012345&state=state123"
+      "https://example.com/api/github/oauth/callback?code=012345&state=state123",
     );
     const response = (await handleRequest(request))!;
 
@@ -136,7 +136,7 @@ describe("createWebWorkerHandler(app)", () => {
       }),
     };
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request("https://example.com/api/github/oauth/token", {
@@ -172,7 +172,7 @@ describe("createWebWorkerHandler(app)", () => {
       }),
     };
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request("https://example.com/api/github/oauth/token", {
@@ -206,7 +206,7 @@ describe("createWebWorkerHandler(app)", () => {
       }),
     };
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request("https://example.com/api/github/oauth/token", {
@@ -239,7 +239,7 @@ describe("createWebWorkerHandler(app)", () => {
       }),
     };
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request(
@@ -252,7 +252,7 @@ describe("createWebWorkerHandler(app)", () => {
           repositories: ["oauth-methods.js"],
           permissions: { issues: "write" },
         }),
-      }
+      },
     );
     const response = (await handleRequest(request))!;
 
@@ -297,7 +297,7 @@ describe("createWebWorkerHandler(app)", () => {
       }),
     };
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request(
@@ -306,7 +306,7 @@ describe("createWebWorkerHandler(app)", () => {
         method: "PATCH",
         headers: { authorization: "token token123" },
         body: JSON.stringify({ refreshToken: "r1.refreshtoken123" }),
-      }
+      },
     );
     const response = (await handleRequest(request))!;
 
@@ -334,7 +334,7 @@ describe("createWebWorkerHandler(app)", () => {
       }),
     };
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request("https://example.com/api/github/oauth/token", {
@@ -360,7 +360,7 @@ describe("createWebWorkerHandler(app)", () => {
       deleteToken: jest.fn().mockResolvedValue(undefined),
     };
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request("https://example.com/api/github/oauth/token", {
@@ -382,7 +382,7 @@ describe("createWebWorkerHandler(app)", () => {
       deleteAuthorization: jest.fn().mockResolvedValue(undefined),
     };
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request("https://example.com/api/github/oauth/grant", {
@@ -423,7 +423,7 @@ describe("createWebWorkerHandler(app)", () => {
   it("GET /unknown", async () => {
     const appMock = {};
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request("https://some.tld/unknown");
@@ -434,11 +434,11 @@ describe("createWebWorkerHandler(app)", () => {
   it("GET /api/github/oauth/callback without code", async () => {
     const appMock = {};
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request(
-      "https://example.com/api/github/oauth/callback"
+      "https://example.com/api/github/oauth/callback",
     );
     const response = (await handleRequest(request))!;
 
@@ -451,11 +451,11 @@ describe("createWebWorkerHandler(app)", () => {
   it("GET /api/github/oauth/callback with error", async () => {
     const appMock = {};
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request(
-      "https://example.com/api/github/oauth/callback?error=redirect_uri_mismatch&error_description=The+redirect_uri+MUST+match+the+registered+callback+URL+for+this+application.&error_uri=https://docs.github.com/en/developers/apps/troubleshooting-authorization-request-errors/%23redirect-uri-mismatch&state=xyz"
+      "https://example.com/api/github/oauth/callback?error=redirect_uri_mismatch&error_description=The+redirect_uri+MUST+match+the+registered+callback+URL+for+this+application.&error_uri=https://docs.github.com/en/developers/apps/troubleshooting-authorization-request-errors/%23redirect-uri-mismatch&state=xyz",
     );
     const response = (await handleRequest(request))!;
 
@@ -469,7 +469,7 @@ describe("createWebWorkerHandler(app)", () => {
   it("POST /api/github/oauth/token without state or code", async () => {
     const appMock = {};
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request("https://example.com/api/github/oauth/token", {
@@ -487,7 +487,7 @@ describe("createWebWorkerHandler(app)", () => {
   it("POST /api/github/oauth/token with non-JSON request body", async () => {
     const appMock = {};
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request("https://example.com/api/github/oauth/token", {
@@ -505,7 +505,7 @@ describe("createWebWorkerHandler(app)", () => {
   it("GET /api/github/oauth/token without Authorization header", async () => {
     const appMock = {};
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request("https://example.com/api/github/oauth/token", {
@@ -522,7 +522,7 @@ describe("createWebWorkerHandler(app)", () => {
   it("PATCH /api/github/oauth/token without authorization header", async () => {
     const appMock = {};
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request("https://example.com/api/github/oauth/token", {
@@ -540,7 +540,7 @@ describe("createWebWorkerHandler(app)", () => {
   it("POST /api/github/oauth/token/scoped without authorization header", async () => {
     const appMock = {};
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request(
@@ -548,7 +548,7 @@ describe("createWebWorkerHandler(app)", () => {
       {
         method: "POST",
         headers: {},
-      }
+      },
     );
     const response = (await handleRequest(request))!;
 
@@ -565,7 +565,7 @@ describe("createWebWorkerHandler(app)", () => {
       }),
     };
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request(
@@ -575,7 +575,7 @@ describe("createWebWorkerHandler(app)", () => {
         body: JSON.stringify({
           refreshToken: "r1.refreshtoken123",
         }),
-      }
+      },
     );
     const response = (await handleRequest(request))!;
 
@@ -592,7 +592,7 @@ describe("createWebWorkerHandler(app)", () => {
       }),
     };
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request(
@@ -602,7 +602,7 @@ describe("createWebWorkerHandler(app)", () => {
         headers: {
           authorization: "token token123",
         },
-      }
+      },
     );
     const response = (await handleRequest(request))!;
 
@@ -615,7 +615,7 @@ describe("createWebWorkerHandler(app)", () => {
   it("DELETE /api/github/oauth/token without authorization header", async () => {
     const appMock = {};
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request("https://example.com/api/github/oauth/token", {
@@ -633,7 +633,7 @@ describe("createWebWorkerHandler(app)", () => {
   it("DELETE /api/github/oauth/grant without authorization header", async () => {
     const appMock = {};
     const handleRequest = createWebWorkerHandler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const request = new Request("https://example.com/api/github/oauth/grant", {
@@ -654,7 +654,7 @@ describe("createWebWorkerHandler(app)", () => {
         clientId: "0123",
         clientSecret: "0123secret",
       }),
-      { pathPrefix: "/test" }
+      { pathPrefix: "/test" },
     );
 
     const request = new Request("https://example.com/test/login", {

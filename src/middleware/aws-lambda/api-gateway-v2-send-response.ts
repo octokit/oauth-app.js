@@ -2,7 +2,7 @@ import type { OctokitResponse } from "../types";
 import type { APIGatewayProxyStructuredResultV2 } from "aws-lambda";
 
 export function sendResponse(
-  octokitResponse: OctokitResponse
+  octokitResponse: OctokitResponse,
 ): APIGatewayProxyStructuredResultV2 {
   return {
     statusCode: octokitResponse.status,

@@ -9,7 +9,7 @@ import type {
 export function addEventHandler(
   state: State,
   eventName: EventAndActionName | EventAndActionName[],
-  eventHandler: EventHandler<Options<ClientType>>
+  eventHandler: EventHandler<Options<ClientType>>,
 ) {
   if (Array.isArray(eventName)) {
     for (const singleEventName of eventName) {

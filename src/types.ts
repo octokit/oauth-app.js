@@ -43,7 +43,7 @@ type CommonOptions<TOctokit extends OAuthAppOctokitClassType> = {
 
 export type Options<
   TClientType extends ClientType,
-  TOctokit extends OAuthAppOctokitClassType = OAuthAppOctokitClassType
+  TOctokit extends OAuthAppOctokitClassType = OAuthAppOctokitClassType,
 > = TClientType extends "oauth-app"
   ? CommonOptions<TOctokit> & {
       clientType?: TClientType;
@@ -115,9 +115,9 @@ export type EventHandlerContext<TOptions extends Options<ClientType>> =
           | GitHubAppUserAuthenticationWithExpiration;
       };
 export type EventHandler<TOptions extends Options<ClientType>> = (
-  context: EventHandlerContext<TOptions>
+  context: EventHandlerContext<TOptions>,
 ) => void;
 export type AddEventHandler<TOptions extends Options<ClientType>> = (
   eventName: EventAndActionName | EventAndActionName[],
-  eventHandler: EventHandler<TOptions>
+  eventHandler: EventHandler<TOptions>,
 ) => void;

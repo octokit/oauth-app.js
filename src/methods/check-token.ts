@@ -8,7 +8,7 @@ export type CheckTokenOptions = {
 
 export async function checkTokenWithState(
   state: State,
-  options: CheckTokenOptions
+  options: CheckTokenOptions,
 ): Promise<any> {
   const result = await OAuthMethods.checkToken({
     // @ts-expect-error not worth the extra code to appease TS

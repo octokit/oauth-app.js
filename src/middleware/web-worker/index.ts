@@ -7,7 +7,7 @@ import type { ClientType, Options } from "../../types";
 
 export function createWebWorkerHandler<T extends Options<ClientType>>(
   app: OAuthApp<T>,
-  options: HandlerOptions = {}
+  options: HandlerOptions = {},
 ) {
   return async function (request: Request): Promise<Response | undefined> {
     const octokitRequest = await parseRequest(request);

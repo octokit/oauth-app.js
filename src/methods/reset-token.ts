@@ -10,7 +10,7 @@ export type ResetTokenOptions = {
 
 export async function resetTokenWithState(
   state: State,
-  options: ResetTokenOptions
+  options: ResetTokenOptions,
 ): Promise<
   (
     | OAuthMethods.ResetTokenOAuthAppResponse

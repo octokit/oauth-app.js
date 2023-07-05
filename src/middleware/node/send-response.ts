@@ -6,7 +6,7 @@ import type { OctokitResponse } from "../types";
 
 export function sendResponse(
   octokitResponse: OctokitResponse,
-  response: ServerResponse
+  response: ServerResponse,
 ) {
   response.writeHead(octokitResponse.status, octokitResponse.headers);
   response.end(octokitResponse.text);

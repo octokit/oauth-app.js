@@ -10,7 +10,7 @@ export type DeleteTokenOptions = {
 
 export async function deleteTokenWithState(
   state: State,
-  options: DeleteTokenOptions
+  options: DeleteTokenOptions,
 ): Promise<OAuthMethods.DeleteTokenResponse> {
   const optionsWithDefaults = {
     clientId: state.clientId,

@@ -10,7 +10,7 @@ export type DeleteAuthorizationOptions = {
 
 export async function deleteAuthorizationWithState(
   state: State,
-  options: DeleteAuthorizationOptions
+  options: DeleteAuthorizationOptions,
 ): Promise<OAuthMethods.DeleteAuthorizationResponse> {
   const optionsWithDefaults = {
     clientId: state.clientId,
@@ -60,6 +60,6 @@ export async function deleteAuthorizationWithState(
 
 export interface DeleteAuthorizationInterface {
   (
-    options: DeleteAuthorizationOptions
+    options: DeleteAuthorizationOptions,
   ): Promise<OAuthMethods.DeleteAuthorizationResponse>;
 }
