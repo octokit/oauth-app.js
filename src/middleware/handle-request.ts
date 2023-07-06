@@ -6,7 +6,7 @@ import type { ClientType, Options } from "../types";
 export async function handleRequest(
   app: OAuthApp<Options<ClientType>>,
   { pathPrefix = "/api/github/oauth" }: HandlerOptions,
-  request: OctokitRequest
+  request: OctokitRequest,
 ): Promise<OctokitResponse | undefined> {
   if (request.method === "OPTIONS") {
     return {
@@ -92,7 +92,7 @@ export async function handleRequest(
     if (route === routes.getCallback) {
       if (query.error) {
         throw new Error(
-          `[@octokit/oauth-app] ${query.error} ${query.error_description}`
+          `[@octokit/oauth-app] ${query.error} ${query.error_description}`,
         );
       }
       if (!query.code) {
@@ -146,7 +146,7 @@ export async function handleRequest(
 
       if (!token) {
         throw new Error(
-          '[@octokit/oauth-app] "Authorization" header is required'
+          '[@octokit/oauth-app] "Authorization" header is required',
         );
       }
 
@@ -172,7 +172,7 @@ export async function handleRequest(
 
       if (!token) {
         throw new Error(
-          '[@octokit/oauth-app] "Authorization" header is required'
+          '[@octokit/oauth-app] "Authorization" header is required',
         );
       }
 
@@ -196,7 +196,7 @@ export async function handleRequest(
 
       if (!token) {
         throw new Error(
-          '[@octokit/oauth-app] "Authorization" header is required'
+          '[@octokit/oauth-app] "Authorization" header is required',
         );
       }
 
@@ -204,7 +204,7 @@ export async function handleRequest(
 
       if (!refreshToken) {
         throw new Error(
-          "[@octokit/oauth-app] refreshToken must be sent in request body"
+          "[@octokit/oauth-app] refreshToken must be sent in request body",
         );
       }
 
@@ -228,7 +228,7 @@ export async function handleRequest(
 
       if (!token) {
         throw new Error(
-          '[@octokit/oauth-app] "Authorization" header is required'
+          '[@octokit/oauth-app] "Authorization" header is required',
         );
       }
 
@@ -255,7 +255,7 @@ export async function handleRequest(
 
       if (!token) {
         throw new Error(
-          '[@octokit/oauth-app] "Authorization" header is required'
+          '[@octokit/oauth-app] "Authorization" header is required',
         );
       }
 
@@ -274,7 +274,7 @@ export async function handleRequest(
 
     if (!token) {
       throw new Error(
-        '[@octokit/oauth-app] "Authorization" header is required'
+        '[@octokit/oauth-app] "Authorization" header is required',
       );
     }
 

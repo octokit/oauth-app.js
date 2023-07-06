@@ -19,7 +19,7 @@ describe("createNodeMiddleware(app)", () => {
 
     const response = await fetch(
       `http://localhost:${port}/api/github/oauth/token`,
-      { method: "OPTIONS" }
+      { method: "OPTIONS" },
     );
 
     server.close();
@@ -41,7 +41,7 @@ describe("createNodeMiddleware(app)", () => {
       `http://localhost:${port}/api/github/oauth/login`,
       {
         redirect: "manual",
-      }
+      },
     );
 
     server.close();
@@ -74,7 +74,7 @@ describe("createNodeMiddleware(app)", () => {
       `http://localhost:${port}/api/github/oauth/login`,
       {
         redirect: "manual",
-      }
+      },
     );
 
     server.close();
@@ -105,7 +105,7 @@ describe("createNodeMiddleware(app)", () => {
       `http://localhost:${port}/api/github/oauth/login?state=mystate123&scopes=one,two,three`,
       {
         redirect: "manual",
-      }
+      },
     );
 
     server.close();
@@ -135,13 +135,13 @@ describe("createNodeMiddleware(app)", () => {
     };
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(
-      `http://localhost:${port}/api/github/oauth/callback?code=012345&state=state123`
+      `http://localhost:${port}/api/github/oauth/callback?code=012345&state=state123`,
     );
 
     server.close();
@@ -167,7 +167,7 @@ describe("createNodeMiddleware(app)", () => {
     };
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -180,7 +180,7 @@ describe("createNodeMiddleware(app)", () => {
           code: "012345",
           redirectUrl: "http://example.com",
         }),
-      }
+      },
     );
 
     server.close();
@@ -210,7 +210,7 @@ describe("createNodeMiddleware(app)", () => {
     };
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -221,7 +221,7 @@ describe("createNodeMiddleware(app)", () => {
         headers: {
           authorization: "token token123",
         },
-      }
+      },
     );
 
     server.close();
@@ -251,7 +251,7 @@ describe("createNodeMiddleware(app)", () => {
     };
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -263,7 +263,7 @@ describe("createNodeMiddleware(app)", () => {
         headers: {
           authorization: "token token123",
         },
-      }
+      },
     );
 
     server.close();
@@ -293,7 +293,7 @@ describe("createNodeMiddleware(app)", () => {
     };
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -310,7 +310,7 @@ describe("createNodeMiddleware(app)", () => {
           repositories: ["oauth-methods.js"],
           permissions: { issues: "write" },
         }),
-      }
+      },
     );
 
     server.close();
@@ -356,7 +356,7 @@ describe("createNodeMiddleware(app)", () => {
     };
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -371,7 +371,7 @@ describe("createNodeMiddleware(app)", () => {
         body: JSON.stringify({
           refreshToken: "r1.refreshtoken123",
         }),
-      }
+      },
     );
 
     server.close();
@@ -400,7 +400,7 @@ describe("createNodeMiddleware(app)", () => {
     };
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -412,7 +412,7 @@ describe("createNodeMiddleware(app)", () => {
         headers: {
           authorization: "token token123",
         },
-      }
+      },
     );
 
     server.close();
@@ -435,7 +435,7 @@ describe("createNodeMiddleware(app)", () => {
     };
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -447,7 +447,7 @@ describe("createNodeMiddleware(app)", () => {
         headers: {
           authorization: "token token123",
         },
-      }
+      },
     );
 
     server.close();
@@ -466,7 +466,7 @@ describe("createNodeMiddleware(app)", () => {
     };
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -478,7 +478,7 @@ describe("createNodeMiddleware(app)", () => {
         headers: {
           authorization: "token token123",
         },
-      }
+      },
     );
 
     server.close();
@@ -517,13 +517,13 @@ describe("createNodeMiddleware(app)", () => {
     const appMock = {};
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(
-      `http://localhost:${port}/api/github/oauth/callback`
+      `http://localhost:${port}/api/github/oauth/callback`,
     );
 
     server.close();
@@ -538,13 +538,13 @@ describe("createNodeMiddleware(app)", () => {
     const appMock = {};
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
 
     const response = await fetch(
-      `http://localhost:${port}/api/github/oauth/callback?error=redirect_uri_mismatch&error_description=The+redirect_uri+MUST+match+the+registered+callback+URL+for+this+application.&error_uri=https://docs.github.com/en/developers/apps/troubleshooting-authorization-request-errors/%23redirect-uri-mismatch&state=xyz`
+      `http://localhost:${port}/api/github/oauth/callback?error=redirect_uri_mismatch&error_description=The+redirect_uri+MUST+match+the+registered+callback+URL+for+this+application.&error_uri=https://docs.github.com/en/developers/apps/troubleshooting-authorization-request-errors/%23redirect-uri-mismatch&state=xyz`,
     );
 
     server.close();
@@ -560,7 +560,7 @@ describe("createNodeMiddleware(app)", () => {
     const appMock = {};
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -570,7 +570,7 @@ describe("createNodeMiddleware(app)", () => {
       {
         method: "POST",
         body: JSON.stringify({}),
-      }
+      },
     );
 
     server.close();
@@ -585,7 +585,7 @@ describe("createNodeMiddleware(app)", () => {
     const appMock = {};
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -595,7 +595,7 @@ describe("createNodeMiddleware(app)", () => {
       {
         method: "POST",
         body: "foo",
-      }
+      },
     );
 
     server.close();
@@ -610,7 +610,7 @@ describe("createNodeMiddleware(app)", () => {
     const appMock = {};
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -619,7 +619,7 @@ describe("createNodeMiddleware(app)", () => {
       `http://localhost:${port}/api/github/oauth/token`,
       {
         headers: {},
-      }
+      },
     );
 
     server.close();
@@ -634,7 +634,7 @@ describe("createNodeMiddleware(app)", () => {
     const appMock = {};
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -644,7 +644,7 @@ describe("createNodeMiddleware(app)", () => {
       {
         method: "PATCH",
         headers: {},
-      }
+      },
     );
 
     server.close();
@@ -659,7 +659,7 @@ describe("createNodeMiddleware(app)", () => {
     const appMock = {};
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -669,7 +669,7 @@ describe("createNodeMiddleware(app)", () => {
       {
         method: "POST",
         headers: {},
-      }
+      },
     );
 
     server.close();
@@ -688,7 +688,7 @@ describe("createNodeMiddleware(app)", () => {
     };
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -700,7 +700,7 @@ describe("createNodeMiddleware(app)", () => {
         body: JSON.stringify({
           refreshToken: "r1.refreshtoken123",
         }),
-      }
+      },
     );
 
     server.close();
@@ -719,7 +719,7 @@ describe("createNodeMiddleware(app)", () => {
     };
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -731,7 +731,7 @@ describe("createNodeMiddleware(app)", () => {
         headers: {
           authorization: "token token123",
         },
-      }
+      },
     );
 
     server.close();
@@ -746,7 +746,7 @@ describe("createNodeMiddleware(app)", () => {
     const appMock = {};
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -756,7 +756,7 @@ describe("createNodeMiddleware(app)", () => {
       {
         method: "DELETE",
         headers: {},
-      }
+      },
     );
 
     server.close();
@@ -771,7 +771,7 @@ describe("createNodeMiddleware(app)", () => {
     const appMock = {};
 
     const server = createServer(
-      createNodeMiddleware(appMock as unknown as OAuthApp)
+      createNodeMiddleware(appMock as unknown as OAuthApp),
     ).listen();
     // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
     const { port } = server.address();
@@ -781,7 +781,7 @@ describe("createNodeMiddleware(app)", () => {
       {
         method: "DELETE",
         headers: {},
-      }
+      },
     );
 
     server.close();
@@ -800,11 +800,11 @@ describe("createNodeMiddleware(app)", () => {
         new OAuthApp({
           clientId: "0123",
           clientSecret: "0123secret",
-        })
-      )
+        }),
+      ),
     );
     expressApp.all("*", (_request: any, response: any) =>
-      response.status(404).send("Nope")
+      response.status(404).send("Nope"),
     );
 
     const server = expressApp.listen();
@@ -831,8 +831,8 @@ describe("createNodeMiddleware(app)", () => {
         new OAuthApp({
           clientId: "0123",
           clientSecret: "0123secret",
-        })
-      )
+        }),
+      ),
     );
 
     const server = app.listen();
@@ -867,8 +867,8 @@ describe("createNodeMiddleware(app)", () => {
         new OAuthApp({
           clientId: "0123",
           clientSecret: "0123secret",
-        })
-      )
+        }),
+      ),
     );
 
     const server = app.listen();
@@ -903,11 +903,11 @@ describe("createNodeMiddleware(app)", () => {
           clientId: "0123",
           clientSecret: "0123secret",
         }),
-        { pathPrefix: "/test" }
-      )
+        { pathPrefix: "/test" },
+      ),
     );
     app.all("*", (_request: any, response: any) =>
-      response.status(404).send("Nope")
+      response.status(404).send("Nope"),
     );
 
     const server = app.listen();
@@ -933,11 +933,11 @@ describe("createNodeMiddleware(app)", () => {
           clientId: "0123",
           clientSecret: "0123secret",
         }),
-        { pathPrefix: "/test" }
-      )
+        { pathPrefix: "/test" },
+      ),
     );
     app.all("*", (_request: any, response: any) =>
-      response.status(404).send("Nope")
+      response.status(404).send("Nope"),
     );
 
     const server = app.listen();
@@ -968,7 +968,7 @@ describe("createNodeMiddleware(app)", () => {
       `http://localhost:${port}/api/github/oauth/login`,
       {
         redirect: "manual",
-      }
+      },
     );
 
     server.close();
@@ -999,7 +999,7 @@ describe("createNodeMiddleware(app)", () => {
       `http://localhost:${port}/api/github/oauth/login?allowSignup=false`,
       {
         redirect: "manual",
-      }
+      },
     );
 
     server.close();
@@ -1031,7 +1031,7 @@ describe("createNodeMiddleware(app)", () => {
       `http://localhost:${port}/api/github/oauth/login?allowSignup=false`,
       {
         redirect: "manual",
-      }
+      },
     );
 
     server.close();
@@ -1062,7 +1062,7 @@ describe("createNodeMiddleware(app)", () => {
       `http://localhost:${port}/api/github/oauth/login`,
       {
         redirect: "manual",
-      }
+      },
     );
 
     server.close();
@@ -1093,7 +1093,7 @@ describe("createNodeMiddleware(app)", () => {
       `http://localhost:${port}/api/github/oauth/login?redirectUrl=http://localhost:12345`,
       {
         redirect: "manual",
-      }
+      },
     );
 
     server.close();
@@ -1108,7 +1108,7 @@ describe("createNodeMiddleware(app)", () => {
     expect(url.searchParams.get("client_id")).toEqual("0123");
     expect(url.searchParams.get("state")).toMatch(/^\w+$/);
     expect(url.searchParams.get("redirect_uri")).toEqual(
-      "http://localhost:12345"
+      "http://localhost:12345",
     );
   });
 
@@ -1127,7 +1127,7 @@ describe("createNodeMiddleware(app)", () => {
       `http://localhost:${port}/api/github/oauth/login`,
       {
         redirect: "manual",
-      }
+      },
     );
 
     server.close();
@@ -1142,7 +1142,7 @@ describe("createNodeMiddleware(app)", () => {
     expect(url.searchParams.get("client_id")).toEqual("0123");
     expect(url.searchParams.get("state")).toMatch(/^\w+$/);
     expect(url.searchParams.get("redirect_uri")).toEqual(
-      "http://localhost:12345"
+      "http://localhost:12345",
     );
   });
 });

@@ -70,13 +70,13 @@ export { createAWSLambdaAPIGatewayV2Handler } from "./middleware/aws-lambda/api-
 type Constructor<T> = new (...args: any[]) => T;
 
 export class OAuthApp<
-  TOptions extends Options<ClientType> = Options<"oauth-app">
+  TOptions extends Options<ClientType> = Options<"oauth-app">,
 > {
   static VERSION = VERSION;
 
   static defaults<
     TDefaults extends Options<ClientType>,
-    S extends Constructor<OAuthApp<TDefaults>>
+    S extends Constructor<OAuthApp<TDefaults>>,
   >(this: S, defaults: TDefaults) {
     const OAuthAppWithDefaults = class extends this {
       constructor(...args: any[]) {
@@ -127,28 +127,28 @@ export class OAuthApp<
 
     this.getWebFlowAuthorizationUrl = getWebFlowAuthorizationUrlWithState.bind(
       null,
-      state
+      state,
     ) as GetWebFlowAuthorizationUrlInterface<ClientTypeFromOptions<TOptions>>;
 
     this.createToken = createTokenWithState.bind(
       null,
-      state
+      state,
     ) as CreateTokenInterface<ClientTypeFromOptions<TOptions>>;
     this.checkToken = checkTokenWithState.bind(
       null,
-      state
+      state,
     ) as CheckTokenInterface<ClientTypeFromOptions<TOptions>>;
     this.resetToken = resetTokenWithState.bind(
       null,
-      state
+      state,
     ) as ResetTokenInterface<ClientTypeFromOptions<TOptions>>;
     this.refreshToken = refreshTokenWithState.bind(
       null,
-      state
+      state,
     ) as RefreshTokenInterface;
     this.scopeToken = scopeTokenWithState.bind(
       null,
-      state
+      state,
     ) as ScopeTokenInterface;
     this.deleteToken = deleteTokenWithState.bind(null, state);
     this.deleteAuthorization = deleteAuthorizationWithState.bind(null, state);

@@ -21,7 +21,7 @@ export async function createTokenWithState(
   options:
     | CreateTokenWebFlowOptions
     | CreateTokenOAuthAppDeviceFlowOptions
-    | CreateTokenGitHubAppDeviceFlowOptions
+    | CreateTokenGitHubAppDeviceFlowOptions,
 ): Promise<{
   authentication:
     | OAuthAppAuth.OAuthAppUserAuthentication
@@ -72,7 +72,7 @@ export interface CreateTokenInterface<TClientType extends ClientType> {
   (
     options: TClientType extends "oauth-app"
       ? CreateTokenOAuthAppDeviceFlowOptions
-      : CreateTokenGitHubAppDeviceFlowOptions
+      : CreateTokenGitHubAppDeviceFlowOptions,
   ): TClientType extends "oauth-app"
     ? Promise<{ authentication: OAuthAppAuth.OAuthAppUserAuthentication }>
     : Promise<

@@ -10,7 +10,7 @@ export type RefreshTokenOptions = {
 
 export async function refreshTokenWithState(
   state: State,
-  options: RefreshTokenOptions
+  options: RefreshTokenOptions,
 ): Promise<
   OAuthMethods.RefreshTokenResponse & {
     authentication: {
@@ -21,7 +21,7 @@ export async function refreshTokenWithState(
 > {
   if (state.clientType === "oauth-app") {
     throw new Error(
-      "[@octokit/oauth-app] app.refreshToken() is not supported for OAuth Apps"
+      "[@octokit/oauth-app] app.refreshToken() is not supported for OAuth Apps",
     );
   }
 

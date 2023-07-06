@@ -13,7 +13,7 @@ export type ScopeTokenOptions = Omit<
 
 export async function scopeTokenWithState(
   state: State,
-  options: ScopeTokenOptions
+  options: ScopeTokenOptions,
 ): Promise<
   OAuthMethods.ScopeTokenResponse & {
     authentication: {
@@ -24,7 +24,7 @@ export async function scopeTokenWithState(
 > {
   if (state.clientType === "oauth-app") {
     throw new Error(
-      "[@octokit/oauth-app] app.scopeToken() is not supported for OAuth Apps"
+      "[@octokit/oauth-app] app.scopeToken() is not supported for OAuth Apps",
     );
   }
 

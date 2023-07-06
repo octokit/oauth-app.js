@@ -47,7 +47,7 @@ describe("app", () => {
             client_secret: "0123secret",
             code: "code123",
           },
-        }
+        },
       )
       .getOnce(
         "https://api.github.com/user",
@@ -56,7 +56,7 @@ describe("app", () => {
           headers: {
             authorization: "token token123",
           },
-        }
+        },
       );
 
     const Mocktokit = OAuthAppOctokit.defaults({
@@ -94,7 +94,7 @@ describe("app", () => {
     });
     const { url } = app.getWebFlowAuthorizationUrl({ state: "state123" });
     expect(url).toStrictEqual(
-      "https://github.com/login/oauth/authorize?allow_signup=true&client_id=0123&state=state123"
+      "https://github.com/login/oauth/authorize?allow_signup=true&client_id=0123&state=state123",
     );
   });
 
@@ -105,7 +105,7 @@ describe("app", () => {
     });
     const { url } = app.getWebFlowAuthorizationUrl({ state: "state123" });
     expect(url).toStrictEqual(
-      "https://github.com/login/oauth/authorize?allow_signup=true&client_id=lv1.0123&state=state123"
+      "https://github.com/login/oauth/authorize?allow_signup=true&client_id=lv1.0123&state=state123",
     );
   });
 
@@ -125,7 +125,7 @@ describe("app", () => {
             client_secret: "0123secret",
             code: "code123",
           },
-        }
+        },
       )
       .getOnce(
         "https://api.github.com/user",
@@ -134,7 +134,7 @@ describe("app", () => {
           headers: {
             authorization: "token token123",
           },
-        }
+        },
       );
 
     const Mocktokit = OAuthAppOctokit.defaults({
@@ -203,7 +203,7 @@ describe("app", () => {
             client_id: "1234567890abcdef1234",
             scope: "repo gist",
           },
-        }
+        },
       )
       .postOnce(
         "https://github.com/login/oauth/access_token",
@@ -217,7 +217,7 @@ describe("app", () => {
             device_code: "devicecode123",
             grant_type: "urn:ietf:params:oauth:grant-type:device_code",
           },
-        }
+        },
       );
 
     const Mocktokit = OAuthAppOctokit.defaults({
@@ -280,7 +280,7 @@ describe("app", () => {
         body: {
           access_token: "token123",
         },
-      }
+      },
     );
 
     const Mocktokit = OAuthAppOctokit.defaults({
@@ -339,7 +339,7 @@ describe("app", () => {
         body: {
           access_token: "token123",
         },
-      }
+      },
     );
 
     const Mocktokit = OAuthAppOctokit.defaults({
@@ -419,7 +419,7 @@ describe("app", () => {
         body: {
           access_token: "token123",
         },
-      }
+      },
     );
 
     const Mocktokit = OAuthAppOctokit.defaults({
@@ -488,13 +488,13 @@ describe("app", () => {
           authorization:
             "basic " +
             Buffer.from(
-              "lv1.1234567890abcdef:1234567890abcdef1234567890abcdef12345678"
+              "lv1.1234567890abcdef:1234567890abcdef1234567890abcdef12345678",
             ).toString("base64"),
         },
         body: {
           access_token: "token123",
         },
-      }
+      },
     );
 
     const Mocktokit = OAuthAppOctokit.defaults({
@@ -573,7 +573,7 @@ describe("app", () => {
           grant_type: "refresh_token",
           refresh_token: "r1.refreshtoken123",
         },
-      }
+      },
     );
 
     const Mocktokit = OAuthAppOctokit.defaults({
@@ -648,9 +648,9 @@ describe("app", () => {
       async () =>
         await app.refreshToken({
           refreshToken: "r1.refreshtoken123",
-        })
+        }),
     ).rejects.toThrow(
-      "[@octokit/oauth-app] app.refreshToken() is not supported for OAuth Apps"
+      "[@octokit/oauth-app] app.refreshToken() is not supported for OAuth Apps",
     );
   });
 
@@ -671,7 +671,7 @@ describe("app", () => {
           repositories: ["oauth-methods.js"],
           permissions: { issues: "write" },
         },
-      }
+      },
     );
 
     const Mocktokit = OAuthAppOctokit.defaults({
@@ -745,9 +745,9 @@ describe("app", () => {
       async () =>
         await app.scopeToken({
           token: "token123",
-        })
+        }),
     ).rejects.toThrow(
-      "[@octokit/oauth-app] app.scopeToken() is not supported for OAuth Apps"
+      "[@octokit/oauth-app] app.scopeToken() is not supported for OAuth Apps",
     );
   });
 
@@ -879,13 +879,13 @@ describe("app", () => {
             client_secret: "0123secret",
             code: "code123",
           },
-        }
+        },
       )
       .deleteOnce((url, options) => {
         expect(url).toEqual("https://api.github.com/applications/0123/token");
         // @ts-expect-error options.headers is not guaranteed to exist
         expect(options.headers.authorization).toEqual(
-          "basic " + Buffer.from("0123:0123secret").toString("base64")
+          "basic " + Buffer.from("0123:0123secret").toString("base64"),
         );
         return true;
       }, {});
@@ -938,7 +938,7 @@ describe("app", () => {
             client_secret: "0123secret",
             code: "code123",
           },
-        }
+        },
       )
       .getOnce(
         "https://api.github.com/user",
@@ -947,7 +947,7 @@ describe("app", () => {
           headers: {
             authorization: "token token123",
           },
-        }
+        },
       );
 
     const Mocktokit = OAuthAppOctokit.defaults({

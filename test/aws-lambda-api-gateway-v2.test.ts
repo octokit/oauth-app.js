@@ -24,7 +24,7 @@ describe("createAWSLambdaAPIGatewayV2Handler(app)", () => {
   it("do not handle request with different prefix", async () => {
     const appMock = {};
     const handleRequest = createAWSLambdaAPIGatewayV2Handler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const response = await handleRequest({
@@ -38,7 +38,7 @@ describe("createAWSLambdaAPIGatewayV2Handler(app)", () => {
   it("fail-over to default unhandled request handler", async () => {
     const appMock = {};
     const handleRequest = createAWSLambdaAPIGatewayV2Handler(
-      appMock as unknown as OAuthApp
+      appMock as unknown as OAuthApp,
     );
 
     const response = (await handleRequest({
@@ -62,7 +62,7 @@ describe("createAWSLambdaAPIGatewayV2Handler(app)", () => {
     expect(response.headers!["access-control-allow-origin"]).toBe("*");
     expect(response.headers!["access-control-allow-methods"]).toBe("*");
     expect(response.headers!["access-control-allow-headers"]).toBe(
-      "Content-Type, User-Agent, Authorization"
+      "Content-Type, User-Agent, Authorization",
     );
   });
 
