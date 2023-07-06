@@ -1,4 +1,4 @@
-import fetchMock from "fetch-mock";
+import fetchMock from "@gr2m/fetch-mock";
 import { Octokit } from "@octokit/core";
 
 import { OAuthApp } from "../src";
