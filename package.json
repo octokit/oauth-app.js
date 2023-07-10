@@ -23,7 +23,7 @@
     "@octokit/auth-oauth-app": "^7.0.0",
     "@octokit/auth-oauth-user": "^4.0.0",
     "@octokit/auth-unauthenticated": "^5.0.0",
-    "@octokit/core": "^5.0.0-beta.3",
+    "@octokit/core": "^5.0.0",
     "@octokit/oauth-authorization-url": "^6.0.2",
     "@octokit/oauth-methods": "^4.0.0",
     "@types/aws-lambda": "^8.10.83",
