@@ -35,7 +35,7 @@
     "@types/node": "^18.0.0",
     "esbuild": "^0.18.0",
     "express": "^4.17.1",
-    "fetch-mock": "^9.0.0",
+    "fetch-mock": "npm:@gr2m/fetch-mock@9.11.0-pull-request-644.1",
     "glob": "^10.2.5",
     "jest": "^29.0.0",
     "nock": "^13.0.0",
