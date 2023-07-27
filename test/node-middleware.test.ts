@@ -150,7 +150,7 @@ describe("createNodeMiddleware(app)", () => {
     expect(await response.text()).toMatch(/token123/);
 
     expect(appMock.createToken.mock.calls.length).toEqual(1);
-    expect(appMock.createToken.mock.calls[0][0]).toMatchObject({
+    expect(appMock.createToken.mock.calls[0][0]).toEqual({
       code: "012345",
     });
   });
@@ -186,12 +186,12 @@ describe("createNodeMiddleware(app)", () => {
     server.close();
 
     expect(response.status).toEqual(201);
-    expect(await response.json()).toMatchObject({
+    expect(await response.json()).toEqual({
       authentication: { type: "token", tokenType: "oauth" },
     });
 
     expect(appMock.createToken.mock.calls.length).toEqual(1);
-    expect(appMock.createToken.mock.calls[0][0]).toMatchObject({
+    expect(appMock.createToken.mock.calls[0][0]).toEqual({
       code: "012345",
       redirectUrl: "http://example.com",
     });
@@ -227,13 +227,13 @@ describe("createNodeMiddleware(app)", () => {
     server.close();
 
     expect(response.status).toEqual(200);
-    expect(await response.json()).toMatchObject({
+    expect(await response.json()).toEqual({
       data: { id: 1 },
       authentication: { type: "token", tokenType: "oauth" },
     });
 
     expect(appMock.checkToken.mock.calls.length).toEqual(1);
-    expect(appMock.checkToken.mock.calls[0][0]).toMatchObject({
+    expect(appMock.checkToken.mock.calls[0][0]).toEqual({
       token: "token123",
     });
   });
@@ -269,13 +269,13 @@ describe("createNodeMiddleware(app)", () => {
     server.close();
 
     expect(response.status).toEqual(200);
-    expect(await response.json()).toMatchObject({
+    expect(await response.json()).toEqual({
       data: { id: 1 },
       authentication: { type: "token", tokenType: "oauth" },
     });
 
     expect(appMock.resetToken.mock.calls.length).toEqual(1);
-    expect(appMock.resetToken.mock.calls[0][0]).toMatchObject({
+    expect(appMock.resetToken.mock.calls[0][0]).toEqual({
       token: "token123",
     });
   });
@@ -376,14 +376,14 @@ describe("createNodeMiddleware(app)", () => {
 
     server.close();
 
-    expect(await response.json()).toMatchObject({
+    expect(await response.json()).toEqual({
       data: { id: 1 },
       authentication: { type: "token", tokenType: "oauth" },
     });
     expect(response.status).toEqual(200);
 
     expect(appMock.refreshToken.mock.calls.length).toEqual(1);
-    expect(appMock.refreshToken.mock.calls[0][0]).toMatchObject({
+    expect(appMock.refreshToken.mock.calls[0][0]).toEqual({
       refreshToken: "r1.refreshtoken123",
     });
   });
@@ -418,13 +418,13 @@ describe("createNodeMiddleware(app)", () => {
     server.close();
 
     expect(response.status).toEqual(200);
-    expect(await response.json()).toMatchObject({
+    expect(await response.json()).toEqual({
       data: { id: 1 },
       authentication: { type: "token", tokenType: "oauth" },
     });
 
     expect(appMock.resetToken.mock.calls.length).toEqual(1);
-    expect(appMock.resetToken.mock.calls[0][0]).toMatchObject({
+    expect(appMock.resetToken.mock.calls[0][0]).toEqual({
       token: "token123",
     });
   });
@@ -455,7 +455,7 @@ describe("createNodeMiddleware(app)", () => {
     expect(response.status).toEqual(204);
 
     expect(appMock.deleteToken.mock.calls.length).toEqual(1);
-    expect(appMock.deleteToken.mock.calls[0][0]).toMatchObject({
+    expect(appMock.deleteToken.mock.calls[0][0]).toEqual({
       token: "token123",
     });
   });
@@ -486,7 +486,7 @@ describe("createNodeMiddleware(app)", () => {
     expect(response.status).toEqual(204);
 
     expect(appMock.deleteAuthorization.mock.calls.length).toEqual(1);
-    expect(appMock.deleteAuthorization.mock.calls[0][0]).toMatchObject({
+    expect(appMock.deleteAuthorization.mock.calls[0][0]).toEqual({
       token: "token123",
     });
   });
@@ -529,7 +529,7 @@ describe("createNodeMiddleware(app)", () => {
     server.close();
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toMatchObject({
+    expect(await response.json()).toEqual({
       error: '[@octokit/oauth-app] "code" parameter is required',
     });
   });
@@ -550,7 +550,7 @@ describe("createNodeMiddleware(app)", () => {
     server.close();
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toMatchObject({
+    expect(await response.json()).toEqual({
       error:
         "[@octokit/oauth-app] redirect_uri_mismatch The redirect_uri MUST match the registered callback URL for this application.",
     });
@@ -576,7 +576,7 @@ describe("createNodeMiddleware(app)", () => {
     server.close();
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toMatchObject({
+    expect(await response.json()).toEqual({
       error: '[@octokit/oauth-app] "code" parameter is required',
     });
   });
@@ -601,7 +601,7 @@ describe("createNodeMiddleware(app)", () => {
     server.close();
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toMatchObject({
+    expect(await response.json()).toEqual({
       error: "[@octokit/oauth-app] request error",
     });
   });
@@ -625,7 +625,7 @@ describe("createNodeMiddleware(app)", () => {
     server.close();
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toMatchObject({
+    expect(await response.json()).toEqual({
       error: '[@octokit/oauth-app] "Authorization" header is required',
     });
   });
@@ -650,7 +650,7 @@ describe("createNodeMiddleware(app)", () => {
     server.close();
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toMatchObject({
+    expect(await response.json()).toEqual({
       error: '[@octokit/oauth-app] "Authorization" header is required',
     });
   });
@@ -675,7 +675,7 @@ describe("createNodeMiddleware(app)", () => {
     server.close();
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toMatchObject({
+    expect(await response.json()).toEqual({
       error: '[@octokit/oauth-app] "Authorization" header is required',
     });
   });
@@ -706,7 +706,7 @@ describe("createNodeMiddleware(app)", () => {
     server.close();
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toMatchObject({
+    expect(await response.json()).toEqual({
       error: '[@octokit/oauth-app] "Authorization" header is required',
     });
   });
@@ -737,7 +737,7 @@ describe("createNodeMiddleware(app)", () => {
     server.close();
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toMatchObject({
+    expect(await response.json()).toEqual({
       error: "[@octokit/oauth-app] refreshToken must be sent in request body",
     });
   });
@@ -762,7 +762,7 @@ describe("createNodeMiddleware(app)", () => {
     server.close();
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toMatchObject({
+    expect(await response.json()).toEqual({
       error: '[@octokit/oauth-app] "Authorization" header is required',
     });
   });
@@ -787,7 +787,7 @@ describe("createNodeMiddleware(app)", () => {
     server.close();
 
     expect(response.status).toEqual(400);
-    expect(await response.json()).toMatchObject({
+    expect(await response.json()).toEqual({
       error: '[@octokit/oauth-app] "Authorization" header is required',
     });
   });
