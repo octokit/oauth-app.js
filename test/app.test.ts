@@ -300,27 +300,27 @@ describe("app", () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      {
-        "authentication": {
-          "clientId": "0123",
-          "clientSecret": "0123secret",
-          "clientType": "oauth-app",
-          "scopes": undefined,
-          "token": "token123",
-          "tokenType": "oauth",
-          "type": "token",
-        },
-        "data": {
-          "id": 1,
-        },
-        "headers": {
-          "content-length": "8",
-          "content-type": "application/json",
-        },
-        "status": 200,
-        "url": "https://api.github.com/applications/0123/token",
-      }
-    `);
+{
+  "authentication": {
+    "clientId": "0123",
+    "clientSecret": "0123secret",
+    "clientType": "oauth-app",
+    "scopes": undefined,
+    "token": "token123",
+    "tokenType": "oauth",
+    "type": "token",
+  },
+  "data": {
+    "id": 1,
+  },
+  "headers": {
+    "content-length": "8",
+    "content-type": "application/json",
+  },
+  "status": 200,
+  "url": "",
+}
+`);
   });
 
   it("app.resetToken(options)", async () => {
@@ -362,35 +362,35 @@ describe("app", () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      {
-        "authentication": {
-          "clientId": "0123",
-          "clientSecret": "0123secret",
-          "clientType": "oauth-app",
-          "scopes": [
-            "repo",
-            "gist",
-          ],
-          "token": "token456",
-          "tokenType": "oauth",
-          "type": "token",
-        },
-        "data": {
-          "id": 2,
-          "scopes": [
-            "repo",
-            "gist",
-          ],
-          "token": "token456",
-        },
-        "headers": {
-          "content-length": "52",
-          "content-type": "application/json",
-        },
-        "status": 200,
-        "url": "https://api.github.com/applications/0123/token",
-      }
-    `);
+{
+  "authentication": {
+    "clientId": "0123",
+    "clientSecret": "0123secret",
+    "clientType": "oauth-app",
+    "scopes": [
+      "repo",
+      "gist",
+    ],
+    "token": "token456",
+    "tokenType": "oauth",
+    "type": "token",
+  },
+  "data": {
+    "id": 2,
+    "scopes": [
+      "repo",
+      "gist",
+    ],
+    "token": "token456",
+  },
+  "headers": {
+    "content-length": "52",
+    "content-type": "application/json",
+  },
+  "status": 200,
+  "url": "",
+}
+`);
     expect(onTokenCallback.mock.calls.length).toEqual(1);
     const [context] = onTokenCallback.mock.calls[0];
 
@@ -442,29 +442,29 @@ describe("app", () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      {
-        "authentication": {
-          "clientId": "0123",
-          "clientSecret": "0123secret",
-          "clientType": "oauth-app",
-          "scopes": null,
-          "token": "token456",
-          "tokenType": "oauth",
-          "type": "token",
-        },
-        "data": {
-          "id": 2,
-          "scopes": null,
-          "token": "token456",
-        },
-        "headers": {
-          "content-length": "41",
-          "content-type": "application/json",
-        },
-        "status": 200,
-        "url": "https://api.github.com/applications/0123/token",
-      }
-    `);
+{
+  "authentication": {
+    "clientId": "0123",
+    "clientSecret": "0123secret",
+    "clientType": "oauth-app",
+    "scopes": null,
+    "token": "token456",
+    "tokenType": "oauth",
+    "type": "token",
+  },
+  "data": {
+    "id": 2,
+    "scopes": null,
+    "token": "token456",
+  },
+  "headers": {
+    "content-length": "41",
+    "content-type": "application/json",
+  },
+  "status": 200,
+  "url": "",
+}
+`);
     expect(onTokenCallback.mock.calls.length).toEqual(1);
     const [context] = onTokenCallback.mock.calls[0];
 
@@ -518,27 +518,27 @@ describe("app", () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      {
-        "authentication": {
-          "clientId": "lv1.1234567890abcdef",
-          "clientSecret": "1234567890abcdef1234567890abcdef12345678",
-          "clientType": "github-app",
-          "token": "token456",
-          "tokenType": "oauth",
-          "type": "token",
-        },
-        "data": {
-          "id": 2,
-          "token": "token456",
-        },
-        "headers": {
-          "content-length": "27",
-          "content-type": "application/json",
-        },
-        "status": 200,
-        "url": "https://api.github.com/applications/lv1.1234567890abcdef/token",
-      }
-    `);
+{
+  "authentication": {
+    "clientId": "lv1.1234567890abcdef",
+    "clientSecret": "1234567890abcdef1234567890abcdef12345678",
+    "clientType": "github-app",
+    "token": "token456",
+    "tokenType": "oauth",
+    "type": "token",
+  },
+  "data": {
+    "id": 2,
+    "token": "token456",
+  },
+  "headers": {
+    "content-length": "27",
+    "content-type": "application/json",
+  },
+  "status": 200,
+  "url": "",
+}
+`);
     expect(onTokenCallback.mock.calls.length).toEqual(1);
     const [context] = onTokenCallback.mock.calls[0];
 
@@ -597,35 +597,35 @@ describe("app", () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      {
-        "authentication": {
-          "clientId": "lv1.1234567890abcdef",
-          "clientSecret": "1234567890abcdef12347890abcdef12345678",
-          "clientType": "github-app",
-          "expiresAt": "1970-01-01T08:00:00.000Z",
-          "refreshToken": "r1.token456",
-          "refreshTokenExpiresAt": "1970-07-04T00:00:00.000Z",
-          "token": "secret456",
-          "tokenType": "oauth",
-          "type": "token",
-        },
-        "data": {
-          "access_token": "secret456",
-          "expires_in": 28800,
-          "refresh_token": "r1.token456",
-          "refresh_token_expires_in": 15897600,
-          "scope": "",
-          "token_type": "bearer",
-        },
-        "headers": {
-          "content-length": "146",
-          "content-type": "application/json",
-          "date": "Thu, 1 Jan 1970 00:00:00 GMT",
-        },
-        "status": 200,
-        "url": "https://github.com/login/oauth/access_token",
-      }
-    `);
+{
+  "authentication": {
+    "clientId": "lv1.1234567890abcdef",
+    "clientSecret": "1234567890abcdef12347890abcdef12345678",
+    "clientType": "github-app",
+    "expiresAt": "1970-01-01T08:00:00.000Z",
+    "refreshToken": "r1.token456",
+    "refreshTokenExpiresAt": "1970-07-04T00:00:00.000Z",
+    "token": "secret456",
+    "tokenType": "oauth",
+    "type": "token",
+  },
+  "data": {
+    "access_token": "secret456",
+    "expires_in": 28800,
+    "refresh_token": "r1.token456",
+    "refresh_token_expires_in": 15897600,
+    "scope": "",
+    "token_type": "bearer",
+  },
+  "headers": {
+    "content-length": "146",
+    "content-type": "application/json",
+    "date": "Thu, 1 Jan 1970 00:00:00 GMT",
+  },
+  "status": 200,
+  "url": "",
+}
+`);
     expect(onTokenCallback.mock.calls.length).toEqual(1);
     const [context] = onTokenCallback.mock.calls[0];
 
@@ -699,30 +699,30 @@ describe("app", () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      {
-        "authentication": {
-          "clientId": "lv1.1234567890abcdef",
-          "clientSecret": "1234567890abcdef12347890abcdef12345678",
-          "clientType": "github-app",
-          "token": "token456",
-          "tokenType": "oauth",
-          "type": "token",
-        },
-        "data": {
-          "account": {
-            "id": 1,
-            "login": "octokit",
-          },
-          "token": "token456",
-        },
-        "headers": {
-          "content-length": "57",
-          "content-type": "application/json",
-        },
-        "status": 200,
-        "url": "https://api.github.com/applications/lv1.1234567890abcdef/token/scoped",
-      }
-    `);
+{
+  "authentication": {
+    "clientId": "lv1.1234567890abcdef",
+    "clientSecret": "1234567890abcdef12347890abcdef12345678",
+    "clientType": "github-app",
+    "token": "token456",
+    "tokenType": "oauth",
+    "type": "token",
+  },
+  "data": {
+    "account": {
+      "id": 1,
+      "login": "octokit",
+    },
+    "token": "token456",
+  },
+  "headers": {
+    "content-length": "57",
+    "content-type": "application/json",
+  },
+  "status": 200,
+  "url": "",
+}
+`);
     expect(onTokenCallback.mock.calls.length).toEqual(1);
     const [context] = onTokenCallback.mock.calls[0];
 
@@ -784,13 +784,13 @@ describe("app", () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      {
-        "data": undefined,
-        "headers": {},
-        "status": 204,
-        "url": "https://api.github.com/applications/0123/token",
-      }
-    `);
+{
+  "data": undefined,
+  "headers": {},
+  "status": 204,
+  "url": "",
+}
+`);
 
     expect(onTokenCallback.mock.calls.length).toEqual(1);
     const [context_deleted] = onTokenCallback.mock.calls[0];
@@ -836,13 +836,13 @@ describe("app", () => {
     });
 
     expect(result).toMatchInlineSnapshot(`
-      {
-        "data": undefined,
-        "headers": {},
-        "status": 204,
-        "url": "https://api.github.com/applications/0123/grant",
-      }
-    `);
+{
+  "data": undefined,
+  "headers": {},
+  "status": 204,
+  "url": "",
+}
+`);
 
     expect(onTokenCallback.mock.calls.length).toEqual(2);
     const [context_token_deleted] = onTokenCallback.mock.calls[0];
