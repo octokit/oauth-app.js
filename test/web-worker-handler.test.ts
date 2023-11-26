@@ -1,4 +1,4 @@
-import { URL } from "url";
+import { URL } from "node:url";
 import { createWebWorkerHandler, OAuthApp } from "../src";
 
 describe("createWebWorkerHandler(app)", () => {

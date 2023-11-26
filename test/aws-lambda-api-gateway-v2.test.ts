@@ -1,5 +1,5 @@
 import { createAWSLambdaAPIGatewayV2Handler, OAuthApp } from "../src/";
-import { URL } from "url";
+import { URL } from "node:url";
 import { APIGatewayProxyEventV2 } from "aws-lambda";
 
 describe("createAWSLambdaAPIGatewayV2Handler(app)", () => {
