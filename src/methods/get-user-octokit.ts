@@ -11,8 +11,8 @@ import type {
   OAuthAppAuthentication,
 } from "@octokit/auth-oauth-user";
 
-import type { State, OctokitInstance, ClientType } from "../types";
-import { emitEvent } from "../emit-event";
+import type { State, OctokitInstance, ClientType } from "../types.js";
+import { emitEvent } from "../emit-event.js";
 
 type StateOptions = "clientType" | "clientId" | "clientSecret" | "request";
 

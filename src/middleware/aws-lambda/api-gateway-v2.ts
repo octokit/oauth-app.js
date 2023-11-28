@@ -1,9 +1,9 @@
 import { parseRequest } from "./api-gateway-v2-parse-request";
-import { sendResponse } from "./api-gateway-v2-send-response";
-import { handleRequest } from "../handle-request";
-import type { HandlerOptions } from "../types";
-import type { OAuthApp } from "../../index";
-import type { ClientType, Options } from "../../types";
+import { sendResponse } from "./api-gateway-v2-send-response.js";
+import { handleRequest } from "../handle-request.js";
+import type { HandlerOptions } from "../types.js";
+import type { OAuthApp } from "../../index.js";
+import type { ClientType, Options } from "../../types.js";
 import type {
   APIGatewayProxyEventV2,
   APIGatewayProxyStructuredResultV2,

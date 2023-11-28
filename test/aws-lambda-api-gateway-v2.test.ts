@@ -1,4 +1,4 @@
-import { createAWSLambdaAPIGatewayV2Handler, OAuthApp } from "../src/";
+import { createAWSLambdaAPIGatewayV2Handler, OAuthApp } from "../src/index.ts";
 import { URL } from "node:url";
 import { APIGatewayProxyEventV2 } from "aws-lambda";
 

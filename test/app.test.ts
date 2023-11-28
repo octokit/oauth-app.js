@@ -1,8 +1,8 @@
 import fetchMock from "fetch-mock";
 import { Octokit } from "@octokit/core";
 
-import { OAuthApp } from "../src";
-import { OAuthAppOctokit } from "../src/oauth-app-octokit";
+import { OAuthApp } from "../src/index.ts";
+import { OAuthAppOctokit } from "../src/oauth-app-octokit.ts";
 
 describe("OAuthApp.defaults", () => {
   test("sets default options", () => {

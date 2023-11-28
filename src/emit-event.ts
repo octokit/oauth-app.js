@@ -1,4 +1,9 @@
-import type { State, EventHandlerContext, ClientType, Options } from "./types";
+import type {
+  State,
+  EventHandlerContext,
+  ClientType,
+  Options,
+} from "./types.js";
 
 export async function emitEvent(
   state: State,

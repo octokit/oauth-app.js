@@ -3,7 +3,7 @@
 // import { IncomingMessage } from "node:http";
 type IncomingMessage = any;
 
-import type { OctokitRequest } from "../types";
+import type { OctokitRequest } from "../types.js";
 
 export function parseRequest(request: IncomingMessage): OctokitRequest {
   const { method, url, headers } = request;

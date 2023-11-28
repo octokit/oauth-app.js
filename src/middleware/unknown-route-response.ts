@@ -1,4 +1,4 @@
-import type { OctokitRequest } from "./types";
+import type { OctokitRequest } from "./types.js";
 
 export function unknownRouteResponse(request: OctokitRequest) {
   return {

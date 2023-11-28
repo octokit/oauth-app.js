@@ -1,6 +1,6 @@
 import * as OAuthMethods from "@octokit/oauth-methods";
 
-import type { ClientType, State } from "../types";
+import type { ClientType, State } from "../types.js";
 
 export type CheckTokenOptions = {
   token: string;

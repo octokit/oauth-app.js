@@ -3,7 +3,7 @@ import {
   OAuthApp,
   sendNodeResponse,
   unknownRouteResponse,
-} from "../src";
+} from "../src/index.ts";
 
 describe("Smoke test", () => {
   it("OAuthApp is a function", () => {

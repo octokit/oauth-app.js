@@ -3,7 +3,7 @@
 // ************************************************************
 
 import { Octokit } from "@octokit/core";
-import { OAuthApp } from "../src";
+import { OAuthApp } from "../src/index.ts";
 
 function expect<T>(what: T) {}
 

@@ -1,7 +1,7 @@
 import * as OAuthAppAuth from "@octokit/auth-oauth-app";
 
-import type { ClientType, State } from "../types";
-import { emitEvent } from "../emit-event";
+import type { ClientType, State } from "../types.js";
+import { emitEvent } from "../emit-event.js";
 
 export type CreateTokenWebFlowOptions = Omit<
   OAuthAppAuth.WebFlowAuthOptions,

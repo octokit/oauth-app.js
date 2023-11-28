@@ -7,39 +7,39 @@ import { OAuthAppOctokit } from "./oauth-app-octokit";
 import {
   getUserOctokitWithState,
   type GetUserOctokitWithStateInterface,
-} from "./methods/get-user-octokit";
+} from "./methods/get-user-octokit.js";
 import {
   type GetWebFlowAuthorizationUrlInterface,
   getWebFlowAuthorizationUrlWithState,
-} from "./methods/get-web-flow-authorization-url";
+} from "./methods/get-web-flow-authorization-url.js";
 import {
   type CreateTokenInterface,
   createTokenWithState,
-} from "./methods/create-token";
+} from "./methods/create-token.js";
 import {
   type CheckTokenInterface,
   checkTokenWithState,
-} from "./methods/check-token";
+} from "./methods/check-token.js";
 import {
   type ResetTokenInterface,
   resetTokenWithState,
-} from "./methods/reset-token";
+} from "./methods/reset-token.js";
 import {
   type RefreshTokenInterface,
   refreshTokenWithState,
-} from "./methods/refresh-token";
+} from "./methods/refresh-token.js";
 import {
   type ScopeTokenInterface,
   scopeTokenWithState,
-} from "./methods/scope-token";
+} from "./methods/scope-token.js";
 import {
   type DeleteTokenInterface,
   deleteTokenWithState,
-} from "./methods/delete-token";
+} from "./methods/delete-token.js";
 import {
   type DeleteAuthorizationInterface,
   deleteAuthorizationWithState,
-} from "./methods/delete-authorization";
+} from "./methods/delete-authorization.js";
 
 import type {
   AddEventHandler,
@@ -49,23 +49,23 @@ import type {
   OctokitTypeFromOptions,
   Options,
   State,
-} from "./types";
+} from "./types.js";
 
 // types required by external handlers (aws-lambda, etc)
 export type {
   HandlerOptions,
   OctokitRequest,
   OctokitResponse,
-} from "./middleware/types";
+} from "./middleware/types.js";
 
 // generic handlers
-export { handleRequest } from "./middleware/handle-request";
-export { unknownRouteResponse } from "./middleware/unknown-route-response";
+export { handleRequest } from "./middleware/handle-request.js";
+export { unknownRouteResponse } from "./middleware/unknown-route-response.js";
 
-export { createNodeMiddleware } from "./middleware/node/index";
-export { sendResponse as sendNodeResponse } from "./middleware/node/send-response";
-export { createWebWorkerHandler } from "./middleware/web-worker/index";
-export { createAWSLambdaAPIGatewayV2Handler } from "./middleware/aws-lambda/api-gateway-v2";
+export { createNodeMiddleware } from "./middleware/node/index.js";
+export { sendResponse as sendNodeResponse } from "./middleware/node/send-response.js";
+export { createWebWorkerHandler } from "./middleware/web-worker/index.js";
+export { createAWSLambdaAPIGatewayV2Handler } from "./middleware/aws-lambda/api-gateway-v2.js";
 
 type Constructor<T> = new (...args: any[]) => T;
 

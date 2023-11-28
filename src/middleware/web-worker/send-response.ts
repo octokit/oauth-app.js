@@ -1,4 +1,4 @@
-import type { OctokitResponse } from "../types";
+import type { OctokitResponse } from "../types.js";
 
 export function sendResponse(octokitResponse: OctokitResponse): Response {
   return new Response(octokitResponse.text, {
