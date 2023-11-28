@@ -1,9 +1,9 @@
-import { parseRequest } from "./parse-request";
-import { sendResponse } from "./send-response";
-import { handleRequest } from "../handle-request";
-import type { OAuthApp } from "../../index";
-import type { HandlerOptions } from "../types";
-import type { ClientType, Options } from "../../types";
+import { parseRequest } from "./parse-request.js";
+import { sendResponse } from "./send-response.js";
+import { handleRequest } from "../handle-request.js";
+import type { OAuthApp } from "../../index.js";
+import type { HandlerOptions } from "../types.js";
+import type { ClientType, Options } from "../../types.js";
 
 export function createWebWorkerHandler<T extends Options<ClientType>>(
   app: OAuthApp<T>,

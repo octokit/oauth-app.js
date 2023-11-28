@@ -1,7 +1,11 @@
-import { OAuthApp } from "../index";
-import { unknownRouteResponse } from "./unknown-route-response";
-import type { HandlerOptions, OctokitRequest, OctokitResponse } from "./types";
-import type { ClientType, Options } from "../types";
+import { OAuthApp } from "../index.js";
+import { unknownRouteResponse } from "./unknown-route-response.js";
+import type {
+  HandlerOptions,
+  OctokitRequest,
+  OctokitResponse,
+} from "./types.js";
+import type { ClientType, Options } from "../types.js";
 
 export async function handleRequest(
   app: OAuthApp<Options<ClientType>>,

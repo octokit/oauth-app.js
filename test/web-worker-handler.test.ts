@@ -1,5 +1,5 @@
-import { URL } from "url";
-import { createWebWorkerHandler, OAuthApp } from "../src";
+import { URL } from "node:url";
+import { createWebWorkerHandler, OAuthApp } from "../src/index.ts";
 
 describe("createWebWorkerHandler(app)", () => {
   it("support both oauth-app and github-app", () => {

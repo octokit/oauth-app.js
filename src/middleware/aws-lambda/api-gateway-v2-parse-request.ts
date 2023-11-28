@@ -1,4 +1,4 @@
-import type { OctokitRequest } from "../types";
+import type { OctokitRequest } from "../types.js";
 import type { APIGatewayProxyEventV2 } from "aws-lambda";
 
 export function parseRequest(request: APIGatewayProxyEventV2): OctokitRequest {

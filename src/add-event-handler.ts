@@ -4,7 +4,7 @@ import type {
   State,
   ClientType,
   Options,
-} from "./types";
+} from "./types.js";
 
 export function addEventHandler(
   state: State,

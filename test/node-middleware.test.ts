@@ -1,7 +1,7 @@
-import { createServer, IncomingMessage } from "http";
-import { URL } from "url";
+import { createServer, IncomingMessage } from "node:http";
+import { URL } from "node:url";
 
-import { createNodeMiddleware, OAuthApp } from "../src/";
+import { createNodeMiddleware, OAuthApp } from "../src/index.ts";
 
 // import without types
 const express = require("express");
