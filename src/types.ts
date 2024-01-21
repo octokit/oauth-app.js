@@ -6,6 +6,7 @@ import type {
 } from "@octokit/auth-oauth-app";
 
 import { OAuthAppOctokit } from "./oauth-app-octokit";
+import type { GithubAppCreateTokenInterface } from "./methods/create-token";
 
 export type ClientType = "oauth-app" | "github-app";
 export type OAuthAppOctokitClassType = typeof OAuthAppOctokit;
@@ -31,6 +32,8 @@ export type EventAndActionName =
   | "authorization"
   | "authorization.deleted";
 
+export type RefreshToken = "opt-in" | "opt-out";
+
 type CommonOptions<TOctokit extends OAuthAppOctokitClassType> = {
   clientId?: ClientId;
   clientSecret?: ClientSecret;
@@ -51,6 +54,7 @@ export type Options<
     }
   : CommonOptions<TOctokit> & {
       clientType?: TClientType;
+      refreshToken?: RefreshToken;
     };
 
 // workaround for https://github.com/octokit/oauth-app.js/pull/216
@@ -75,11 +79,20 @@ export type OctokitClassTypeFromOptions<TOptions extends Options<ClientType>> =
 export type ClientTypeFromOptions<TOptions extends Options<ClientType>> =
   TOptions["clientType"] extends "github-app" ? "github-app" : "oauth-app";
 
+export type RefreshTokenFromOptions<TOptions extends Options<ClientType>> =
+  TOptions extends Options<"github-app">
+    ? RefreshTokenFromGithubAppOptions<TOptions>
+    : "opt-out";
+export type RefreshTokenFromGithubAppOptions<
+  TOptions extends Options<"github-app">,
+> = TOptions["refreshToken"] extends "opt-in" ? "opt-in" : "opt-out";
+
 export type OctokitInstance = InstanceType<OAuthAppOctokitClassType>;
 export type State = {
   clientType: ClientType;
   clientId: ClientId;
   clientSecret: ClientSecret;
+  refreshToken: RefreshToken;
   defaultScopes: Scope[];
   allowSignup?: boolean;
   baseUrl?: string;
@@ -91,6 +104,12 @@ export type State = {
     [key: string]: EventHandler<Options<ClientType>>[];
   };
 };
+
+type AwaitedResponseFromCreatedTokenForGithubApp<
+  TOptions extends Options<ClientType>,
+> = Awaited<
+  ReturnType<GithubAppCreateTokenInterface<TOptions>>
+>["authentication"];
 
 export type EventHandlerContext<TOptions extends Options<ClientType>> =
   ClientTypeFromOptions<TOptions> extends "oauth-app"
@@ -110,10 +129,9 @@ export type EventHandlerContext<TOptions extends Options<ClientType>> =
         action: ActionName;
         token: Token;
         octokit: OctokitTypeFromOptions<TOptions>;
-        authentication?:
-          | GitHubAppUserAuthentication
-          | GitHubAppUserAuthenticationWithExpiration;
+        authentication?: AwaitedResponseFromCreatedTokenForGithubApp<TOptions>;
       };
+
 export type EventHandler<TOptions extends Options<ClientType>> = (
   context: EventHandlerContext<TOptions>,
 ) => void;
