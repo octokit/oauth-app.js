@@ -178,6 +178,17 @@ const app = new MyOAuthApp({ clientId, clientSecret });
         Either <code>"oauth-app"</code> or <code>"github-app"</code>. Defaults to <code>"oauth-app"</code>.
       </td>
     </tr>
+     <tr>
+      <th>
+        <code>refreshToken</code>
+      </th>
+      <th>
+        <code>string</code>
+      </th>
+      <td>
+        When clientType is "github-app", you can set refreshToken <code>"opt-in"</code> or <code>"opt-out"</code>. Defaults to <code>"opt-out"</code>.
+      </td>
+    </tr>
     <tr>
       <th>
         <code>allowSignup</code>
@@ -567,7 +578,7 @@ Array of OAuth scope names that the user access token should be granted. Default
   </tbody>
 </table>
 
-Resolves with with an [user authentication object](https://github.com/octokit/auth-oauth-app.js#authentication-object)
+Resolves with with an [user authentication object](https://github.com/octokit/auth-oauth-app.js#authentication-object), "refreshToken" option to "github-app" OAuthApp client type will return types with tokens when "opt-in" and without refresh tokens when "opt-out".
 
 ## `app.checkToken(options)`
 
