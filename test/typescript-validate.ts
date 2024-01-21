@@ -93,11 +93,27 @@ export async function GitHubAppTest() {
   });
   githubApp.type;
 
+  const githubAppWithRefreshToken = new OAuthApp({
+    clientType: "github-app",
+    clientId: "",
+    clientSecret: "",
+    refreshToken: "opt-in",
+  });
+
+  const createTokenWithRefreshToken =
+    await githubAppWithRefreshToken.createToken({
+      code: "code",
+    });
+
+  createTokenWithRefreshToken.authentication.refreshTokenExpiresAt;
+
   const result = await githubApp.createToken({
     onVerification() {},
   });
   // @ts-expect-error scopes are not used by GitHub Apps
   result.scopes;
+  // @ts-expect-error refreshToken are not used by GitHub Apps by default
+  result.authentication.refreshTokenExpiresAt;
 
   // @ts-expect-error scopes option not permitted for GitHub Apps
   await githubApp.createToken({
@@ -109,6 +125,7 @@ export async function GitHubAppTest() {
     // @ts-expect-error
     context.scopes;
 
+    // @ts-expect-error authentication is possibly undefined
     if ("refreshToken" in context.authentication) {
       context.authentication.refreshTokenExpiresAt;
     }
