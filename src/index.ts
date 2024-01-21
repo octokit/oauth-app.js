@@ -107,6 +107,8 @@ export class OAuthApp<
       clientType: this.type,
       clientId: options.clientId,
       clientSecret: options.clientSecret,
+      // @ts-expect-error refreshToken not permitted for OAuth Apps
+      refreshToken: options.refreshToken || "opt-out",
       // @ts-expect-error defaultScopes not permitted for GitHub Apps
       defaultScopes: options.defaultScopes || [],
       allowSignup: options.allowSignup,
@@ -133,7 +135,7 @@ export class OAuthApp<
     this.createToken = createTokenWithState.bind(
       null,
       state,
-    ) as CreateTokenInterface<ClientTypeFromOptions<TOptions>>;
+    ) as CreateTokenInterface<TOptions>[ClientTypeFromOptions<TOptions>];
     this.checkToken = checkTokenWithState.bind(
       null,
       state,
@@ -164,7 +166,7 @@ export class OAuthApp<
   getWebFlowAuthorizationUrl: GetWebFlowAuthorizationUrlInterface<
     ClientTypeFromOptions<TOptions>
   >;
-  createToken: CreateTokenInterface<ClientTypeFromOptions<TOptions>>;
+  createToken: CreateTokenInterface<TOptions>[ClientTypeFromOptions<TOptions>];
   checkToken: CheckTokenInterface<ClientTypeFromOptions<TOptions>>;
   resetToken: ResetTokenInterface<ClientTypeFromOptions<TOptions>>;
   refreshToken: RefreshTokenInterface;
