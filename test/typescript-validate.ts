@@ -112,7 +112,7 @@ export async function GitHubAppTest() {
   githubApp.on("token.created", (context) => {
     // @ts-expect-error
     context.scopes;
-    // @ts-expect-error authentication is optional
+    
     if ("refreshToken" in context.authentication) {
       context.authentication.refreshTokenExpiresAt;
     }
