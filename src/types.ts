@@ -9,12 +9,15 @@ import { OAuthAppOctokit } from "./oauth-app-octokit";
 
 export type ClientType = "oauth-app" | "github-app";
 export type OAuthAppOctokitClassType = typeof OAuthAppOctokit;
-
+export type GithubAppUserAuthenticationWithOptionalExpiration =
+  GitHubAppUserAuthentication &
+    Partial<GitHubAppUserAuthenticationWithExpiration>;
 export type Scope = string;
 export type ClientId = string;
 export type ClientSecret = string;
 export type Token = string;
 export type EventName = "token" | "authorization";
+
 export type ActionName =
   | "created"
   | "reset"
@@ -110,9 +113,7 @@ export type EventHandlerContext<TOptions extends Options<ClientType>> =
         action: ActionName;
         token: Token;
         octokit: OctokitTypeFromOptions<TOptions>;
-        authentication?:
-          | GitHubAppUserAuthentication
-          | GitHubAppUserAuthenticationWithExpiration;
+        authentication?: GithubAppUserAuthenticationWithOptionalExpiration;
       };
 export type EventHandler<TOptions extends Options<ClientType>> = (
   context: EventHandlerContext<TOptions>,

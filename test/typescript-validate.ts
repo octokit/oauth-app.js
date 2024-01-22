@@ -99,6 +99,10 @@ export async function GitHubAppTest() {
   // @ts-expect-error scopes are not used by GitHub Apps
   result.scopes;
 
+  result.authentication.expiresAt;
+  result.authentication.refreshTokenExpiresAt;
+  result.authentication.refreshToken;
+
   // @ts-expect-error scopes option not permitted for GitHub Apps
   await githubApp.createToken({
     onVerification() {},

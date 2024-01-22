@@ -1,6 +1,10 @@
 import * as OAuthAppAuth from "@octokit/auth-oauth-app";
 
-import type { ClientType, State } from "../types.js";
+import type {
+  ClientType,
+  GithubAppUserAuthenticationWithOptionalExpiration,
+  State,
+} from "../types.js";
 import { emitEvent } from "../emit-event.js";
 
 export type CreateTokenWebFlowOptions = Omit<
@@ -61,12 +65,9 @@ export interface CreateTokenInterface<TClientType extends ClientType> {
   // web flow
   (options: CreateTokenWebFlowOptions): TClientType extends "oauth-app"
     ? Promise<{ authentication: OAuthAppAuth.OAuthAppUserAuthentication }>
-    : Promise<
-        | { authentication: OAuthAppAuth.GitHubAppUserAuthentication }
-        | {
-            authentication: OAuthAppAuth.GitHubAppUserAuthenticationWithExpiration;
-          }
-      >;
+    : Promise<{
+        authentication: GithubAppUserAuthenticationWithOptionalExpiration;
+      }>;
 
   // device flow
   (
@@ -75,10 +76,7 @@ export interface CreateTokenInterface<TClientType extends ClientType> {
       : CreateTokenGitHubAppDeviceFlowOptions,
   ): TClientType extends "oauth-app"
     ? Promise<{ authentication: OAuthAppAuth.OAuthAppUserAuthentication }>
-    : Promise<
-        | { authentication: OAuthAppAuth.GitHubAppUserAuthentication }
-        | {
-            authentication: OAuthAppAuth.GitHubAppUserAuthenticationWithExpiration;
-          }
-      >;
+    : Promise<{
+        authentication: GithubAppUserAuthenticationWithOptionalExpiration;
+      }>;
 }
