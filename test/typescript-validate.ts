@@ -99,6 +99,10 @@ export async function GitHubAppTest() {
   // @ts-expect-error scopes are not used by GitHub Apps
   result.scopes;
 
+  result.authentication.expiresAt;
+  result.authentication.refreshTokenExpiresAt;
+  result.authentication.refreshToken;
+
   // @ts-expect-error scopes option not permitted for GitHub Apps
   await githubApp.createToken({
     onVerification() {},
@@ -108,7 +112,7 @@ export async function GitHubAppTest() {
   githubApp.on("token.created", (context) => {
     // @ts-expect-error
     context.scopes;
-
+    // @ts-expect-error authentication is optional
     if ("refreshToken" in context.authentication) {
       context.authentication.refreshTokenExpiresAt;
     }
