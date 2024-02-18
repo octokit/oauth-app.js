@@ -89,7 +89,7 @@ require("http").createServer(createNodeMiddleware(app)).listen(3000);
 
 ### For GitHub Apps
 
-GitHub Apps do not support `scopes`. If the GitHub App has expiring user tokens enabled, the token used for the `octokit` instance will be refreshed automatically, and the additional refresh-releated properties will be passed to the `"token"` event handler.
+GitHub Apps do not support `scopes`. If the GitHub App has expiring user tokens enabled, the token used for the `octokit` instance will be refreshed automatically, and the additional refresh-related properties will be passed to the `"token"` event handler.
 
 ```js
 const { OAuthApp, createNodeMiddleware } = require("@octokit/oauth-app");
