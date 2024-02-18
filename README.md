@@ -234,7 +234,7 @@ Sets the default `scopes` value for `app.getWebFlowAuthorizationUrl(options)`. S
       </th>
       <td>
 
-You can pass in your own Octokit constructor with custom defaults and plugins. The Octokit Constructor must use an authenticatio strategy that is compatible with[`@octokit/auth-oauth-app](https://github.com/octokit/auth-oauth-app.js/#readme).
+You can pass in your own Octokit constructor with custom defaults and plugins. The Octokit Constructor must use an authentication strategy that is compatible with[`@octokit/auth-oauth-app](https://github.com/octokit/auth-oauth-app.js/#readme).
 
 For usage with enterprise, set `baseUrl` to the hostname + `/api/v3`. Example:
 
