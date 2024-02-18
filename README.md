@@ -500,7 +500,7 @@ const { token } = await app.createToken({
   </tbody>
 </table>
 
-Resolves with with an [user authentication object](https://github.com/octokit/auth-oauth-app.js#authentication-object)
+Resolves with an [user authentication object](https://github.com/octokit/auth-oauth-app.js#authentication-object)
 
 ### For OAuth Device flow
 
@@ -567,7 +567,7 @@ Array of OAuth scope names that the user access token should be granted. Default
   </tbody>
 </table>
 
-Resolves with with an [user authentication object](https://github.com/octokit/auth-oauth-app.js#authentication-object)
+Resolves with an [user authentication object](https://github.com/octokit/auth-oauth-app.js#authentication-object)
 
 ## `app.checkToken(options)`
 
