@@ -60,6 +60,6 @@ Only one version number is bumped at a time, the highest version change trumps t
 Besides publishing a new version to npm, semantic-release also creates a git tag and release
 on GitHub, generates changelogs from the commit messages and puts them into the release notes.
 
-Before the publish it runs the `npm run build` script which creates a `pkg/` folder with distributions for browsers, node and Typescript definitions. The contents of the `pkg/` folder are published to the npm registry.
+Before the publish it runs the `npm run build` script which creates a `pkg/` folder with distributions for browsers, node and TypeScript definitions. The contents of the `pkg/` folder are published to the npm registry.
 
 If the pull request looks good but does not follow the commit conventions, use the <kbd>Squash & merge</kbd> button.
