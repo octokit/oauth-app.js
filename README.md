@@ -89,7 +89,7 @@ require("http").createServer(createNodeMiddleware(app)).listen(3000);
 
 ### For GitHub Apps
 
-GitHub Apps do not support `scopes`. If the GitHub App has expiring user tokens enabled, the token used for the `octokit` instance will be refreshed automatically, and the additional refresh-releated properties will be passed to the `"token"` event handler.
+GitHub Apps do not support `scopes`. If the GitHub App has expiring user tokens enabled, the token used for the `octokit` instance will be refreshed automatically, and the additional refresh-related properties will be passed to the `"token"` event handler.
 
 ```js
 const { OAuthApp, createNodeMiddleware } = require("@octokit/oauth-app");
@@ -234,7 +234,7 @@ Sets the default `scopes` value for `app.getWebFlowAuthorizationUrl(options)`. S
       </th>
       <td>
 
-You can pass in your own Octokit constructor with custom defaults and plugins. The Octokit Constructor must use an authenticatio strategy that is compatible with[`@octokit/auth-oauth-app](https://github.com/octokit/auth-oauth-app.js/#readme).
+You can pass in your own Octokit constructor with custom defaults and plugins. The Octokit Constructor must use an authentication strategy that is compatible with[`@octokit/auth-oauth-app](https://github.com/octokit/auth-oauth-app.js/#readme).
 
 For usage with enterprise, set `baseUrl` to the hostname + `/api/v3`. Example:
 
@@ -249,7 +249,7 @@ new OAuthApp({
 });
 ```
 
-Defaults to `@octokit/oauth-app`'s owne `Octokit` constructor which can be imported separately from `OAuthApp`. It's [`@octokit/core`](https://github.com/octokit/core.js) with the [`@octokit/auth-oauth-user`](https://github.com/octokit/auth-oauth-user.js/#readme) authentication strategy.
+Defaults to `@octokit/oauth-app`'s own `Octokit` constructor which can be imported separately from `OAuthApp`. It's [`@octokit/core`](https://github.com/octokit/core.js) with the [`@octokit/auth-oauth-user`](https://github.com/octokit/auth-oauth-user.js/#readme) authentication strategy.
 
 </td></tr>
   </tbody>
@@ -500,7 +500,7 @@ const { token } = await app.createToken({
   </tbody>
 </table>
 
-Resolves with with an [user authentication object](https://github.com/octokit/auth-oauth-app.js#authentication-object)
+Resolves with an [user authentication object](https://github.com/octokit/auth-oauth-app.js#authentication-object)
 
 ### For OAuth Device flow
 
@@ -567,7 +567,7 @@ Array of OAuth scope names that the user access token should be granted. Default
   </tbody>
 </table>
 
-Resolves with with an [user authentication object](https://github.com/octokit/auth-oauth-app.js#authentication-object)
+Resolves with an [user authentication object](https://github.com/octokit/auth-oauth-app.js#authentication-object)
 
 ## `app.checkToken(options)`
 
