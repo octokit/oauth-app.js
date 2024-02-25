@@ -1,8 +1,8 @@
 import { createOAuthAppAuth } from "@octokit/auth-oauth-app";
 
-import { VERSION } from "./version";
-import { addEventHandler } from "./add-event-handler";
-import { OAuthAppOctokit } from "./oauth-app-octokit";
+import { VERSION } from "./version.js";
+import { addEventHandler } from "./add-event-handler.js";
+import { OAuthAppOctokit } from "./oauth-app-octokit.js";
 
 import {
   getUserOctokitWithState,

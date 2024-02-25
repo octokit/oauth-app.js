@@ -1,4 +1,4 @@
-import { parseRequest } from "./api-gateway-v2-parse-request";
+import { parseRequest } from "./api-gateway-v2-parse-request.js";
 import { sendResponse } from "./api-gateway-v2-send-response.js";
 import { handleRequest } from "../handle-request.js";
 import type { HandlerOptions } from "../types.js";
