@@ -1,5 +1,6 @@
 import fetchMock from "fetch-mock";
 import { Octokit } from "@octokit/core";
+import { jest } from "@jest/globals";
 
 import { OAuthApp } from "../src/index.ts";
 import { OAuthAppOctokit } from "../src/oauth-app-octokit.ts";

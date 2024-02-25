@@ -2,12 +2,13 @@
   "name": "@octokit/oauth-app",
   "version": "0.0.0-development",
   "description": "GitHub OAuth toolset for Node.js",
+  "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs && tsc -p tsconfig.json",
     "lint": "prettier --check '{src,test}/**/*' README.md package.json",
     "lint:fix": "prettier --write '{src,test}/**/*' README.md package.json",
     "pretest": "npm run -s lint",
-    "test": "jest --coverage",
+    "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest --coverage",
     "test:typescript": "npx tsc --noEmit --declaration --noUnusedLocals --allowImportingTsExtensions --moduleResolution node16 --module node16 test/typescript-validate.ts"
   },
   "repository": "github:octokit/oauth-app.js",
@@ -20,9 +21,9 @@
   "author": "Gregor Martynus (https://twitter.com/gr2m)",
   "license": "MIT",
   "dependencies": {
-    "@octokit/auth-oauth-app": "^8.0.0-beta.2",
-    "@octokit/auth-oauth-user": "^5.0.0",
-    "@octokit/auth-unauthenticated": "^5.0.0",
+    "@octokit/auth-oauth-app": "^8.0.0",
+    "@octokit/auth-oauth-user": "^5.0.1",
+    "@octokit/auth-unauthenticated": "^6.0.0-beta.1",
     "@octokit/core": "^6.0.0",
     "@octokit/oauth-authorization-url": "^7.0.0",
     "@octokit/oauth-methods": "^5.0.0",
@@ -45,11 +46,15 @@
     "typescript": "^5.0.0"
   },
   "jest": {
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
     "transform": {
       "^.+\\.(ts|tsx)$": [
         "ts-jest",
         {
-          "tsconfig": "test/tsconfig.test.json"
+          "tsconfig": "test/tsconfig.test.json",
+          "useESM": true
         }
       ]
     },

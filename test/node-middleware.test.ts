@@ -1,5 +1,6 @@
 import { createServer, IncomingMessage } from "node:http";
 import { URL } from "node:url";
+import { jest } from "@jest/globals";
 
 import { createNodeMiddleware, OAuthApp } from "../src/index.ts";
 

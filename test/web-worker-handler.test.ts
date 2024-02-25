@@ -1,4 +1,5 @@
 import { URL } from "node:url";
+import { jest } from "@jest/globals";
 import { createWebWorkerHandler, OAuthApp } from "../src/index.ts";
 
 describe("createWebWorkerHandler(app)", () => {
