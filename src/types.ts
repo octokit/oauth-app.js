@@ -5,7 +5,7 @@ import type {
   GitHubAppUserAuthenticationWithExpiration,
 } from "@octokit/auth-oauth-app";
 
-import { OAuthAppOctokit } from "./oauth-app-octokit";
+import { OAuthAppOctokit } from "./oauth-app-octokit.js";
 
 export type ClientType = "oauth-app" | "github-app";
 export type OAuthAppOctokitClassType = typeof OAuthAppOctokit;
