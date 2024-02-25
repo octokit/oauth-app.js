@@ -20,17 +20,17 @@
   "author": "Gregor Martynus (https://twitter.com/gr2m)",
   "license": "MIT",
   "dependencies": {
-    "@octokit/auth-oauth-app": "^7.0.0",
-    "@octokit/auth-oauth-user": "^4.0.0",
+    "@octokit/auth-oauth-app": "^8.0.0-beta.2",
+    "@octokit/auth-oauth-user": "^5.0.0",
     "@octokit/auth-unauthenticated": "^5.0.0",
-    "@octokit/core": "^5.0.0",
-    "@octokit/oauth-authorization-url": "^6.0.2",
-    "@octokit/oauth-methods": "^4.0.0",
+    "@octokit/core": "^6.0.0",
+    "@octokit/oauth-authorization-url": "^7.0.0",
+    "@octokit/oauth-methods": "^5.0.0",
     "@types/aws-lambda": "^8.10.83",
-    "universal-user-agent": "^6.0.0"
+    "universal-user-agent": "^7.0.0"
   },
   "devDependencies": {
-    "@octokit/tsconfig": "^2.0.0",
+    "@octokit/tsconfig": "^3.0.0",
     "@types/jest": "^29.0.0",
     "@types/node": "^20.0.0",
     "esbuild": "^0.20.0",
