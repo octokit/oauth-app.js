@@ -6,7 +6,7 @@ import { createNodeMiddleware, OAuthApp } from "../src/index.ts";
 
 // import without types
 // @ts-ignore
-const express = (await import("express")).default;
+const express = (await import("express")).default as any;
 
 describe("createNodeMiddleware(app)", () => {
   it("allow pre-flight requests", async () => {
