@@ -1,4 +1,5 @@
 import { URL } from "node:url";
+import { jest } from "@jest/globals";
 import { createWebWorkerHandler, OAuthApp } from "../src/index.ts";
 
 describe("createWebWorkerHandler(app)", () => {
@@ -99,7 +100,7 @@ describe("createWebWorkerHandler(app)", () => {
 
   it("GET /api/github/oauth/callback?code=012345&state=mystate123", async () => {
     const appMock = {
-      createToken: jest.fn().mockResolvedValue({
+      createToken: jest.fn<any>().mockResolvedValue({
         authentication: {
           type: "token",
           tokenType: "oauth",
@@ -127,7 +128,7 @@ describe("createWebWorkerHandler(app)", () => {
 
   it("POST /api/github/oauth/token", async () => {
     const appMock = {
-      createToken: jest.fn().mockResolvedValue({
+      createToken: jest.fn<any>().mockResolvedValue({
         authentication: {
           type: "token",
           tokenType: "oauth",
@@ -162,7 +163,7 @@ describe("createWebWorkerHandler(app)", () => {
 
   it("GET /api/github/oauth/token", async () => {
     const appMock = {
-      checkToken: jest.fn().mockResolvedValue({
+      checkToken: jest.fn<any>().mockResolvedValue({
         data: { id: 1 },
         authentication: {
           type: "token",
@@ -196,7 +197,7 @@ describe("createWebWorkerHandler(app)", () => {
 
   it("PATCH /api/github/oauth/token", async () => {
     const appMock = {
-      resetToken: jest.fn().mockResolvedValue({
+      resetToken: jest.fn<any>().mockResolvedValue({
         data: { id: 1 },
         authentication: {
           type: "token",
@@ -229,7 +230,7 @@ describe("createWebWorkerHandler(app)", () => {
 
   it("POST /api/github/oauth/token/scoped", async () => {
     const appMock = {
-      scopeToken: jest.fn().mockResolvedValue({
+      scopeToken: jest.fn<any>().mockResolvedValue({
         data: { id: 1 },
         authentication: {
           type: "token",
@@ -287,7 +288,7 @@ describe("createWebWorkerHandler(app)", () => {
 
   it("PATCH /api/github/oauth/refresh-token", async () => {
     const appMock = {
-      refreshToken: jest.fn().mockResolvedValue({
+      refreshToken: jest.fn<any>().mockResolvedValue({
         data: { id: 1 },
         authentication: {
           type: "token",
@@ -324,7 +325,7 @@ describe("createWebWorkerHandler(app)", () => {
 
   it("PATCH /api/github/oauth/token", async () => {
     const appMock = {
-      resetToken: jest.fn().mockResolvedValue({
+      resetToken: jest.fn<any>().mockResolvedValue({
         data: { id: 1 },
         authentication: {
           type: "token",
@@ -357,7 +358,7 @@ describe("createWebWorkerHandler(app)", () => {
 
   it("DELETE /api/github/oauth/token", async () => {
     const appMock = {
-      deleteToken: jest.fn().mockResolvedValue(undefined),
+      deleteToken: jest.fn<any>().mockResolvedValue(undefined),
     };
     const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp,
@@ -379,7 +380,7 @@ describe("createWebWorkerHandler(app)", () => {
 
   it("DELETE /api/github/oauth/grant", async () => {
     const appMock = {
-      deleteAuthorization: jest.fn().mockResolvedValue(undefined),
+      deleteAuthorization: jest.fn<any>().mockResolvedValue(undefined),
     };
     const handleRequest = createWebWorkerHandler(
       appMock as unknown as OAuthApp,
@@ -560,7 +561,7 @@ describe("createWebWorkerHandler(app)", () => {
 
   it("PATCH /api/github/oauth/refresh-token without authorization header", async () => {
     const appMock = {
-      refreshToken: jest.fn().mockResolvedValue({
+      refreshToken: jest.fn<() => Promise<{ ok: true }>>().mockResolvedValue({
         ok: true,
       }),
     };
@@ -587,7 +588,7 @@ describe("createWebWorkerHandler(app)", () => {
 
   it("PATCH /api/github/oauth/refresh-token without refreshToken", async () => {
     const appMock = {
-      refreshToken: jest.fn().mockResolvedValue({
+      refreshToken: jest.fn<() => Promise<{ ok: true }>>().mockResolvedValue({
         ok: true,
       }),
     };

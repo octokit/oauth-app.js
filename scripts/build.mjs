@@ -46,7 +46,7 @@ async function main() {
     bundle: true,
     platform: "node",
     target: "node18",
-    format: "cjs",
+    format: "esm",
     ...sharedOptions,
   });
 
@@ -67,9 +67,12 @@ async function main() {
       {
         ...pkg,
         files: ["dist-*/**", "bin/**"],
-        main: "dist-node/index.js",
-        types: "dist-types/index.d.ts",
-        source: "dist-src/index.js",
+        exports: {
+          ".": {
+            types: "./dist-types/index.d.ts",
+            import: "./dist-node/index.js",
+          },
+        },
         sideEffects: false,
       },
       null,

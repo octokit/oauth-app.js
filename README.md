@@ -69,7 +69,8 @@ Install with `npm install @octokit/oauth-app`
 ### For OAuth Apps
 
 ```js
-const { OAuthApp, createNodeMiddleware } = require("@octokit/oauth-app");
+import { OAuthApp, createNodeMiddleware } from "@octokit/oauth-app";
+import { createServer } from "node:http";
 
 const app = new OAuthApp({
   clientType: "oauth-app",
@@ -82,7 +83,7 @@ app.on("token", async ({ token, octokit }) => {
   console.log(`Token retrieved for ${data.login}`);
 });
 
-require("http").createServer(createNodeMiddleware(app)).listen(3000);
+createServer(createNodeMiddleware(app)).listen(3000);
 // can now receive user authorization callbacks at /api/github/oauth/callback
 // See all endpoints at https://github.com/octokit/oauth-app.js#middlewares
 ```
@@ -92,7 +93,8 @@ require("http").createServer(createNodeMiddleware(app)).listen(3000);
 GitHub Apps do not support `scopes`. If the GitHub App has expiring user tokens enabled, the token used for the `octokit` instance will be refreshed automatically, and the additional refresh-related properties will be passed to the `"token"` event handler.
 
 ```js
-const { OAuthApp, createNodeMiddleware } = require("@octokit/oauth-app");
+import { OAuthApp, createNodeMiddleware } from "@octokit/oauth-app";
+import { createServer } from "node:http";
 
 const app = new OAuthApp({
   clientType: "github-app",
@@ -105,7 +107,7 @@ app.on("token", async ({ token, octokit, expiresAt }) => {
   console.log(`Token retrieved for ${data.login}`);
 });
 
-require("http").createServer(createNodeMiddleware(app)).listen(3000);
+createServer(createNodeMiddleware(app)).listen(3000);
 // can now receive user authorization callbacks at /api/github/oauth/callback
 // See all endpoints at https://github.com/octokit/oauth-app.js#middlewares
 ```
@@ -239,7 +241,7 @@ You can pass in your own Octokit constructor with custom defaults and plugins. T
 For usage with enterprise, set `baseUrl` to the hostname + `/api/v3`. Example:
 
 ```js
-const { Octokit } = require("@octokit/core");
+import { Octokit } from "@octokit/core";
 new OAuthApp({
   clientId: "1234567890abcdef1234",
   clientSecret: "1234567890abcdef1234567890abcdef12345678",
@@ -895,7 +897,9 @@ By default, all middlewares expose the following routes
 Native http server middleware for Node.js
 
 ```js
-const { OAuthApp, createNodeMiddleware } = require("@octokit/oauth-app");
+import { OAuthApp, createNodeMiddleware } from "@octokit/oauth-app";
+import { createServer } from "node:http";
+
 const app = new OAuthApp({
   clientType: "oauth-app",
   clientId: "1234567890abcdef1234",
@@ -906,7 +910,7 @@ const middleware = createNodeMiddleware(app, {
   pathPrefix: "/api/github/oauth",
 });
 
-require("http").createServer(middleware).listen(3000);
+createServer(middleware).listen(3000);
 // can now receive user authorization callbacks at /api/github/oauth/callback
 ```
 

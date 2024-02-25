@@ -1,10 +1,12 @@
 import { createServer, IncomingMessage } from "node:http";
 import { URL } from "node:url";
+import { jest } from "@jest/globals";
 
 import { createNodeMiddleware, OAuthApp } from "../src/index.ts";
 
 // import without types
-const express = require("express");
+// @ts-ignore
+const express = (await import("express")).default as any;
 
 describe("createNodeMiddleware(app)", () => {
   it("allow pre-flight requests", async () => {
@@ -125,7 +127,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("GET /api/github/oauth/callback?code=012345&state=mystate123", async () => {
     const appMock = {
-      createToken: jest.fn().mockResolvedValue({
+      createToken: jest.fn<any>().mockResolvedValue({
         authentication: {
           type: "token",
           tokenType: "oauth",
@@ -157,7 +159,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("POST /api/github/oauth/token", async () => {
     const appMock = {
-      createToken: jest.fn().mockResolvedValue({
+      createToken: jest.fn<any>().mockResolvedValue({
         authentication: {
           type: "token",
           tokenType: "oauth",
@@ -199,7 +201,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("GET /api/github/oauth/token", async () => {
     const appMock = {
-      checkToken: jest.fn().mockResolvedValue({
+      checkToken: jest.fn<any>().mockResolvedValue({
         data: { id: 1 },
         authentication: {
           type: "token",
@@ -240,7 +242,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("PATCH /api/github/oauth/token", async () => {
     const appMock = {
-      resetToken: jest.fn().mockResolvedValue({
+      resetToken: jest.fn<any>().mockResolvedValue({
         data: { id: 1 },
         authentication: {
           type: "token",
@@ -282,7 +284,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("POST /api/github/oauth/token/scoped", async () => {
     const appMock = {
-      scopeToken: jest.fn().mockResolvedValue({
+      scopeToken: jest.fn<any>().mockResolvedValue({
         data: { id: 1 },
         authentication: {
           type: "token",
@@ -345,7 +347,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("PATCH /api/github/oauth/refresh-token", async () => {
     const appMock = {
-      refreshToken: jest.fn().mockResolvedValue({
+      refreshToken: jest.fn<any>().mockResolvedValue({
         data: { id: 1 },
         authentication: {
           type: "token",
@@ -389,7 +391,7 @@ describe("createNodeMiddleware(app)", () => {
   });
   it("PATCH /api/github/oauth/token", async () => {
     const appMock = {
-      resetToken: jest.fn().mockResolvedValue({
+      resetToken: jest.fn<any>().mockResolvedValue({
         data: { id: 1 },
         authentication: {
           type: "token",
@@ -431,7 +433,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("DELETE /api/github/oauth/token", async () => {
     const appMock = {
-      deleteToken: jest.fn().mockResolvedValue(undefined),
+      deleteToken: jest.fn<any>().mockResolvedValue(undefined),
     };
 
     const server = createServer(
@@ -462,7 +464,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("DELETE /api/github/oauth/grant", async () => {
     const appMock = {
-      deleteAuthorization: jest.fn().mockResolvedValue(undefined),
+      deleteAuthorization: jest.fn<any>().mockResolvedValue(undefined),
     };
 
     const server = createServer(
@@ -682,7 +684,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("PATCH /api/github/oauth/refresh-token without authorization header", async () => {
     const appMock = {
-      refreshToken: jest.fn().mockResolvedValue({
+      refreshToken: jest.fn<any>().mockResolvedValue({
         ok: true,
       }),
     };
@@ -713,7 +715,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("PATCH /api/github/oauth/refresh-token without refreshToken", async () => {
     const appMock = {
-      refreshToken: jest.fn().mockResolvedValue({
+      refreshToken: jest.fn<any>().mockResolvedValue({
         ok: true,
       }),
     };

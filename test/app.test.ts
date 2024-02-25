@@ -1,8 +1,10 @@
 import fetchMock from "fetch-mock";
 import { Octokit } from "@octokit/core";
+import { jest } from "@jest/globals";
 
 import { OAuthApp } from "../src/index.ts";
 import { OAuthAppOctokit } from "../src/oauth-app-octokit.ts";
+import type { EventHandler } from "../src/types.ts";
 
 describe("OAuthApp.defaults", () => {
   test("sets default options", () => {
@@ -149,7 +151,14 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
-    const onTokenCallback = jest.fn();
+    const onTokenCallback = jest.fn<
+      EventHandler<{
+        clientType: "oauth-app";
+        clientId: string;
+        clientSecret: string;
+        Octokit: any;
+      }>
+    >();
     app.on("token.created", onTokenCallback);
 
     const result = await app.createToken({
@@ -232,7 +241,14 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
-    const onTokenCallback = jest.fn();
+    const onTokenCallback = jest.fn<
+      EventHandler<{
+        clientType: "oauth-app";
+        clientId: string;
+        clientSecret: string;
+        Octokit: any;
+      }>
+    >();
     app.on("token.created", onTokenCallback);
 
     const onVerification = jest.fn();
@@ -354,7 +370,14 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
-    const onTokenCallback = jest.fn();
+    const onTokenCallback = jest.fn<
+      EventHandler<{
+        clientType: "oauth-app";
+        clientId: string;
+        clientSecret: string;
+        Octokit: any;
+      }>
+    >();
     app.on("token.reset", onTokenCallback);
 
     const result = await app.resetToken({
@@ -434,7 +457,14 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
-    const onTokenCallback = jest.fn();
+    const onTokenCallback = jest.fn<
+      EventHandler<{
+        clientType: "oauth-app";
+        clientId: string;
+        clientSecret: string;
+        Octokit: any;
+      }>
+    >();
     app.on("token.reset", onTokenCallback);
 
     const result = await app.resetToken({
@@ -510,7 +540,14 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
-    const onTokenCallback = jest.fn();
+    const onTokenCallback = jest.fn<
+      EventHandler<{
+        clientType: "oauth-app";
+        clientId: string;
+        clientSecret: string;
+        Octokit: any;
+      }>
+    >();
     app.on("token.reset", onTokenCallback);
 
     const result = await app.resetToken({
@@ -589,7 +626,14 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
-    const onTokenCallback = jest.fn();
+    const onTokenCallback = jest.fn<
+      EventHandler<{
+        clientType: "oauth-app";
+        clientId: string;
+        clientSecret: string;
+        Octokit: any;
+      }>
+    >();
     app.on("token.refreshed", onTokenCallback);
 
     const result = await app.refreshToken({
@@ -687,7 +731,14 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
-    const onTokenCallback = jest.fn();
+    const onTokenCallback = jest.fn<
+      EventHandler<{
+        clientType: "oauth-app";
+        clientId: string;
+        clientSecret: string;
+        Octokit: any;
+      }>
+    >();
     app.on("token.scoped", onTokenCallback);
 
     const result = await app.scopeToken({
@@ -776,7 +827,14 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
-    const onTokenCallback = jest.fn();
+    const onTokenCallback = jest.fn<
+      EventHandler<{
+        clientType: "oauth-app";
+        clientId: string;
+        clientSecret: string;
+        Octokit: any;
+      }>
+    >();
     app.on("token.deleted", onTokenCallback);
 
     const result = await app.deleteToken({
@@ -828,7 +886,14 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
-    const onTokenCallback = jest.fn();
+    const onTokenCallback = jest.fn<
+      EventHandler<{
+        clientType: "oauth-app";
+        clientId: string;
+        clientSecret: string;
+        Octokit: any;
+      }>
+    >();
     app.on(["token", "authorization"], onTokenCallback);
 
     const result = await app.deleteAuthorization({

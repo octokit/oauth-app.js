@@ -1,6 +1,6 @@
 import { createAWSLambdaAPIGatewayV2Handler, OAuthApp } from "../src/index.ts";
 import { URL } from "node:url";
-import { APIGatewayProxyEventV2 } from "aws-lambda";
+import type { APIGatewayProxyEventV2 } from "aws-lambda";
 
 describe("createAWSLambdaAPIGatewayV2Handler(app)", () => {
   it("supports oauth app", async () => {
