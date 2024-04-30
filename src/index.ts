@@ -67,6 +67,27 @@ export { sendResponse as sendNodeResponse } from "./middleware/node/send-respons
 export { createWebWorkerHandler } from "./middleware/web-worker/index.js";
 export { createAWSLambdaAPIGatewayV2Handler } from "./middleware/aws-lambda/api-gateway-v2.js";
 
+// Export types required for the OAuthApp class
+// This is in order to fix TypeScript errors in downstream projects:
+// The inferred type of 'OAuthApp' cannot be named without a reference to '../node_modules/@octokit/oauth-app/dist-types/{filename}.js'. This is likely not portable. A type annotation is necessary.
+export type { GetUserOctokitWithStateInterface } from "./methods/get-user-octokit.js";
+export type { GetWebFlowAuthorizationUrlInterface } from "./methods/get-web-flow-authorization-url.js";
+export type { CreateTokenInterface } from "./methods/create-token.js";
+export type { CheckTokenInterface } from "./methods/check-token.js";
+export type { ResetTokenInterface } from "./methods/reset-token.js";
+export type { RefreshTokenInterface } from "./methods/refresh-token.js";
+export type { ScopeTokenInterface } from "./methods/scope-token.js";
+export type { DeleteTokenInterface } from "./methods/delete-token.js";
+export type { DeleteAuthorizationInterface } from "./methods/delete-authorization.js";
+export type {
+  AddEventHandler,
+  ClientType,
+  ClientTypeFromOptions,
+  ConstructorOptions,
+  OctokitTypeFromOptions,
+  Options,
+} from "./types.js";
+
 type Constructor<T> = new (...args: any[]) => T;
 
 export class OAuthApp<
