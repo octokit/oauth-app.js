@@ -12,7 +12,7 @@ export async function handleRequest(
   { pathPrefix = "/api/github/oauth" }: HandlerOptions,
   request: OctokitRequest,
 ): Promise<OctokitResponse | undefined> {
-  if (request.method === "OPTIONS") {
+  if (pathname.startsWith(`${pathPrefix}/`) && request.method === "OPTIONS") {
     return {
       status: 200,
       headers: {
