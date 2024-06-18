@@ -12,6 +12,13 @@ export async function handleRequest(
   { pathPrefix = "/api/github/oauth" }: HandlerOptions,
   request: OctokitRequest,
 ): Promise<OctokitResponse | undefined> {
+  // request.url may include ?query parameters which we don't want for `route`
+  // hence the workaround using new URL()
+  let { pathname } = new URL(request.url as string, "http://localhost");
+  if (!pathname.startsWith(`${pathPrefix}/`)) {
+    return undefined;
+  }
+
   if (request.method === "OPTIONS") {
     return {
       status: 200,
@@ -24,12 +31,6 @@ export async function handleRequest(
     };
   }
 
-  // request.url may include ?query parameters which we don't want for `route`
-  // hence the workaround using new URL()
-  let { pathname } = new URL(request.url as string, "http://localhost");
-  if (!pathname.startsWith(`${pathPrefix}/`)) {
-    return undefined;
-  }
   pathname = pathname.slice(pathPrefix.length + 1);
 
   const route = [request.method, pathname].join(" ");

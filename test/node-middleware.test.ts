@@ -27,6 +27,45 @@ describe("createNodeMiddleware(app)", () => {
     server.close();
 
     expect(response.status).toEqual(200);
+    expect(response.headers.get("access-control-allow-origin")).toEqual("*");
+    expect(response.headers.get("access-control-allow-methods")).toEqual("*");
+    expect(response.headers.get("access-control-allow-headers")).toEqual(
+      "Content-Type, User-Agent, Authorization",
+    );
+  });
+
+  it("doesn't overwrite pre-flight requests unrelated to github oauth", async () => {
+    const app = new OAuthApp({
+      clientId: "0123",
+      clientSecret: "0123secret",
+    });
+
+    const server = createServer((req, res) => {
+      if (req.url === "/health") {
+        res.writeHead(200, {
+          "Content-Type": "text/plain",
+          "Access-Control-Allow-Origin": "http://localhost:8080",
+        });
+        res.end("OK");
+        return;
+      }
+      createNodeMiddleware(app);
+    }).listen();
+    // @ts-expect-error complains about { port } although it's included in returned AddressInfo interface
+    const { port } = server.address();
+
+    const response = await fetch(`http://localhost:${port}/health`, {
+      method: "OPTIONS",
+    });
+
+    server.close();
+
+    expect(response.status).toEqual(200);
+    expect(response.headers.get("access-control-allow-origin")).toEqual(
+      "http://localhost:8080",
+    );
+    expect(response.headers.get("access-control-allow-methods")).toEqual(null);
+    expect(response.headers.get("access-control-allow-headers")).toEqual(null);
   });
 
   it("GET /api/github/oauth/login", async () => {
