@@ -18,7 +18,7 @@ export async function handleRequest(
   if (!pathname.startsWith(`${pathPrefix}/`)) {
     return undefined;
   }
-  
+
   if (request.method === "OPTIONS") {
     return {
       status: 200,
