@@ -1,6 +1,6 @@
 import fetchMock from "fetch-mock";
 import { Octokit } from "@octokit/core";
-import { jest } from "@jest/globals";
+import { describe, expect, it, test, vi } from "vitest";
 
 import { OAuthApp } from "../src/index.ts";
 import { OAuthAppOctokit } from "../src/oauth-app-octokit.ts";
@@ -73,7 +73,7 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
-    const onTokenSpy = jest.fn();
+    const onTokenSpy = vi.fn();
     app.on("token", onTokenSpy);
 
     const octokit = await app.getUserOctokit({
@@ -151,7 +151,7 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
-    const onTokenCallback = jest.fn<
+    const onTokenCallback = vi.fn<
       EventHandler<{
         clientType: "oauth-app";
         clientId: string;
@@ -241,7 +241,7 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
-    const onTokenCallback = jest.fn<
+    const onTokenCallback = vi.fn<
       EventHandler<{
         clientType: "oauth-app";
         clientId: string;
@@ -251,7 +251,7 @@ describe("app", () => {
     >();
     app.on("token.created", onTokenCallback);
 
-    const onVerification = jest.fn();
+    const onVerification = vi.fn();
     const result = await app.createToken({
       onVerification,
       scopes: ["repo", "gist"],
@@ -370,7 +370,7 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
-    const onTokenCallback = jest.fn<
+    const onTokenCallback = vi.fn<
       EventHandler<{
         clientType: "oauth-app";
         clientId: string;
@@ -457,7 +457,7 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
-    const onTokenCallback = jest.fn<
+    const onTokenCallback = vi.fn<
       EventHandler<{
         clientType: "oauth-app";
         clientId: string;
@@ -540,7 +540,7 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
-    const onTokenCallback = jest.fn<
+    const onTokenCallback = vi.fn<
       EventHandler<{
         clientType: "oauth-app";
         clientId: string;
@@ -626,7 +626,7 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
-    const onTokenCallback = jest.fn<
+    const onTokenCallback = vi.fn<
       EventHandler<{
         clientType: "oauth-app";
         clientId: string;
@@ -731,7 +731,7 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
-    const onTokenCallback = jest.fn<
+    const onTokenCallback = vi.fn<
       EventHandler<{
         clientType: "oauth-app";
         clientId: string;
@@ -827,7 +827,7 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
-    const onTokenCallback = jest.fn<
+    const onTokenCallback = vi.fn<
       EventHandler<{
         clientType: "oauth-app";
         clientId: string;
@@ -843,7 +843,7 @@ describe("app", () => {
 
     expect(result).toMatchInlineSnapshot(`
 {
-  "data": undefined,
+  "data": "",
   "headers": {},
   "status": 204,
   "url": "",
@@ -886,7 +886,7 @@ describe("app", () => {
       Octokit: Mocktokit,
     });
 
-    const onTokenCallback = jest.fn<
+    const onTokenCallback = vi.fn<
       EventHandler<{
         clientType: "oauth-app";
         clientId: string;
@@ -902,7 +902,7 @@ describe("app", () => {
 
     expect(result).toMatchInlineSnapshot(`
 {
-  "data": undefined,
+  "data": "",
   "headers": {},
   "status": 204,
   "url": "",
@@ -1029,12 +1029,12 @@ describe("app", () => {
 
     const calls: number[] = [];
 
-    const onTokenCallback1 = jest.fn().mockImplementationOnce(() => {
+    const onTokenCallback1 = vi.fn().mockImplementationOnce(() => {
       calls.push(1);
       return new Promise((resolve) => setTimeout(resolve, 20));
     });
 
-    const onTokenCallback2 = jest.fn().mockImplementationOnce(() => {
+    const onTokenCallback2 = vi.fn().mockImplementationOnce(() => {
       calls.push(2);
       return new Promise((resolve) => setTimeout(resolve, 10));
     });

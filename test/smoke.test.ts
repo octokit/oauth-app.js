@@ -4,6 +4,7 @@ import {
   sendNodeResponse,
   unknownRouteResponse,
 } from "../src/index.ts";
+import { describe, expect, it } from "vitest";
 
 describe("Smoke test", () => {
   it("OAuthApp is a function", () => {
