@@ -7,7 +7,7 @@ import { emitEvent } from "../emit-event.js";
 export type DeleteTokenOptions = {
   token: string;
 };
- 
+
 export async function deleteTokenWithState(
   state: State,
   options: DeleteTokenOptions,
