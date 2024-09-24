@@ -113,7 +113,7 @@ export async function GitHubAppTest() {
     // @ts-expect-error
     context.scopes;
 
-    if ("refreshToken" in context.authentication) {
+    if (context.authentication && "refreshToken" in context.authentication) {
       context.authentication.refreshTokenExpiresAt;
     }
   });
