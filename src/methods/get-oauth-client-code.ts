@@ -1,4 +1,3 @@
-/* v8 ignore next 7 */
 export function getOAuthClientCode() {
   return `import { Octokit: Core } from "https://esm.sh/@octokit/core";
     
