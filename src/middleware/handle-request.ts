@@ -82,14 +82,27 @@ export async function handleRequest(
 
   try {
     if (route === routes.getLogin) {
-      const { url } = app.getWebFlowAuthorizationUrl({
-        state: query.state,
-        scopes: query.scopes ? query.scopes.split(",") : undefined,
-        allowSignup: query.allowSignup
-          ? query.allowSignup === "true"
-          : undefined,
-        redirectUrl: query.redirectUrl,
-      });
+      const authOptions = {};
+
+      if (query.state) {
+        Object.assign(authOptions, { state: query.state });
+      }
+
+      if (query.scopes) {
+        Object.assign(authOptions, { scopes: query.scopes.split(",") });
+      }
+
+      if (query.allowSignup) {
+        Object.assign(authOptions, {
+          allowSignup: query.allowSignup === "true",
+        });
+      }
+
+      if (query.redirectUrl) {
+        Object.assign(authOptions, { redirectUrl: query.redirectUrl });
+      }
+
+      const { url } = app.getWebFlowAuthorizationUrl(authOptions);
 
       return { status: 302, headers: { location: url } };
     }
