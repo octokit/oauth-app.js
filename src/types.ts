@@ -84,10 +84,10 @@ export type State = {
   clientId: ClientId;
   clientSecret: ClientSecret;
   defaultScopes: Scope[];
-  allowSignup?: boolean;
-  baseUrl?: string;
-  redirectUrl?: string;
-  log?: typeof console;
+  allowSignup?: boolean | undefined;
+  baseUrl?: string | undefined;
+  redirectUrl?: string | undefined;
+  log?: typeof console | undefined;
   Octokit: OAuthAppOctokitClassType;
   octokit: OctokitInstance;
   eventHandlers: {

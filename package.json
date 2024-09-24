@@ -9,7 +9,7 @@
     "lint:fix": "prettier --write '{src,test}/**/*' README.md package.json",
     "pretest": "npm run -s lint",
     "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" npx jest --coverage",
-    "test:typescript": "npx tsc --noEmit --declaration --noUnusedLocals --allowImportingTsExtensions --moduleResolution node16 --module node16 test/typescript-validate.ts"
+    "test:typescript": "npx tsc --noEmit --declaration --noUnusedLocals --allowImportingTsExtensions --moduleResolution node16 --module node16 --exactOptionalPropertyTypes --strict test/typescript-validate.ts"
   },
   "repository": "github:octokit/oauth-app.js",
   "keywords": [
@@ -31,7 +31,7 @@
     "universal-user-agent": "^7.0.0"
   },
   "devDependencies": {
-    "@octokit/tsconfig": "^3.0.0",
+    "@octokit/tsconfig": "^4.0.0",
     "@types/jest": "^29.0.0",
     "@types/node": "^20.0.0",
     "esbuild": "^0.24.0",

@@ -1,8 +1,13 @@
 import type { OctokitResponse } from "../types.js";
 
 export function sendResponse(octokitResponse: OctokitResponse): Response {
-  return new Response(octokitResponse.text, {
+  const responseOptions = {
     status: octokitResponse.status,
-    headers: octokitResponse.headers,
-  });
+  };
+
+  if (octokitResponse.headers) {
+    Object.assign(responseOptions, { headers: octokitResponse.headers });
+  }
+
+  return new Response(octokitResponse.text, responseOptions);
 }
