@@ -7,10 +7,10 @@ export default defineConfig({
       exclude: ["src/methods/get-oauth-client-code.ts"], // Exclude this file from coverage as it isn't exported
       reporter: ["html"],
       thresholds: {
-        branches: 97,
-        functions: 96,
-        lines: 99,
-        statements: 99,
+        branches: 98,
+        functions: 100,
+        lines: 100,
+        statements: 100,
       },
     },
   },
