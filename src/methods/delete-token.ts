@@ -25,7 +25,7 @@ export async function deleteTokenWithState(
           clientType: "oauth-app",
           ...optionsWithDefaults,
         })
-      : // istanbul ignore next
+      : /* v8 ignore next 4 */
         await OAuthMethods.deleteToken({
           clientType: "github-app",
           ...optionsWithDefaults,

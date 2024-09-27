@@ -1,6 +1,6 @@
 import { createServer, IncomingMessage } from "node:http";
 import { URL } from "node:url";
-import { jest } from "@jest/globals";
+import { describe, expect, it, vi } from "vitest";
 
 import { createNodeMiddleware, OAuthApp } from "../src/index.ts";
 
@@ -166,7 +166,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("GET /api/github/oauth/callback?code=012345&state=mystate123", async () => {
     const appMock = {
-      createToken: jest.fn<any>().mockResolvedValue({
+      createToken: vi.fn<any>().mockResolvedValue({
         authentication: {
           type: "token",
           tokenType: "oauth",
@@ -198,7 +198,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("POST /api/github/oauth/token", async () => {
     const appMock = {
-      createToken: jest.fn<any>().mockResolvedValue({
+      createToken: vi.fn<any>().mockResolvedValue({
         authentication: {
           type: "token",
           tokenType: "oauth",
@@ -240,7 +240,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("GET /api/github/oauth/token", async () => {
     const appMock = {
-      checkToken: jest.fn<any>().mockResolvedValue({
+      checkToken: vi.fn<any>().mockResolvedValue({
         data: { id: 1 },
         authentication: {
           type: "token",
@@ -281,7 +281,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("PATCH /api/github/oauth/token", async () => {
     const appMock = {
-      resetToken: jest.fn<any>().mockResolvedValue({
+      resetToken: vi.fn<any>().mockResolvedValue({
         data: { id: 1 },
         authentication: {
           type: "token",
@@ -323,7 +323,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("POST /api/github/oauth/token/scoped", async () => {
     const appMock = {
-      scopeToken: jest.fn<any>().mockResolvedValue({
+      scopeToken: vi.fn<any>().mockResolvedValue({
         data: { id: 1 },
         authentication: {
           type: "token",
@@ -386,7 +386,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("PATCH /api/github/oauth/refresh-token", async () => {
     const appMock = {
-      refreshToken: jest.fn<any>().mockResolvedValue({
+      refreshToken: vi.fn<any>().mockResolvedValue({
         data: { id: 1 },
         authentication: {
           type: "token",
@@ -430,7 +430,7 @@ describe("createNodeMiddleware(app)", () => {
   });
   it("PATCH /api/github/oauth/token", async () => {
     const appMock = {
-      resetToken: jest.fn<any>().mockResolvedValue({
+      resetToken: vi.fn<any>().mockResolvedValue({
         data: { id: 1 },
         authentication: {
           type: "token",
@@ -472,7 +472,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("DELETE /api/github/oauth/token", async () => {
     const appMock = {
-      deleteToken: jest.fn<any>().mockResolvedValue(undefined),
+      deleteToken: vi.fn<any>().mockResolvedValue(undefined),
     };
 
     const server = createServer(
@@ -503,7 +503,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("DELETE /api/github/oauth/grant", async () => {
     const appMock = {
-      deleteAuthorization: jest.fn<any>().mockResolvedValue(undefined),
+      deleteAuthorization: vi.fn<any>().mockResolvedValue(undefined),
     };
 
     const server = createServer(
@@ -723,7 +723,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("PATCH /api/github/oauth/refresh-token without authorization header", async () => {
     const appMock = {
-      refreshToken: jest.fn<any>().mockResolvedValue({
+      refreshToken: vi.fn<any>().mockResolvedValue({
         ok: true,
       }),
     };
@@ -754,7 +754,7 @@ describe("createNodeMiddleware(app)", () => {
 
   it("PATCH /api/github/oauth/refresh-token without refreshToken", async () => {
     const appMock = {
-      refreshToken: jest.fn<any>().mockResolvedValue({
+      refreshToken: vi.fn<any>().mockResolvedValue({
         ok: true,
       }),
     };
