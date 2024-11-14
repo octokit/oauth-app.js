@@ -35,7 +35,7 @@ describe("OAuthApp.defaults", () => {
 describe("app", () => {
   it("app.getUserOctokit(options)", async () => {
     const mock = fetchMock
-      .sandbox()
+      .createInstance()
       .postOnce(
         "https://github.com/login/oauth/access_token",
         {
@@ -63,7 +63,7 @@ describe("app", () => {
 
     const Mocktokit = OAuthAppOctokit.defaults({
       request: {
-        fetch: mock,
+        fetch: mock.fetchHandler,
       },
     });
 
@@ -113,7 +113,7 @@ describe("app", () => {
 
   it("app.createToken(options) for web flow", async () => {
     const mock = fetchMock
-      .sandbox()
+      .createInstance()
       .postOnce(
         "https://github.com/login/oauth/access_token",
         {
@@ -141,7 +141,7 @@ describe("app", () => {
 
     const Mocktokit = OAuthAppOctokit.defaults({
       request: {
-        fetch: mock,
+        fetch: mock.fetchHandler,
       },
     });
 
@@ -197,7 +197,7 @@ describe("app", () => {
 
   it("app.createToken(options) for device flow", async () => {
     const mock = fetchMock
-      .sandbox()
+      .createInstance()
       .postOnce(
         "https://github.com/login/device/code",
         {
@@ -231,7 +231,7 @@ describe("app", () => {
 
     const Mocktokit = OAuthAppOctokit.defaults({
       request: {
-        fetch: mock,
+        fetch: mock.fetchHandler,
       },
     });
 
@@ -285,7 +285,7 @@ describe("app", () => {
   });
 
   it("app.checkToken(options)", async () => {
-    const mock = fetchMock.sandbox().postOnce(
+    const mock = fetchMock.createInstance().postOnce(
       "https://api.github.com/applications/0123/token",
       { id: 1 },
       {
@@ -301,7 +301,7 @@ describe("app", () => {
 
     const Mocktokit = OAuthAppOctokit.defaults({
       request: {
-        fetch: mock,
+        fetch: mock.fetchHandler,
       },
     });
 
@@ -334,13 +334,13 @@ describe("app", () => {
     "content-type": "application/json",
   },
   "status": 200,
-  "url": "",
+  "url": "https://api.github.com/applications/0123/token",
 }
 `);
   });
 
   it("app.resetToken(options)", async () => {
-    const mock = fetchMock.sandbox().patchOnce(
+    const mock = fetchMock.createInstance().patchOnce(
       "https://api.github.com/applications/0123/token",
       {
         id: 2,
@@ -360,7 +360,7 @@ describe("app", () => {
 
     const Mocktokit = OAuthAppOctokit.defaults({
       request: {
-        fetch: mock,
+        fetch: mock.fetchHandler,
       },
     });
 
@@ -411,7 +411,7 @@ describe("app", () => {
     "content-type": "application/json",
   },
   "status": 200,
-  "url": "",
+  "url": "https://api.github.com/applications/0123/token",
 }
 `);
     expect(onTokenCallback.mock.calls.length).toEqual(1);
@@ -427,7 +427,7 @@ describe("app", () => {
   });
 
   it("app.resetToken(options) with empty scopes", async () => {
-    const mock = fetchMock.sandbox().patchOnce(
+    const mock = fetchMock.createInstance().patchOnce(
       "https://api.github.com/applications/0123/token",
       {
         id: 2,
@@ -447,7 +447,7 @@ describe("app", () => {
 
     const Mocktokit = OAuthAppOctokit.defaults({
       request: {
-        fetch: mock,
+        fetch: mock.fetchHandler,
       },
     });
 
@@ -492,7 +492,7 @@ describe("app", () => {
     "content-type": "application/json",
   },
   "status": 200,
-  "url": "",
+  "url": "https://api.github.com/applications/0123/token",
 }
 `);
     expect(onTokenCallback.mock.calls.length).toEqual(1);
@@ -507,7 +507,7 @@ describe("app", () => {
   });
 
   it("app.resetToken(options) for GitHub App", async () => {
-    const mock = fetchMock.sandbox().patchOnce(
+    const mock = fetchMock.createInstance().patchOnce(
       "https://api.github.com/applications/lv1.1234567890abcdef/token",
       {
         id: 2,
@@ -529,7 +529,7 @@ describe("app", () => {
 
     const Mocktokit = OAuthAppOctokit.defaults({
       request: {
-        fetch: mock,
+        fetch: mock.fetchHandler,
       },
     });
 
@@ -573,7 +573,7 @@ describe("app", () => {
     "content-type": "application/json",
   },
   "status": 200,
-  "url": "",
+  "url": "https://api.github.com/applications/lv1.1234567890abcdef/token",
 }
 `);
     expect(onTokenCallback.mock.calls.length).toEqual(1);
@@ -588,7 +588,7 @@ describe("app", () => {
   });
 
   it("app.refreshToken(options)", async () => {
-    const mock = fetchMock.sandbox().postOnce(
+    const mock = fetchMock.createInstance().postOnce(
       "https://github.com/login/oauth/access_token",
       {
         body: {
@@ -615,7 +615,7 @@ describe("app", () => {
 
     const Mocktokit = OAuthAppOctokit.defaults({
       request: {
-        fetch: mock,
+        fetch: mock.fetchHandler,
       },
     });
 
@@ -667,7 +667,7 @@ describe("app", () => {
     "date": "Thu, 1 Jan 1970 00:00:00 GMT",
   },
   "status": 200,
-  "url": "",
+  "url": "https://github.com/login/oauth/access_token",
 }
 `);
     expect(onTokenCallback.mock.calls.length).toEqual(1);
@@ -699,7 +699,7 @@ describe("app", () => {
   });
 
   it("app.scopeToken(options)", async () => {
-    const mock = fetchMock.sandbox().postOnce(
+    const mock = fetchMock.createInstance().postOnce(
       "https://api.github.com/applications/lv1.1234567890abcdef/token/scoped",
       {
         token: "token456",
@@ -720,7 +720,7 @@ describe("app", () => {
 
     const Mocktokit = OAuthAppOctokit.defaults({
       request: {
-        fetch: mock,
+        fetch: mock.fetchHandler,
       },
     });
 
@@ -771,7 +771,7 @@ describe("app", () => {
     "content-type": "application/json",
   },
   "status": 200,
-  "url": "",
+  "url": "https://api.github.com/applications/lv1.1234567890abcdef/token/scoped",
 }
 `);
     expect(onTokenCallback.mock.calls.length).toEqual(1);
@@ -804,7 +804,7 @@ describe("app", () => {
 
   it("app.deleteToken(options)", async () => {
     const mock = fetchMock
-      .sandbox()
+      .createInstance()
       .deleteOnce("https://api.github.com/applications/0123/token", 204, {
         headers: {
           authorization:
@@ -813,11 +813,12 @@ describe("app", () => {
         body: {
           access_token: "token123",
         },
+        matchPartialBody: true,
       });
 
     const Mocktokit = OAuthAppOctokit.defaults({
       request: {
-        fetch: mock,
+        fetch: mock.fetchHandler,
       },
     });
 
@@ -863,7 +864,7 @@ describe("app", () => {
 
   it("app.deleteAuthorization(options)", async () => {
     const mock = fetchMock
-      .sandbox()
+      .createInstance()
       .deleteOnce("https://api.github.com/applications/0123/grant", 204, {
         headers: {
           authorization:
@@ -876,7 +877,7 @@ describe("app", () => {
 
     const Mocktokit = OAuthAppOctokit.defaults({
       request: {
-        fetch: mock,
+        fetch: mock.fetchHandler,
       },
     });
 
@@ -930,7 +931,7 @@ describe("app", () => {
 
   it('app.on("token.created", ({ octokit }) => octokit.auth({ type: "reset" })', async () => {
     const mock = fetchMock
-      .sandbox()
+      .createInstance()
       .postOnce(
         "https://github.com/login/oauth/access_token",
         {
@@ -946,18 +947,23 @@ describe("app", () => {
           },
         },
       )
-      .deleteOnce((url, options) => {
-        expect(url).toEqual("https://api.github.com/applications/0123/token");
-        // @ts-expect-error options.headers is not guaranteed to exist
-        expect(options.headers.authorization).toEqual(
+      .deleteOnce((request: any) => {
+        expect(request.url).toEqual(
+          "https://api.github.com/applications/0123/token",
+        );
+        const authorization = request.options.headers["authorization"];
+        expect(authorization).toEqual(
           "basic " + Buffer.from("0123:0123secret").toString("base64"),
         );
+        // expect(request.headers["authorization"]).toEqual(
+        //   "basic " + Buffer.from("0123:0123secret").toString("base64"),
+        // );
         return true;
       }, {});
 
     const Mocktokit = OAuthAppOctokit.defaults({
       request: {
-        fetch: mock,
+        fetch: mock.fetchHandler,
       },
     });
 
@@ -984,12 +990,12 @@ describe("app", () => {
 
     await app.createToken({ code: "code123" });
 
-    expect(mock.done()).toEqual(true);
+    expect(mock.callHistory.done()).toBe(true);
   });
 
   it("app.on multiple events", async () => {
     const mock = fetchMock
-      .sandbox()
+      .createInstance()
       .postOnce(
         "https://github.com/login/oauth/access_token",
         {
@@ -1017,7 +1023,7 @@ describe("app", () => {
 
     const Mocktokit = OAuthAppOctokit.defaults({
       request: {
-        fetch: mock,
+        fetch: mock.fetchHandler,
       },
     });
 
