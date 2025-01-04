@@ -62,10 +62,11 @@ export async function getUserOctokitWithState(
 
 export interface GetUserOctokitWithStateInterface<
   TClientType extends ClientType,
+  TOctokitInstance extends OctokitInstance
 > {
   (
     options: TClientType extends "oauth-app"
       ? GetUserOctokitOAuthAppOptions
       : GetUserOctokitGitHubAppOptions,
-  ): Promise<OctokitInstance>;
+  ): Promise<TOctokitInstance>;
 }
