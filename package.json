@@ -37,10 +37,10 @@
     "esbuild": "^0.25.0",
     "express": "^4.17.1",
     "fetch-mock": "^11.0.0",
-    "glob": "^11.0.0",
     "nock": "^14.0.0",
     "prettier": "3.5.3",
     "semantic-release-plugin-update-version-in-files": "^2.0.0",
+    "tinyglobby": "^0.2.13",
     "typescript": "^5.0.0",
     "vitest": "^3.0.0"
   },
