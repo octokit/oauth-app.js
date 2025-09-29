@@ -144,7 +144,13 @@ export class OAuthApp<
     // @ts-expect-error TODO: figure this out
     this.octokit = octokit;
 
-    this.getUserOctokit = getUserOctokitWithState.bind(null, state);
+    this.getUserOctokit = getUserOctokitWithState.bind(
+      null,
+      state,
+    ) as GetUserOctokitWithStateInterface<
+      ClientTypeFromOptions<TOptions>,
+      OctokitTypeFromOptions<TOptions>
+    >;
 
     this.getWebFlowAuthorizationUrl = getWebFlowAuthorizationUrlWithState.bind(
       null,
@@ -180,7 +186,8 @@ export class OAuthApp<
   on: AddEventHandler<TOptions>;
   octokit: OctokitTypeFromOptions<TOptions>;
   getUserOctokit: GetUserOctokitWithStateInterface<
-    ClientTypeFromOptions<TOptions>
+    ClientTypeFromOptions<TOptions>,
+    OctokitTypeFromOptions<TOptions>
   >;
   getWebFlowAuthorizationUrl: GetWebFlowAuthorizationUrlInterface<
     ClientTypeFromOptions<TOptions>
