@@ -62,7 +62,7 @@ export async function getUserOctokitWithState(
 
 export interface GetUserOctokitWithStateInterface<
   TClientType extends ClientType,
-  TOctokitInstance extends OctokitInstance,
+  TOctokitInstance extends OctokitInstance = OctokitInstance,
 > {
   (
     options: TClientType extends "oauth-app"
