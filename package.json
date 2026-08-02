@@ -9,7 +9,7 @@
     "lint:fix": "prettier --write '{src,test}/**/*' README.md package.json",
     "pretest": "npm run -s lint",
     "test": "vitest run --coverage",
-    "test:typescript": "npx tsc --noEmit --declaration --noUnusedLocals --allowImportingTsExtensions --moduleResolution node16 --module node16 --exactOptionalPropertyTypes --strict test/typescript-validate.ts"
+    "test:typescript": "npx tsc --noEmit --declaration --noUnusedLocals --allowImportingTsExtensions --moduleResolution node16 --module node18 --exactOptionalPropertyTypes --strict --types node --ignoreConfig test/typescript-validate.ts"
   },
   "repository": "github:octokit/oauth-app.js",
   "keywords": [
@@ -41,7 +41,7 @@
     "prettier": "3.6.2",
     "semantic-release-plugin-update-version-in-files": "^2.0.0",
     "tinyglobby": "^0.2.13",
-    "typescript": "^5.0.0",
+    "typescript": "^7.0.0",
     "vitest": "^3.0.0"
   },
   "release": {
