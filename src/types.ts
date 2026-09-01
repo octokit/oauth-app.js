@@ -19,11 +19,7 @@ export type Token = string;
 export type EventName = "token" | "authorization";
 
 export type ActionName =
-  | "created"
-  | "reset"
-  | "deleted"
-  | "refreshed"
-  | "scoped";
+  "created" | "reset" | "deleted" | "refreshed" | "scoped";
 export type EventAndActionName =
   | "token"
   | "token.created"
