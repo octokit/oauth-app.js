@@ -19,18 +19,19 @@ export async function deleteTokenWithState(
     ...options,
   };
 
+  /* v8 ignore next-- @preserve */
   const response =
     state.clientType === "oauth-app"
       ? await OAuthMethods.deleteToken({
           clientType: "oauth-app",
           ...optionsWithDefaults,
         })
-      : /* v8 ignore next 4 */
-        await OAuthMethods.deleteToken({
+      : await OAuthMethods.deleteToken({
           clientType: "github-app",
           ...optionsWithDefaults,
         });
 
+  /* v8 ignore next-- @preserve */
   await emitEvent(state, {
     name: "token",
     action: "deleted",
